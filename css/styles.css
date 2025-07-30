@@ -201,7 +201,6 @@ body.menu-open > *:not(.navbar-collapse):not(.menu-backdrop) {
 
 
 /* Categories */
-/* Categories */
 .medi-category-section {
   padding-top: 40px;
   padding-bottom: 40px;
@@ -220,7 +219,8 @@ body.menu-open > *:not(.navbar-collapse):not(.menu-backdrop) {
   justify-content: center;
   text-align: center;
   height: 100%;
-  padding: 30px 10px; /* increased for image spacing */
+  padding: 30px 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .medi-category-card:hover {
@@ -229,11 +229,20 @@ body.menu-open > *:not(.navbar-collapse):not(.menu-backdrop) {
 
 /* Category Icons */
 .category-icon {
-  width: 200px;
+  width: 100%;
+  max-width: 200px;
   height: 200px;
   object-fit: contain;
   margin-bottom: 15px;
 }
+
+/* Responsive Tweak: Add bottom margin for stacked mobile layout */
+@media (max-width: 576px) {
+  .medi-category-card {
+    margin-bottom: 20px;
+  }
+}
+
 
 
 /* About Section with Image and Overlay */
