@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Medi-O</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+
+<body>
+
+  <!-- Header + Navbar Section -->
+  <header class="medi-header position-relative">
+    <nav class="navbar navbar-expand-lg medi-navbar position-absolute top-0 w-100">
+      <div class="container-fluid px-4 d-flex flex-column">
+
+        <div class="container-fluid px-4 d-flex flex-column">
+          <div class="d-flex w-100 justify-content-between align-items-center">
+            <!-- Logo on the left -->
+            <a class="navbar-brand medi-logo" href="#">
+              <img src="images/medi-o-logo.svg" alt="Medi-O Logo"/>
+            </a>
+
+            <!-- RIGHT COLUMN: Two stacked rows -->
+            <div class="d-flex flex-column align-items-end">
+              <!-- Row 1: Hamburger (mobile only) -->
+              <button class="navbar-toggler d-lg-none" type="button" aria-label="Toggle navigation">
+                <i class="bi bi-list fs-2" style="color: #0467BB;"></i>
+              </button>
+
+              <!-- Row 1: Desktop-only icons -->
+              <div class="d-none d-lg-flex justify-content-end mt-2">
+                <ul class="navbar-nav medi-nav-links flex-row gap-4 mb-0">
+                  <li class="nav-item"><a class="nav-link text-primary" href="#">Home</a></li>
+                  <li class="nav-item"><a class="nav-link text-primary" href="#">Shop</a></li>
+                  <li class="nav-item"><a class="nav-link text-primary" href="#">About Us</a></li>
+                  <li class="nav-item"><a class="nav-link text-primary" href="#">Contact Us</a></li>
+                </ul>
+              </div>
+
+
+
+              <!-- Row 2: Desktop view only -->
+              <div class="d-none d-lg-flex w-100 justify-content-end align-items-center gap-4 mt-2 position-relative gap-4 medi-icons mt-2">
+
+                <!-- Slide-in Search Bar (initially hidden) -->
+                <div id="slideSearchBar" class="slide-search-bar d-flex align-items-center">
+                  <div class="input-group">
+                    <input type="text" class="form-control rounded-start-pill" placeholder="Search Here..." />
+                    <button class="btn btn-primary rounded-end-pill" id="headerSearchBtn">
+                      <i class="bi bi-search"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Icons (search icon will be replaced by bar) -->
+                <a href="#" id="triggerSearchBar" class="text-white"><i class="bi bi-search fs-5"></i></a>
+                <a href="#" class="text-white"><i class="bi bi-cart fs-5"></i></a>
+                <a href="#" class="text-white"><i class="bi bi-person fs-5"></i></a>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+
+        <!-- Collapsible Menu with Icons for Mobile/Tablet -->
+        <div class="collapse navbar-collapse w-100" id="navMenu">
+          <ul class="navbar-nav medi-nav-links gap- mb-2 mb-lg-0 ms-auto">
+            <li class="nav-item"><a class="nav-link text-white" href="#">Home</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="#">Shop</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="#">About Us</a></li>
+            <li class="nav-item"><a class="nav-link text-white" href="#">Contact Us</a></li>
+          </ul>
+
+          <!-- Icons for Mobile/Tablet Only -->
+          <div class="d-flex gap-4 mt-3 d-lg-none justify-content-start">
+            <a href="#" class="text-white"><i class="bi bi-search fs-5"></i></a>
+            <a href="#" class="text-white"><i class="bi bi-cart fs-5"></i></a>
+            <a href="#" class="text-white"><i class="bi bi-person fs-5"></i></a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Content -->
+    <section class="container medi-hero-content text-white text-center">
+      <div class="col-lg-5 bg-white bg-opacity-75 p-5 rounded">
+        <h3 class="fw-bold text-primary">Medicine at Your Fingertips!</h3>
+        <p class="medium text-dark mb-3">
+          Skip the queues and manage your prescriptions online. Medi-O lets you order medicines, upload prescriptions,
+          and receive trusted care from home.
+        </p>
+        <button class="btn btn-primary">Upload Your Prescription</button>
+      </div>
+    </section>
+  </header>
+
+  <!-- Search Section -->
+  <section class="container medi-search-section mt-5 pt-5">
+    <div class="input-group">
+      <input type="text" class="form-control rounded-start-pill" placeholder="Search Here....." id="searchInput" />
+      <button class="btn btn-primary rounded-end-pill" id="searchBtn">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </section>
+
+  <!-- Categories -->
+  <section class="container medi-category-section py-5">
+  <div class="row text-center g-4">
+    <div class="col-6 col-md-3">
+      <div class="card py-4 shadow-sm medi-category-card">
+        <img src="images/Adult-Care1-01 1.png" alt="Adult Care" class="category-icon mb-2" />
+        <p class="fw-semibold">Adult Care</p>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card py-4 shadow-sm medi-category-card">
+        <img src="images/Personal-Care-01-01-01 1.png" alt="Personal Care" class="category-icon mb-2" />
+        <p class="fw-semibold">Personal Care</p>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card py-4 shadow-sm medi-category-card">
+        <img src="images/Diabetic.png" alt="Diabetes Care" class="category-icon mb-2" />
+        <p class="fw-semibold">Diabetes Care</p>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="card py-4 shadow-sm medi-category-card">
+        <img src="images/baby.png" alt="Baby Care" class="category-icon mb-2" />
+        <p class="fw-semibold">Baby Care</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- About Medi-O Section -->
+<section class="medi-about-section text-white text-center">
+  <div class="container py-5">
+    <h2 class="fw-bold mb-4">About Medi-O</h2>
+    <p class="mb-3">
+      Medi-O was developed to transform traditional pharmacy services into a secure, digital experience —
+      allowing users to order medications, upload prescriptions, and receive verified treatments from
+      the comfort of their homes.
+    </p>
+    <p class="mb-4">
+      With a focus on reliability, convenience, and innovation, Medi-O introduces features like
+      QR-code–based prescription verification, automated medicine reminders, and a streamlined order
+      process. Built with care and powered by technology, Medi-O is committed to becoming a trusted
+      name in digital healthcare — offering a smarter way to manage your medication needs.
+    </p>
+    <a href="#" class="btn btn-outline-light rounded-pill px-4 py-2">Read More</a>
+  </div>
+</section>
+
+
+<!-- Best Selling Section -->
+<section class="medi-best-selling-section text-center py-5">
+  <div class="container">
+    <h2 class="text-primary fw-bold mb-5">BEST SELLING</h2>
+    <div class="row g-4 justify-content-center">
+      <!-- Product Card -->
+      <div class="col-6 col-md-3">
+        <img src="images/Group 208.png" class="img-fluid mb-3" alt="Ortho Shield">
+        <h6>ORTHO SHIELD 50ml</h6>
+        <p class="mb-1">Rs. 2,910.00</p>
+        <div class="text-warning">★ ★ ★ ☆ ☆</div>
+      </div>
+      <div class="col-6 col-md-3">
+        <img src="images/Siddhalepa-Balm-50g 1.png" class="img-fluid mb-3" alt="Siddhalepa Balm">
+        <h6>SIDDHALEPA BALM 50G</h6>
+        <p class="mb-1">Rs. 2,910.00</p>
+        <div class="text-warning">★ ★ ★ ☆ ☆</div>
+      </div>
+      <div class="col-6 col-md-3">
+        <img src="images/ACNE-AID 1.png" class="img-fluid mb-3" alt="Acne-Aid Bar">
+        <h6>ACNE-AID BAR 100g</h6>
+        <p class="mb-1">Rs. 2,910.00</p>
+        <div class="text-warning">★ ★ ★ ☆ ☆</div>
+      </div>
+      <div class="col-6 col-md-3">
+        <img src="images/aknicarelotion 1.png" class="img-fluid mb-3" alt="Aknicare Cleanser">
+        <h6>AKNICARE CLEANSER 200ml</h6>
+        <p class="mb-1">Rs. 2,910.00</p>
+        <div class="text-warning">★ ★ ★ ☆ ☆</div>
+      </div>
+    </div>
+
+    <!-- Dots Indicator -->
+    <div class="mt-4">
+      <span class="dot active"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+    </div>
+
+    <!-- Feature Badges -->
+    <div class="row mt-5">
+      <div class="col-md-4 mb-3">
+        <div class="feature-box">100% Secured Payment Methods</div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="feature-box">365 Days Quick Support</div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="feature-box">Trusted Pharmacist Approval</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+<!-- Footer Section -->
+<footer class="medi-footer text-white py-5">
+  <div class="container">
+    <div class="row gy-4 text-center text-md-start">
+
+      <!-- Logo & Description -->
+      <div class="col-md-4">
+        <img src="images/medi-o-logo-white.svg" alt="Medi-O Logo" height="60" class="logo-bottom" class="mb-3" />
+        <p class="mb-0">
+          Medi-O is a licensed and registered pharmacy compliant with NMRA
+          (National Medicine Regulatory Authority). Registration No:
+          (NMRA/R/5255/2022).
+        </p>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="col-md-4">
+        <h5 class="fw-bold mb-4">Quick Links</h5>
+        <ul class="list-unstyled">
+          <li><a href="#" class="text-white text-decoration-none">FAQs</a></li>
+          <li><a href="#" class="text-white text-decoration-none">About Us</a></li>
+          <li><a href="#" class="text-white text-decoration-none">Contact Us</a></li>
+          <li><a href="#" class="text-white text-decoration-none">Terms & Conditions</a></li>
+          <li><a href="#" class="text-white text-decoration-none">Privacy Policy</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact Info -->
+      <div class="col-md-4">
+        <h6 class="fw-bold mb-3">Contact us</h6>
+        <p class="mb-1"><i class="bi bi-geo-alt-fill me-2"></i>Colombo, Sri Lanka</p>
+        <p class="mb-1"><i class="bi bi-envelope-fill me-2"></i>info@medio.com</p>
+        <p class="mb-3"><i class="bi bi-telephone-fill me-2"></i>+94 77 123 4567</p>
+
+        <!-- Social Media Icons -->
+        <div class="d-flex justify-content-center justify-content-md-start gap-3">
+          <a href="#" class="text-white fs-5"><i class="bi bi-youtube"></i></a>
+          <a href="#" class="text-white fs-5"><i class="bi bi-instagram"></i></a>
+          <a href="#" class="text-white fs-5"><i class="bi bi-twitter"></i></a>
+          <a href="#" class="text-white fs-5"><i class="bi bi-facebook"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+
+
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Custom JS -->
+  <script src="js/script.js"></script>
+</body>
+
+</html>
