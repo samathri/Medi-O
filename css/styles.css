@@ -728,11 +728,42 @@ body {
 }
 
 
+/* Pagination Styling */
+.pagination {
+    display: flex;
+    justify-content: center;
+    gap: 10px; /* Space between pagination items */
+}
+
+.page-item {
+    border: 0px solid #ddd;
+    border-radius: 5px;
+}
+
+.page-item.active .page-link {
+    background-color: #0467BB;
+    border-color: #ffffff;
+    color: white;
+}
+
+.page-item .page-link {
+    color: #0467BB;
+    background-color: white;
+    border: none;
+}
+
+.page-item .page-link:hover {
+    background-color: #f8f9fa;
+    color: #03548a;
+}
+
+
 
 
 /* ===================== */
       /* About us */
 /* ===================== */
+
 
 /* About Us Hero Section */
 .medi-o-hero.about-hero {
@@ -841,6 +872,281 @@ body {
 
 
 
+/* ===================== */
+      /* About us */
+/* ===================== */
+
+
+/* Contact Us Hero Section */
+.medi-o-hero.contact-hero {
+    background-image: url('../images/contact-hero.png'); /* Replace with the path to your contact hero image */
+    background-size: cover; /* Ensures the image covers the section */
+    background-position: center; /* Centers the image */
+    padding-top: 100px; /* Adjust top padding */
+    padding-bottom: 60px; /* Adjust bottom padding */
+    position: relative;
+    height: 400px; /* Set a height for the section */
+}
+
+/* Optional: Add overlay to make text stand out if needed */
+.medi-o-hero.contact-hero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+/* Ensure content is above the overlay */
+.medi-o-hero.contact-hero .container {
+    position: relative;
+    z-index: 2;
+}
+
+/* Contact Us Section */
+.contact-section {
+    margin-bottom: 50px;
+}
+
+/* Title and Description */
+.contact-title {
+    font-size: 2rem;
+    color: #0467BB;
+    font-weight: 600;
+}
+
+.contact-description {
+    font-size: 1.2rem;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Contact Info Section */
+.contact-info {
+    position: relative; /* Ensure the overlay is positioned relative to this container */
+  background-image: url('../images/contact-info.png') !important; /* Replace with the path to your contact hero image */
+    background-size: contain; /* Ensures the image covers the section */
+    background-position: center; /* Centers the image */
+    background-repeat: no-repeat;
+    padding: 50px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.521);
+}
+
+/* Overlay Styling */
+.contact-info::before {
+    content: ""; /* Required for the pseudo-element */
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.767); /* Black overlay with 50% opacity */
+    border-radius: 10px; /* Optional: If you want the overlay to have rounded corners like the parent */
+    z-index: 1; /* Ensure overlay is below the content */
+}
+
+/* Ensuring the text content appears above the overlay */
+.contact-info {
+    position: relative; /* Ensure the container is positioned relative */
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    justify-content: space-evenly; /* Center items vertically */
+    align-items: center; /* Center items horizontally */
+    padding: 30px;
+    background: rgba(0, 0, 0, 0.4); /* Optional, if you want a dark overlay */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.521);
+}
+
+.contact-info .contact-info-item,
+.contact-info .social-icons {
+    position: relative;
+    z-index: 2; /* Makes sure text content is above the overlay */
+    text-align: left; /* Center the content inside the items */
+}
+
+.contact-info-item {
+    font-size: 1.1rem;
+    color: #ffffff;
+    margin-bottom: 30px;
+
+}
+
+.contact-info-item i {
+    color: #ffffff;
+    margin-right: 10px;
+    font-size: 1.5rem;
+
+}  
+
+.gap-c{
+    margin-left: 15px !important;
+
+}
+
+.social-icons a {
+    color: #ffffff;
+    font-size: 2rem !important;
+    margin: 0 10px;
+    text-decoration: none;
+
+}
+
+.social-icons a:hover {
+    color: #03548a;
+}
+
+/* Optional: Responsive Design */
+@media (max-width: 768px) {
+    .contact-info {
+        padding: 20px;
+    }
+
+    .contact-info-item {
+        font-size: 1rem;
+    }
+
+    .social-icons a {
+        font-size: 1.5rem;
+    }
+}
+
+
+/* Inquiry Form Section */
+.inquiry-form {
+    background-color: #0466bb1c;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-title {
+    font-size: 1.8rem;
+    color: #0467BB;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.form-label {
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.form-control {
+    font-size: 1rem;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+.form-control:focus {
+    border-color: #0467BB;
+    box-shadow: 0 0 5px rgba(4, 103, 187, 0.3);
+}
+
+button[type="submit"] {
+    background-color: #0467BB;
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 50px;
+    margin-top: 20px;
+}
+
+button[type="submit"]:hover {
+  background-color: transparent;
+  border: 2px solid #0467BB;
+  color: #0467BB;
+}
+/* Responsive Design */
+@media (max-width: 768px) {
+    .contact-info, .inquiry-form {
+        margin-bottom: 30px;
+    }
+
+    .contact-info {
+        margin-bottom: 20px;
+    }
+
+    .social-icons {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .form-control {
+        font-size: 1rem;
+    }
+
+    .form-title {
+        font-size: 1.6rem;
+    }
+}
+
+
+/* Full Page Container for Centering */
+.page-container {
+    display: flex;
+    justify-content: center;  /* Center horizontally */
+    align-items: center;  /* Center vertically */
+    height: 100vh;  /* Take full viewport height */
+    margin: 0;
+}
+
+/* Map container */
+.map-container {
+    position: relative;
+    width: 80%;  /* Adjust the width of the map container */
+    max-width: 1000px;  /* Optional: Set max width */
+    padding-bottom: 50%; /* 16:9 aspect ratio for larger screens */
+    height: 0;
+    margin-top: 150px;
+    }
+
+
+/* Make iframe responsive */
+.map-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50%;
+    border: none;
+}
+
+/* Mobile and Tablet Views */
+@media (max-width: 768px) {
+    /* Adjust map container width and aspect ratio for tablets */
+    .map-container {
+        width: 90%;  /* Make the container smaller for mobile/tablet */
+        padding-bottom: 75%; /* 4:3 aspect ratio for tablets */
+        margin-top: 0px;
+    }
+
+    /* Ensure iframe fills the container correctly */
+    .map-container iframe {
+        height: 100%; /* Fill the container height */
+    }
+}
+
+@media (max-width: 576px) {
+    /* For small mobile screens */
+    .map-container {
+        width: 100%;  /* Take full width on small screens */
+        padding-bottom: 75%; /* Adjust the aspect ratio (4:3) */
+        margin-top: 0px;
+
+    }
+
+    /* Ensure iframe fills the container correctly */
+    .map-container iframe {
+        height: 100%; /* Fill the container height */
+    }
+}
 
 
 
