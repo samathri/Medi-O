@@ -24,7 +24,6 @@
 
 <body>
 
-
     <!-- Header -->
     <header class="medi-o-header-container">
         <nav class="medi-o-navbar navbar navbar-expand-lg">
@@ -49,12 +48,12 @@
                         <!-- Nav Links -->
                         <ul class="medi-o-navbar-nav navbar-nav flex-lg-row mb-2 gap-3 mb-lg-0">
                             <li class="medi-o-nav-item nav-item"><a class="medi-o-nav-link nav-link"
-                                    href="images/about-banner-home.png">Home</a></li>
+                                    href="home.html">Home</a></li>
                             <li class="medi-o-nav-item nav-item"><a class="medi-o-nav-link nav-link"
-                                    href="images/ACNE-AID 1.png">Shop</a></li>
-                            <li class="medi-o-nav-item nav-item"><a class="medi-o-nav-link nav-link" href="#">About
+                                    href="shop.html">Shop</a></li>
+                            <li class="medi-o-nav-item nav-item"><a class="medi-o-nav-link nav-link" href="about.html">About
                                     Us</a></li>
-                            <li class="medi-o-nav-item nav-item"><a class="medi-o-nav-link nav-link" href="#">Contact
+                            <li class="medi-o-nav-item nav-item"><a class="medi-o-nav-link nav-link" href="contact.html">Contact
                                     Us</a></li>
                         </ul>
 
@@ -104,14 +103,47 @@
         </nav>
     </header>
 
-
     <section class="medi-o-shop-page container-fluid px-3 px-md-5">
 
         <div class="row">
             <!-- Sidebar -->
             <aside class="col-lg-3 mb-4">
                 <h5 class="fw-bold text-primary">Categories</h5>
-                <ul class="list-unstyled category-list">
+                <!-- Accordion for mobile/tablet view -->
+                <div class="accordion d-lg-none" id="categoryAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="categoryHeading1">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#categoryCollapse1" aria-expanded="true"
+                                aria-controls="categoryCollapse1">
+                                All
+                            </button>
+                        </h2>
+                        <div id="categoryCollapse1" class="accordion-collapse collapse show"
+                            aria-labelledby="categoryHeading1" data-bs-parent="#categoryAccordion">
+                            <div class="accordion-body">
+                                <ul class="list-unstyled">
+                                    <li><a href="#">Adult Care</a></li>
+                                    <li><a href="#">Ayurvedic Care</a></li>
+                                    <li><a href="#">Baby Care</a></li>
+                                    <li><a href="#">Dental Care</a></li>
+                                    <li><a href="#">Diabetes Care</a></li>
+                                    <li><a href="#">Dressings</a></li>
+                                    <li><a href="#">Doctors Equipment</a></li>
+                                    <li><a href="#">First Aid Items</a></li>
+                                    <li><a href="#">Orthopedic Aid</a></li>
+                                    <li><a href="#">Personal Care</a></li>
+                                    <li><a href="#">Supplements</a></li>
+                                    <li><a href="#">Veterinary</a></li>
+                                    <li><a href="#">Wellness Vouchers</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Desktop view categories (hidden on small screens) -->
+                <ul class="list-unstyled category-list d-none d-lg-block">
                     <li><a href="#">All</a></li>
                     <li><a href="#">Adult Care</a></li>
                     <li><a href="#">Ayurvedic Care</a></li>
@@ -127,17 +159,27 @@
                     <li><a href="#">Veterinary</a></li>
                     <li><a href="#">Wellness Vouchers</a></li>
                 </ul>
+                <section class="price-slider-container">
+    <h5 class="fw-bold text-primary">By Price</h5>
+    <div class="price-slider">
+        <!-- Single Slider for price range -->
+        <input type="range" id="priceSlider" min="0" max="15000" value="7500" step="100" class="form-range">
+        
+        <!-- Price Labels Display Below Slider -->
+        <div class="price-labels">
+            <span id="priceLabel">Rs. 7500.00</span>
+        </div>
+        
+        <!-- Filter Button below the slider -->
+        <div class="filter-btn-container">
+            <button id="filterBtn" class="btn btn-primary">Apply Filter</button>
+        </div>
+    </div>
+</section>
 
-
-                <h5 class="fw-bold text-primary mt-4">By Price</h5>
-                <div class="price-slider my-3">
-                    <input type="range" min="0" max="15000" class="form-range" />
-                    <div class="d-flex justify-content-between small text-muted">
-                        <span>Rs. 0.00</span>
-                        <span>Rs. 15000.00</span>
-                    </div>
-                </div>
+                
             </aside>
+            
 
             <!-- Products Section -->
             <div class="col-lg-9">
@@ -156,9 +198,9 @@
                 </div>
 
                 <!-- Product Grid (use homepage card styles) -->
-                <div class="row g-4 py-5">
-                    <!-- Repeat this col for each product -->
-                    <div class="col-6 col-md-4 col-xl-3">
+                <div class="row g-3 py-3">
+                    <!-- Product Card 1 -->
+                    <div class="col-6  col-md-3 col-lg-3">
                         <div class="medi-o-product-card text-center">
                             <img src="images/Isocal-600x600.png" class="bs-img img-fluid mb-3" alt="Ortho Shield">
                             <h6 class="medi-o-product-title">ISOCAL POWDER 425g</h6>
@@ -167,7 +209,8 @@
                         </div>
                     </div>
 
-                    <div class="col-6 col-md-4 col-xl-3">
+                    <!-- Product Card 2 -->
+                    <div class="col-6  col-md-3 col-lg-3">
                         <div class="medi-o-product-card text-center">
                             <img src="images/Siddhalepa-Balm-50g 1.png" class="bs-img img-fluid mb-3"
                                 alt="Siddhalepa Balm">
@@ -177,7 +220,8 @@
                         </div>
                     </div>
 
-                    <div class="col-6 col-md-4 col-xl-3">
+                    <!-- Product Card 3 -->
+                    <div class="col-6  col-md-3 col-lg-3">
                         <div class="medi-o-product-card text-center">
                             <img src="images/ACNE-AID 1.png" class="bs-img img-fluid mb-3" alt="Acne-Aid Bar">
                             <h6 class="medi-o-product-title">ACNE-AID BAR 100g</h6>
@@ -186,7 +230,8 @@
                         </div>
                     </div>
 
-                    <div class="col-6 col-md-4 col-xl-3">
+                    <!-- Product Card 4 -->
+                    <div class="col-6  col-md-3 col-lg-3">
                         <div class="medi-o-product-card text-center">
                             <img src="images/aknicarelotion 1.png" class="bs-img img-fluid mb-3"
                                 alt="Aknicare Cleanser">
@@ -195,13 +240,11 @@
                             <div class="text-warning">★ ★ ★ ☆ ☆</div>
                         </div>
                     </div>
-
-                    <!-- Copy the card above for more products -->
                 </div>
-
-                <div class="row g-4 py-5">
-                    <!-- Repeat this col for each product -->
-                    <div class="col-6 col-md-4 col-xl-3">
+                <!-- Product Grid (use homepage card styles) -->
+                <div class="row g-3 py-3">
+                    <!-- Product Card 1 -->
+                    <div class="col-6  col-md-3 col-lg-3">
                         <div class="medi-o-product-card text-center">
                             <img src="images/Isocal-600x600.png" class="bs-img img-fluid mb-3" alt="Ortho Shield">
                             <h6 class="medi-o-product-title">ISOCAL POWDER 425g</h6>
@@ -210,7 +253,8 @@
                         </div>
                     </div>
 
-                    <div class="col-6 col-md-4 col-xl-3">
+                    <!-- Product Card 2 -->
+                    <div class="col-6  col-md-3 col-lg-3">
                         <div class="medi-o-product-card text-center">
                             <img src="images/Siddhalepa-Balm-50g 1.png" class="bs-img img-fluid mb-3"
                                 alt="Siddhalepa Balm">
@@ -220,7 +264,8 @@
                         </div>
                     </div>
 
-                    <div class="col-6 col-md-4 col-xl-3">
+                    <!-- Product Card 3 -->
+                    <div class="col-6  col-md-3 col-lg-3">
                         <div class="medi-o-product-card text-center">
                             <img src="images/ACNE-AID 1.png" class="bs-img img-fluid mb-3" alt="Acne-Aid Bar">
                             <h6 class="medi-o-product-title">ACNE-AID BAR 100g</h6>
@@ -229,7 +274,8 @@
                         </div>
                     </div>
 
-                    <div class="col-6 col-md-4 col-xl-3">
+                    <!-- Product Card 4 -->
+                    <div class="col-6  col-md-3 col-lg-3">
                         <div class="medi-o-product-card text-center">
                             <img src="images/aknicarelotion 1.png" class="bs-img img-fluid mb-3"
                                 alt="Aknicare Cleanser">
@@ -238,13 +284,12 @@
                             <div class="text-warning">★ ★ ★ ☆ ☆</div>
                         </div>
                     </div>
-
-                    <!-- Copy the card above for more products -->
                 </div>
 
-                <div class="row g-4 py-5">
-                    <!-- Repeat this col for each product -->
-                    <div class="col-6 col-md-4 col-xl-3">
+                <!-- Product Grid (use homepage card styles) -->
+                <div class="row g-3 py-3">
+                    <!-- Product Card 1 -->
+                    <div class="col-6  col-md-3 col-lg-3">
                         <div class="medi-o-product-card text-center">
                             <img src="images/Isocal-600x600.png" class="bs-img img-fluid mb-3" alt="Ortho Shield">
                             <h6 class="medi-o-product-title">ISOCAL POWDER 425g</h6>
@@ -253,7 +298,8 @@
                         </div>
                     </div>
 
-                    <div class="col-6 col-md-4 col-xl-3">
+                    <!-- Product Card 2 -->
+                    <div class="col-6  col-md-3 col-lg-3">
                         <div class="medi-o-product-card text-center">
                             <img src="images/Siddhalepa-Balm-50g 1.png" class="bs-img img-fluid mb-3"
                                 alt="Siddhalepa Balm">
@@ -263,7 +309,8 @@
                         </div>
                     </div>
 
-                    <div class="col-6 col-md-4 col-xl-3">
+                    <!-- Product Card 3 -->
+                    <div class="col-6  col-md-3 col-lg-3">
                         <div class="medi-o-product-card text-center">
                             <img src="images/ACNE-AID 1.png" class="bs-img img-fluid mb-3" alt="Acne-Aid Bar">
                             <h6 class="medi-o-product-title">ACNE-AID BAR 100g</h6>
@@ -272,7 +319,8 @@
                         </div>
                     </div>
 
-                    <div class="col-6 col-md-4 col-xl-3">
+                    <!-- Product Card 4 -->
+                    <div class="col-6  col-md-3 col-lg-3">
                         <div class="medi-o-product-card text-center">
                             <img src="images/aknicarelotion 1.png" class="bs-img img-fluid mb-3"
                                 alt="Aknicare Cleanser">
@@ -281,52 +329,15 @@
                             <div class="text-warning">★ ★ ★ ☆ ☆</div>
                         </div>
                     </div>
-
-                    <!-- Copy the card above for more products -->
                 </div>
 
-                <div class="row g-4 py-5">
-                    <!-- Repeat this col for each product -->
-                    <div class="col-6 col-md-4 col-xl-3">
-                        <div class="medi-o-product-card text-center">
-                            <img src="images/Isocal-600x600.png" class="bs-img img-fluid mb-3" alt="Ortho Shield">
-                            <h6 class="medi-o-product-title">ISOCAL POWDER 425g</h6>
-                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
-                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
-                        </div>
-                    </div>
 
-                    <div class="col-6 col-md-4 col-xl-3">
-                        <div class="medi-o-product-card text-center">
-                            <img src="images/Siddhalepa-Balm-50g 1.png" class="bs-img img-fluid mb-3"
-                                alt="Siddhalepa Balm">
-                            <h6 class="medi-o-product-title">SIDDHALEPA BALM 50G</h6>
-                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
-                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
-                        </div>
-                    </div>
 
-                    <div class="col-6 col-md-4 col-xl-3">
-                        <div class="medi-o-product-card text-center">
-                            <img src="images/ACNE-AID 1.png" class="bs-img img-fluid mb-3" alt="Acne-Aid Bar">
-                            <h6 class="medi-o-product-title">ACNE-AID BAR 100g</h6>
-                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
-                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
-                        </div>
-                    </div>
 
-                    <div class="col-6 col-md-4 col-xl-3">
-                        <div class="medi-o-product-card text-center">
-                            <img src="images/aknicarelotion 1.png" class="bs-img img-fluid mb-3"
-                                alt="Aknicare Cleanser">
-                            <h6 class="medi-o-product-title">AKNICARE CLEANSER 200ml</h6>
-                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
-                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
-                        </div>
-                    </div>
 
-                    <!-- Copy the card above for more products -->
-                </div>
+
+
+
 
             </div>
         </div>
@@ -390,6 +401,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Swiper JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
     <script src="js/script.js"></script>
 
 

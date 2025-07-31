@@ -261,6 +261,10 @@ body {
 }
 
 
+/* ===================== */
+      /* Home Page */
+/* ===================== */
+
 
 /* Hero section */
 .medi-o-hero {
@@ -559,6 +563,7 @@ body {
 }
 
 
+
 @media (max-width: 992px) {
   .medi-o-shop-page {
     margin-top: 10px; /* Smaller top margin for mobile */
@@ -583,6 +588,254 @@ body {
 }
 
 
+/* Hide category grid on mobile/tablet */
+@media (max-width: 992px) {
+  .medi-o-categories {
+    display: none; /* Hide the grid layout on mobile/tablet */
+  }
+
+  /* Display the accordion on mobile/tablet */
+  .medi-o-accordion {
+    display: block;
+  }
+
+  .accordion-button {
+    font-size: 1.2rem;
+    color: #000000;
+    padding: 15px;
+  }
+
+  .accordion-button:not(.collapsed) {
+    background-color: #e6f0fa;
+    color: #0467BB;
+  }
+
+  .accordion-body {
+    font-size: 1rem;
+    padding: 10px 20px;
+    background-color: #f7f7f7;
+  }
+}
+
+/* Optional: Add a smooth transition effect for accordion */
+.accordion-button {
+  transition: background-color 0.3s ease;
+}
+
+/* Optionally add spacing between accordion items on mobile */
+@media (max-width: 768px) {
+  .accordion-item {
+    margin-bottom: 20px;
+  }
+}
+
+
+#categoryCollapse1 .accordion-body ul {
+    list-style: none; /* Removes the default list bullets */
+    padding: 0;
+    margin: 0;
+}
+
+#categoryCollapse1 .accordion-body ul li {
+    margin-bottom: 20px; /* Adds a 20px gap between list items */
+}
+
+#categoryCollapse1 .accordion-body ul li a {
+    text-decoration: none; /* Removes the underline */
+    color: #000000; /* Sets the font color */
+    transition: color 0.3s ease; /* Smooth color transition on hover */
+}
+
+#categoryCollapse1 .accordion-body ul li a:hover {
+    color: #03548A; /* Darker shade of blue on hover */
+}
+
+/* Price Slider Container */
+.price-slider-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: left;
+}
+
+/* Slider styling */
+.form-range {
+    width: 100%;
+    background: transparent;
+    -webkit-appearance: none;
+    appearance: none;
+    position: relative;
+    z-index: 2;
+}
+
+/* Slider track (background) */
+.form-range::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 15px;
+    background: #ffffff00;
+    border-radius: 5px;
+}
+
+/* Slider thumb (dot) */
+.form-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #0467BB;
+    cursor: pointer;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.4);
+}
+
+/* Price Labels (displayed below slider) */
+.price-labels {
+    display: block;
+    margin-top: 10px;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.price-labels span {
+    color: #000000;
+}
+
+/* Filter Button Styling */
+.filter-btn-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+#filterBtn {
+    padding: 10px 20px;
+    background-color: #0467BB;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+#filterBtn:hover {
+    background-color: #03548a; /* Darker shade of blue */
+}
+
+/* Optional: Smooth transition for range thumb */
+.form-range {
+    transition: background-color 0.2s ease-in-out;
+}
+
+
+
+
+/* ===================== */
+      /* About us */
+/* ===================== */
+
+/* About Us Hero Section */
+.medi-o-hero.about-hero {
+    background-image: url('../images/About-hero.jpg'); /* Background image */
+    background-size: cover; /* Ensures the image covers the section */
+    background-position: center; /* Centers the image */
+    padding-top: 100px; /* Adjust top padding */
+    padding-bottom: 60px; /* Adjust bottom padding */
+    position: relative;
+    height: 400px; /* Set a height for the section */
+}
+
+/* Optional: Add overlay to make text stand out if needed */
+.medi-o-hero.about-hero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+/* Ensure content is above the overlay */
+.medi-o-hero.about-hero .container {
+    position: relative;
+    z-index: 2;
+}
+
+/* Responsive Styles */
+@media (max-width: 991px) {
+    .medi-o-hero.about-hero {
+        padding-top: 50px;
+        padding-bottom: 40px;
+        height: 300px; /* Adjust height for smaller screens */
+    }
+}
+
+
+/* About Us Section */
+.who-we-are {
+    padding-top: 60px;
+    padding-bottom: 60px;
+}
+
+.who-we-are-title {
+    font-size: 2.5rem;
+    color: #0467BB;
+    font-weight: 600;
+}
+
+.who-we-are-desc {
+    font-size: 1.2rem;
+    color: #333;
+    line-height: 1.6;
+    margin: 0 auto;
+}
+
+/* Icons */
+.icon-img {
+    width: 50%; /* Adjust size to fit nicely */
+    height: auto;
+    margin-bottom: 20px;
+    filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.1));
+}
+
+/* Section Title */
+.section-title {
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: #000000;
+}
+
+/* Section Description */
+.section-desc {
+    font-size: 1rem;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Reduce gap between image and text */
+.row.my-5 {
+    margin-bottom: 30px; /* Reduce the space between sections */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .who-we-are-title {
+        font-size: 2rem;
+    }
+
+    .who-we-are-desc {
+        font-size: 1rem;
+    }
+
+    .section-title {
+        font-size: 1.2rem;
+    }
+
+    .section-desc {
+        font-size: 0.95rem;
+    }
+}
 
 
 
@@ -617,9 +870,9 @@ body {
 
 
 
-
-
-/* footer */
+/* ===================== */
+      /* Footer */
+/* ===================== */
 .medi-o-footer-logo {
   filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.3));
 }

@@ -58,3 +58,39 @@ document.querySelectorAll('.bi-search').forEach(icon => {
     }
   }
 });
+
+
+// price range slider code
+const priceSlider = document.getElementById('priceSlider');
+const priceLabel = document.getElementById('priceLabel');
+const filterBtn = document.getElementById('filterBtn');
+
+// Set initial value for the label
+priceLabel.textContent = `Rs. ${priceSlider.value}.00`;
+
+// Function to update the background with a gradient based on the slider value
+function updateSliderBackground() {
+    const value = priceSlider.value;
+    const min = priceSlider.min;
+    const max = priceSlider.max;
+
+    // Calculate percentage for the gradient
+    const percentage = ((value - min) / (max - min)) * 100;
+
+    // Set the background with a gradient from left (min value) to right (max value)
+    priceSlider.style.background = `linear-gradient(to right, #0467BB ${percentage}%, #ddd ${percentage}%)`;
+
+    // Update the label with the current value
+    priceLabel.textContent = `Rs. ${value}.00`;
+}
+
+// Event listener to update background as the user drags the slider
+priceSlider.addEventListener('input', updateSliderBackground);
+
+// Initialize the slider background on load
+updateSliderBackground();
+
+// Event listener for the Filter button
+filterBtn.addEventListener('click', () => {
+    alert(`Filter applied! Showing products in the price range Rs. 0.00 to Rs. ${priceSlider.value}.00`);
+});
