@@ -1,69 +1,60 @@
-const searchTrigger = document.getElementById("triggerSearchBar");
-const searchBar = document.getElementById("slideSearchBar");
+// hamburger menu code
 
-searchTrigger.addEventListener("click", function (e) {
-  e.preventDefault();
-  searchBar.classList.add("show");
-  searchTrigger.classList.add("hide");
+let lastScrollTop = 0;
+  const header = document.querySelector('.medi-o-header-container');
+
+  window.addEventListener('scroll', function () {
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+
+    if (scrollTop > lastScrollTop) {
+      // Scrolling down
+      header.classList.add('medi-o-header-hide');
+    } else {
+      // Scrolling up
+      header.classList.remove('medi-o-header-hide');
+    }
+
+    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // For Mobile or negative scrolling
+  });
+
+
+
+  // Search bar code
+  
+  // Toggle popup visibility
+function toggleSearchPopup(show) {
+  const overlay = document.getElementById('searchOverlay');
+  overlay.classList.toggle('d-none', !show);
+}
+
+// Open popup on any .bi-search icon click
+document.querySelectorAll('.bi-search').forEach(icon => {
+  icon.addEventListener('click', (e) => {
+    e.preventDefault();
+    toggleSearchPopup(true);
+  });
 });
 
-// ❌ Removed outside click detection
-// Now you'll need to close it manually (if you want a close button, we can add one)
 
-// Function to close search bar (optional if you add a close button)
-function closeSearchBar() {
-  searchBar.classList.remove("show");
-  searchTrigger.classList.remove("hide");
-}
+// swiper initialization
 
-
-
-// ===================
-// Hamburger menu code
-// ===================
-const navMenu = document.getElementById("navMenu");
-
-const backdrop = document.createElement("div");
-backdrop.classList.add("menu-backdrop");
-
-// Close button inside backdrop
-const closeBtn = document.createElement("button");
-closeBtn.innerHTML = "&times;";
-closeBtn.style.position = "absolute";
-closeBtn.style.top = "15px";
-closeBtn.style.right = "15px";
-closeBtn.style.background = "transparent";
-closeBtn.style.border = "none";
-closeBtn.style.fontSize = "2rem";
-closeBtn.style.cursor = "pointer";
-closeBtn.style.color = "#0467BB";
-backdrop.appendChild(closeBtn);
-
-document.body.appendChild(backdrop);
-
-function openMenu() {
-  navMenu.classList.add("show");
-  backdrop.classList.add("show");
-  document.body.classList.add("menu-open");
-  document.body.style.overflow = "hidden"; // stop scrolling
-}
-
-function closeMenu() {
-  navMenu.classList.remove("show");
-  backdrop.classList.remove("show");
-  document.body.classList.remove("menu-open");
-  document.body.style.overflow = ""; // restore scrolling
-}
-
-document.querySelector(".navbar-toggler").addEventListener("click", () => {
-  if (navMenu.classList.contains("show")) {
-    closeMenu();
-  } else {
-    openMenu();
+  const swiper = new Swiper(".mySwiper", {
+  slidesPerView: 4,
+  spaceBetween: 20,
+  loop: true,
+  autoplay: {
+    delay: 4000,
+    disableOnInteraction: false,
+  },
+  breakpoints: {
+    0: {
+      slidesPerView: 2,
+    },
+    768: {
+      slidesPerView: 3,
+    },
+    992: {
+      slidesPerView: 4,
+    }
   }
 });
-
-closeBtn.addEventListener("click", () => {
-  closeMenu();
-});
-
