@@ -7,40 +7,54 @@ searchTrigger.addEventListener("click", function (e) {
   searchTrigger.classList.add("hide");
 });
 
-// Click outside to hide
-document.addEventListener("click", function (e) {
-  const clickedOutside = !searchBar.contains(e.target) && !searchTrigger.contains(e.target);
-  if (clickedOutside) {
-    searchBar.classList.remove("show");
-    searchTrigger.classList.remove("hide");
-  }
-});
+// ❌ Removed outside click detection
+// Now you'll need to close it manually (if you want a close button, we can add one)
+
+// Function to close search bar (optional if you add a close button)
+function closeSearchBar() {
+  searchBar.classList.remove("show");
+  searchTrigger.classList.remove("hide");
+}
 
 
 
-// Hamburger menu slide-in/out with backdrop handling
+// ===================
+// Hamburger menu code
+// ===================
 const navMenu = document.getElementById("navMenu");
 
-// Create a backdrop div dynamically for overlay effect
 const backdrop = document.createElement("div");
 backdrop.classList.add("menu-backdrop");
+
+// Close button inside backdrop
+const closeBtn = document.createElement("button");
+closeBtn.innerHTML = "&times;";
+closeBtn.style.position = "absolute";
+closeBtn.style.top = "15px";
+closeBtn.style.right = "15px";
+closeBtn.style.background = "transparent";
+closeBtn.style.border = "none";
+closeBtn.style.fontSize = "2rem";
+closeBtn.style.cursor = "pointer";
+closeBtn.style.color = "#0467BB";
+backdrop.appendChild(closeBtn);
+
 document.body.appendChild(backdrop);
 
-// Function to open menu
 function openMenu() {
   navMenu.classList.add("show");
   backdrop.classList.add("show");
   document.body.classList.add("menu-open");
+  document.body.style.overflow = "hidden"; // stop scrolling
 }
 
-// Function to close menu
 function closeMenu() {
   navMenu.classList.remove("show");
   backdrop.classList.remove("show");
   document.body.classList.remove("menu-open");
+  document.body.style.overflow = ""; // restore scrolling
 }
 
-// Toggle menu when hamburger button is clicked
 document.querySelector(".navbar-toggler").addEventListener("click", () => {
   if (navMenu.classList.contains("show")) {
     closeMenu();
@@ -49,7 +63,7 @@ document.querySelector(".navbar-toggler").addEventListener("click", () => {
   }
 });
 
-// Close menu when clicking on backdrop
-backdrop.addEventListener("click", () => {
+closeBtn.addEventListener("click", () => {
   closeMenu();
 });
+

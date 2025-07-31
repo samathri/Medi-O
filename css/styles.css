@@ -33,8 +33,24 @@ body {
   left: 0;
 }
 
+.navbar-brand {
+  display: flex;
+  align-items: center;
+}
+
 .medi-logo img {
-  height: 40px;
+  height: 60px;
+}
+
+@media (max-width: 768px) {
+  .medi-logo img {
+    height: 40px;
+    margin-left: -30px;
+  }
+
+  .navbar-toggler{
+    margin-right: -20px;
+  }
 }
 
 .medi-nav-links .nav-link {
@@ -64,7 +80,7 @@ body {
   top: 0 !important;
   right: 0;
   height: 100vh !important;
-  width: 80% !important;
+  width: 90% !important;
   max-width: 320px; /* Optional max width */
   overflow-y: auto;
   transform: translateX(100%);
@@ -197,6 +213,96 @@ body.menu-open > *:not(.navbar-collapse):not(.menu-backdrop) {
   display: none;
 }
 
+.nav-icon-m{
+  margin-left: 20px;
+}
+
+/* Mobile menu search styling */
+.navbar-nav .input-group {
+  height: 40px;
+  background-color: #fff;
+}
+
+.navbar-nav .input-group-text i {
+  font-size: 1.1rem;
+}
+
+.navbar-nav .form-control {
+  font-size: 0.95rem;
+  color: #0467BB;
+}
+
+.navbar-nav .form-control::placeholder {
+  color: #0467BB;
+  opacity: 0.7;
+}
+
+
+
+
+/* Clean mobile search bar */
+/* Tidy mobile search input */
+/* Clear and defined mobile search input group */
+.search-mobile {
+  border: 2px solid #0467BB;           /* Strong blue border */
+  border-radius: 25px;
+  background-color: #fff;
+  height: 42px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 0 4px rgba(4, 103, 187, 0.2);  /* Soft blue shadow for clarity */
+}
+
+/* Search input text */
+.search-input {
+  font-size: 0.95rem;
+  color: #0467BB;
+  background-color: transparent;
+}
+
+/* Optional: refine icon size and spacing */
+.search-mobile .input-group-text {
+  background-color: transparent;
+  border: none;
+  padding: 0 8px;
+}
+
+.search-mobile .input-group-text i {
+  font-size: 1.2rem;
+}
+
+
+/* Nav link styling */
+.navbar-collapse .nav-link {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #0467BB !important;
+}
+
+/* Equal spacing for all nav items */
+.navbar-collapse .nav-item {
+  margin-bottom: 0px !important;
+  
+}
+
+
+
+/* Close button visual */
+.navbar-collapse .btn.btn-link {
+  font-size: 1.75rem;
+  line-height: 1;
+  padding: 0;
+}
+
+/* Remove inline gap styles if any */
+.nav-icon-m {
+  margin-left: 5px !important;
+  font-size: 1.1rem;
+
+}
+
+
 
 
 
@@ -316,3 +422,17 @@ body.menu-open > *:not(.navbar-collapse):not(.menu-backdrop) {
   text-decoration: underline;
   color: #cfe8ff;
 }
+
+.footer-description{
+  max-width: 70%;
+}
+
+@media (max-width: 576px) {
+  .footer-description {
+    max-width: 100%;
+    margin-bottom: 20px;
+  }
+}
+
+
+
