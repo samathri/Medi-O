@@ -1708,3 +1708,7 @@ button[type="submit"]:hover {
   width: 100%;
 }
 }
+
+.bi-telephone-fill {
+  text-decoration: none;
+}
