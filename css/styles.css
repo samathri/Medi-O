@@ -1152,6 +1152,275 @@ button[type="submit"]:hover {
 
 
 
+/* FAQ Section */
+.faq-section {
+    padding: 150px !important;
+}
+
+.faq-title {
+    font-size: 2.5rem;
+    color: #0467BB;
+    font-weight: 600;
+}
+
+.faq-subtitle {
+    font-size: 1.2rem;
+    color: #000000;
+    margin-bottom: 30px;
+}
+
+/* Accordion Styling */
+.accordion-button {
+    background-color: #e6f0fa;
+    font-size: 1.1rem;
+    font-weight: 500;
+    padding: 15px 20px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #c2dbfa;
+    color: #0467BB;
+}
+
+.accordion-body {
+    background-color: #ffffff;
+    padding: 15px;
+    font-size: 1rem;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Add gap between each FAQ question */
+.accordion-item {
+    margin-bottom: 20px; /* Add space between questions */
+}
+
+/* Responsive Styling for Mobile & Tablet */
+@media (max-width: 768px) {
+  .faq-section {
+    padding: 0px !important;
+}
+    .faq-title {
+        font-size: 2rem;
+    }
+
+    .faq-subtitle {
+        font-size: 1rem;
+    }
+
+    .accordion-button {
+        font-size: 1rem;
+    }
+}
+
+
+
+/* Privacy Policy Page Styling */
+.privacy-policy-section {
+    padding: 150px;
+    margin-top: 100px;
+}
+
+.privacy-policy-content{
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.privacy-policy-title {
+    font-size: 2.5rem;
+    color: #0467BB;
+    font-weight: 600;
+}
+
+
+.privacy-policy-description {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 40px;
+}
+
+.privacy-policy-subtitle {
+    font-size: 1.5rem;
+    color: #000000;
+    font-weight: 600;
+    margin-top: 30px;
+    margin-bottom: 15px;
+}
+
+.privacy-policy-list {
+    list-style: disc;
+    padding-left: 20px;
+}
+
+.privacy-policy-list li {
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+/* Footer Styling */
+.privacy-policy-footer {
+    background-color: #0467BB;
+    color: white;
+}
+
+.privacy-policy-footer-logo {
+    filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.3));
+}
+
+.privacy-policy-footer-description {
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.privacy-policy-footer-links a:hover {
+    text-decoration: underline;
+    color: #e0e0e0;
+}
+
+/* Responsive Styling for Mobile */
+@media (max-width: 768px) {
+
+  .privacy-policy-section {
+    padding: 0px;
+    margin-top: 0px;
+}
+    .privacy-policy-title {
+        font-size: 2rem;
+    }
+
+    .privacy-policy-description {
+        font-size: 1rem;
+    }
+
+    .privacy-policy-subtitle {
+        font-size: 1.2rem;
+    }
+
+    .privacy-policy-list li {
+        font-size: 1rem;
+    }
+
+    .privacy-policy-footer-title {
+        font-size: 1rem;
+    }
+
+    .privacy-policy-footer-description {
+        font-size: 0.85rem;
+    }
+}
+
+
+/* Terms and Conditions Page Styles */
+
+.terms-policy-section {
+    padding: 150px;
+    margin-top: 100px;
+}
+
+.terms-policy-header {
+    background-color: #0467BB;
+    padding: 20px 0;
+}
+
+.terms-policy-navbar {
+    padding: 0 15px;
+}
+
+.terms-policy-navbar-brand img {
+    height: 40px;
+}
+
+.terms-policy-title {
+    font-size: 2.5rem;
+    color: #0467BB;
+    font-weight: 600;
+}
+
+.terms-policy-description {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 40px;
+}
+
+.terms-policy-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.terms-policy-subtitle {
+    font-size: 1.5rem;
+    color: #000000;
+    font-weight: 600;
+    margin-top: 30px;
+    margin-bottom: 15px;
+}
+
+.terms-policy-list {
+    list-style-type: none;
+    margin-left: 0;
+    padding-left: 0;
+}
+
+.terms-policy-list li {
+    margin-bottom: 10px;
+}
+
+/* Footer Section */
+.terms-policy-footer {
+    background-color: #0467BB;
+}
+
+.terms-policy-footer-logo {
+    height: 60px;
+}
+
+.terms-policy-footer-title {
+    font-weight: 600;
+}
+
+.terms-policy-footer-links li {
+    margin-bottom: 10px;
+}
+
+.terms-policy-footer-links a {
+    color: white;
+    text-decoration: none;
+}
+
+.terms-policy-footer-description {
+    font-size: 1rem;
+    color: white;
+}
+
+@media (max-width: 768px) {
+
+  .terms-policy-section {
+    padding: 0px;
+    margin-top: 0px;
+}
+    .terms-policy-title {
+        font-size: 2rem;
+    }
+
+    .terms-policy-subtitle {
+        font-size: 1.2rem;
+    }
+
+    .terms-policy-description {
+        font-size: 1rem;
+    }
+}
 
 
 
