@@ -1570,6 +1570,7 @@ button[type="submit"]:hover {
     .add-to-cart-btn, .btn-success, .btn-primary {
         width: 100%;
     }
+
 }
 
 /* Main Image */
@@ -1650,7 +1651,7 @@ button[type="submit"]:hover {
 .d-flex {
     display: flex;
     justify-content: flex-start; /* Align buttons to the left */
-    gap: 15px; /* Space between buttons */
+    gap: 10px; /* Space between buttons */
 }
 
 
