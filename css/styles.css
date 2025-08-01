@@ -1441,50 +1441,56 @@ button[type="submit"]:hover {
 /* ===================== */
 /* Item Details Page */
 /* ===================== */
-
+/* Base Styling for Item Details Section */
 .item-details-section {
-    padding: 150px;
+    padding: 100px 15px;
     margin-top: 100px;
 }
 
 .item-title {
-    font-size: 2rem;
+    font-size: 2.2rem;
     color: #0467BB;
     font-weight: 600;
+    margin-bottom: 10px;
 }
 
 .item-price {
     font-size: 1.5rem;
     color: #0467BB;
     font-weight: 600;
+    margin-bottom: 15px;
 }
 
 .item-rating {
     font-size: 1.2rem;
     color: #FFD700;
+    margin-bottom: 20px;
 }
 
 .item-desc {
-    font-size: 1rem;
+    font-size: 1.1rem;
     color: #333;
-    line-height: 1.6;
+    line-height: 1.7;
+    margin-bottom: 20px;
 }
 
 .item-thumbnails {
     display: flex;
-    gap: 10px;
+    gap: 15px;
+    margin-top: 20px;
 }
 
 .item-thumbnails img {
-    width: 60px;
+    width: 80px;
     height: auto;
     cursor: pointer;
     border-radius: 5px;
-    transition: transform 0.3s;
+    transition: transform 0.3s, border-color 0.3s;
 }
 
 .item-thumbnails img:hover {
     transform: scale(1.1);
+    border-color: #0467BB;
 }
 
 /* Quantity Input */
@@ -1498,16 +1504,19 @@ button[type="submit"]:hover {
 
 /* Mobile and Tablet Styles */
 @media (max-width: 768px) {
+  .item-details-section {
+    margin-top: 0px;
+}
     .item-title {
-        font-size: 1.5rem;
+        font-size: 1.8rem;
     }
 
     .item-price {
-        font-size: 1.2rem;
+        font-size: 1.3rem;
     }
 
     .item-desc {
-        font-size: 0.95rem;
+        font-size: 1rem;
     }
 
     .item-thumbnails {
@@ -1522,23 +1531,26 @@ button[type="submit"]:hover {
         text-align: center;
     }
 
-    /* Product Images */
     .item-images img {
         max-width: 100%;
+    }
+
+    .item-thumbnails img {
+        width: 70px;
     }
 }
 
 @media (max-width: 576px) {
     .item-title {
-        font-size: 1.4rem;
+        font-size: 1.6rem;
     }
 
     .item-price {
-        font-size: 1.1rem;
+        font-size: 1.2rem;
     }
 
     .item-desc {
-        font-size: 0.9rem;
+        font-size: 0.95rem;
     }
 
     /* Make the product description and price more compact */
@@ -1553,6 +1565,11 @@ button[type="submit"]:hover {
     .item-thumbnails {
         gap: 5px;
     }
+
+    /* Adjust button width for mobile */
+    .add-to-cart-btn, .btn-success, .btn-primary {
+        width: 100%;
+    }
 }
 
 /* Main Image */
@@ -1564,7 +1581,7 @@ button[type="submit"]:hover {
 
 /* Thumbnails */
 .item-thumbnails img.thumbnail {
-    width: 100%; /* Thumbnail will take up the full width of its container */
+    width: 80px; /* Thumbnail will take up the full width of its container */
     max-width: 100px; /* Set a smaller size for the thumbnails */
     height: auto; /* Maintain aspect ratio */
     cursor: pointer; /* Show pointer cursor to indicate clickable image */
@@ -1580,8 +1597,8 @@ button[type="submit"]:hover {
 /* Ensure the thumbnails container is aligned */
 .item-thumbnails {
     display: flex;
-    gap: 10px; /* Space between thumbnails */
-    margin-top: 10px;
+    gap: 15px; /* Space between thumbnails */
+    margin-top: 15px;
 }
 
 /* Make sure the thumbnail images are responsive on mobile */
@@ -1594,7 +1611,6 @@ button[type="submit"]:hover {
         max-height: 400px; /* Resize main image for mobile */
     }
 }
-
 
 /* Style for buttons */
 .btn {
@@ -1613,9 +1629,9 @@ button[type="submit"]:hover {
 }
 
 .btn-primary:hover {
-      background-color: transparent;
-  border: 2px solid #0467BB;
-  color: #0467BB;
+    background-color: transparent !important;
+  border: 2px solid #0467BB !important;
+  color: #0467BB !important;
 }
 
 .btn-success {
@@ -1625,7 +1641,7 @@ button[type="submit"]:hover {
 }
 
 .btn-success:hover {
-    background-color: transparent;
+    background-color: transparent !important;
   border: 2px solid #0467BB;
   color: #0467BB;
 }
@@ -1636,7 +1652,6 @@ button[type="submit"]:hover {
     justify-content: flex-start; /* Align buttons to the left */
     gap: 15px; /* Space between buttons */
 }
-
 
 
 
