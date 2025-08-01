@@ -1656,6 +1656,691 @@ button[type="submit"]:hover {
 
 
 
+/* Cart Page Styling */
+.cart-page {
+    padding: 100px 15px;
+    margin-top: 100px;
+}
+
+/* Cart Page Title */
+.cart-title {
+    font-size: 2rem;
+    color: #0467BB;
+    font-weight: 600;
+}
+
+/* Cart Items */
+.cart-item {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.cart-item-img {
+    width: 80px;
+    height: auto;
+    border-radius: 5px;
+}
+
+.cart-item-title {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #333;
+}
+
+.cart-item-price {
+    font-size: 1rem;
+    color: #0467BB;
+}
+
+.cart-item-quantity {
+    width: 60px;
+    font-size: 1rem;
+}
+
+.cart-item-actions {
+    display: flex;
+    align-items: center;
+}
+
+.cart-item-actions button {
+    font-size: 1rem;
+}
+
+/* Cart Summary */
+.cart-summary {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.cart-summary-title {
+    font-size: 1.8rem;
+    color: #0467BB;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.cart-summary .d-flex {
+    justify-content: space-between;
+    font-weight: 500;
+    font-size: 1.1rem;
+}
+
+/* Buttons Styling */
+.btn {
+    font-size: 1rem;
+    padding: 12px 25px;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: #0467BB;
+    border: none;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: transparent;
+    border: 2px solid #0467BB;
+    color: #0467BB;
+}
+
+.btn-outline-primary {
+    background-color: transparent;
+    color: #0467BB;
+    border: 2px solid #0467BB;
+}
+
+.btn-outline-primary:hover {
+    background-color: #0467BB;
+    color: white;
+}
+
+/* Responsive Styles */
+@media (max-width: 992px) {
+
+  .cart-page {
+    padding: 15px;
+    margin-top: 0px;
+}
+
+    .cart-item {
+        margin-bottom: 15px;
+    }
+
+    .cart-summary {
+        margin-top: 30px;
+    }
+
+    .cart-item-img {
+        width: 60px;
+    }
+
+    .cart-item-title {
+        font-size: 1rem;
+    }
+
+    .cart-item-price {
+        font-size: 0.9rem;
+    }
+
+    .cart-summary .d-flex {
+        font-size: 1rem;
+    }
+
+    .cart-title {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .cart-title {
+        font-size: 1.5rem;
+    }
+
+    .cart-item {
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    .cart-item-title {
+        font-size: 1rem;
+    }
+
+    .cart-item-price {
+        font-size: 0.9rem;
+    }
+
+    .cart-summary .d-flex {
+        font-size: 0.9rem;
+    }
+
+    .cart-item-quantity {
+        width: 50px;
+    }
+
+    .cart-summary {
+        margin-top: 20px;
+    }
+
+    .btn {
+        width: 100%;
+    }
+
+    .cart-item-actions {
+        justify-content: flex-start;
+        gap: 10px;
+
+    }
+}
+
+
+
+/* Checkout Page */
+.checkout-page {
+    padding: 100px 0;
+    margin-top: 100px;
+}
+
+.checkout-title {
+    font-size: 2.5rem;
+    color: #0467BB;
+    font-weight: 600;
+}
+
+.billing-info, .order-summary {
+    padding: 30px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.billing-info-title, .order-summary-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #0467BB;
+}
+
+.payment-method-title {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #333;
+}
+
+.btn-primary {
+    background-color: #0467BB;
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 12px 30px;
+    border-radius: 50px;
+}
+
+.btn-primary:hover {
+    background-color: transparent;
+    border: 2px solid #0467BB;
+    color: #0467BB;
+}
+
+.btn-outline-secondary {
+    background-color: transparent;
+    border: 2px solid #ddd;
+    color: #0467BB;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #f0f0f0;
+    border-color: #0467BB;
+}
+
+/* Mobile and Tablet Styles */
+@media (max-width: 768px) {
+    .checkout-page {
+        padding: 15px;
+        margin-top: 0px;
+    }
+
+    .checkout-title {
+        font-size: 2rem;
+    }
+
+    .billing-info, .order-summary {
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    .billing-info-title, .order-summary-title {
+        font-size: 1.6rem;
+    }
+
+    .form-control {
+        font-size: 1rem;
+        padding: 12px;
+    }
+
+    .btn-primary, .btn-outline-secondary {
+        width: 100%;
+        padding: 14px 0 ;
+        font-size: 0.8rem !important;
+    }
+}
+
+
+
+/* Custom styles for the order success page */
+.order-success {
+    padding: 100px 15px;
+    text-align: center;
+    margin-top: 100px;
+}
+
+.order-success h2 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    color: #0467BB;
+}
+
+.order-success p {
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.alert-success {
+    background-color: #28a745;
+    color: white;
+    font-size: 1.1rem;
+}
+
+.btn {
+    font-size: 1.1rem;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+.btn-primary {
+    background-color: #0467BB;
+    border-color: #0467BB;
+}
+
+.btn-primary:hover {
+    background-color: #035a8f;
+    border-color: #035a8f;
+}
+
+.btn-outline-secondary {
+    background-color: transparent;
+    border-color: #6c757d;
+    color: #6c757d;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #f8f9fa;
+    border-color: #6c757d;
+}
+
+
+@media (max-width: 768px) {
+    .order-success {
+        padding: 15px;
+        margin-top: 0px;
+    }
+
+    .order-success h2 {
+        font-size: 1.8rem;
+    }
+
+    .order-success p {
+        font-size: 1rem;
+    }
+
+    .btn {
+        width: 100%;
+        padding: 12px 0;
+        font-size: 0.9rem !important;
+    }
+  
+}
+
+
+/* Profile */
+
+.c-profile {
+    padding: 100px 15px;
+    margin-top: 100px;}
+
+    @media (max-width: 768px) {
+    .c-profile {
+        padding: 15px;
+        margin-top: 0px !important;
+    }}
+
+
+ .profile-header {
+      background-color: #0467BB;
+      color: #fff;
+      padding: 2rem 1rem;
+      text-align: center;
+    }
+
+    .profile-header h1 {
+      margin: 0;
+      font-weight: 600;
+    }
+
+    .section-title {
+      border-bottom: 2px solid #0467BB;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+      color: #0467BB;
+    }
+
+    .status-badge {
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 0.25em 0.6em;
+      border-radius: 0.35rem;
+      color: #fff;
+      display: inline-block;
+    }
+
+    .status-pending {
+      background-color: #ffc107;
+    }
+
+    .status-approved {
+      background-color: #198754;
+    }
+
+    .status-assigned {
+      background-color: #0d6efd;
+    }
+
+    .status-ready {
+      background-color: #20c997;
+    }
+
+    .status-collected {
+      background-color: #6c757d;
+    }
+
+    .btn-sm {
+      font-size: 0.8rem;
+    }
+
+    .qr-code {
+      width: 80px;
+      height: 80px;
+      background-color: #e9ecef;
+      border-radius: 0.25rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 0.7rem;
+      color: #6c757d;
+    }
+
+    .form-section {
+      background: #fff;
+      padding: 1.5rem;
+      border-radius: 0.5rem;
+      box-shadow: 0 0 15px rgb(0 0 0 / 0.05);
+      margin-bottom: 2rem;
+    }
+
+    /* Responsive fix */
+    @media (max-width: 575.98px) {
+      .qr-code {
+        width: 60px;
+        height: 60px;
+        font-size: 0.6rem;
+      }
+    }
+
+
+
+    /* Admin */
+
+/* Sidebar */
+    #sidebar {
+      min-width: 250px;
+      max-width: 250px;
+      background: #0467BB;
+      color: white;
+      transition: all 0.3s;
+      min-height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      overflow-y: auto;
+      z-index: 1000;
+    }
+
+    #sidebar .nav-link {
+      color: #cde3f7;
+    }
+
+    #sidebar .nav-link.active {
+      background-color: #034a8c;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    #sidebar .nav-link:hover {
+      background-color: #034a8c;
+      color: #fff;
+    }
+
+    #content {
+      margin-left: 250px;
+      padding: 2rem;
+      min-height: 100vh;
+      transition: margin-left 0.3s;
+    }
+
+    /* Responsive */
+    @media (max-width: 991.98px) {
+      #sidebar {
+        margin-left: -250px;
+      }
+
+      #sidebar.active {
+        margin-left: 0;
+      }
+
+      #content {
+        margin-left: 0;
+      }
+
+      #content.shifted {
+        margin-left: 250px;
+      }
+
+      #sidebarCollapse {
+        display: inline-block;
+      }
+    }
+
+    #sidebarCollapse {
+      display: none;
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 1100;
+      background: #0467BB;
+      border: none;
+      color: white;
+      padding: 0.3rem 0.7rem;
+      border-radius: 0.25rem;
+    }
+
+    .section-title {
+      color: #0467BB;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      border-bottom: 2px solid #0467BB;
+      padding-bottom: 0.25rem;
+    }
+
+    .card .card-icon {
+      font-size: 2rem;
+      color: #0467BB;
+    }
+
+    /* Scrollable tables */
+    .table-responsive {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+
+
+.signup-view{
+    padding: 100px 15px;
+    margin-top: 200px !important;
+
+}
+
+
+@media screen and (max-width: 768px) {
+    .signup-view {
+        padding: 15px;
+        margin-top: 0px !important;
+    }
+    
+}
+
+.signin-view{
+    padding: 100px 15px;
+    margin-top: 100px !important;
+
+}
+
+
+@media screen and (max-width: 768px) {
+    .signin-view {
+        padding: 15px;
+        margin-top: 0px !important;
+    }
+    
+}
+
+
+input::placeholder {
+    color: #999;
+    font-weight: 400;
+}
+
+form input.form-control {
+    font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+}
+
+
+/* Scoped styles for pharmacist dashboard */
+    .pharmacist-dashboard {
+      font-family: 'Poppins', sans-serif;
+      background: #f8f9fa;
+      padding: 20px;
+      margin-top: 100px;
+    }
+
+    .pharmacist-dashboard__title {
+      font-weight: 600;
+      color: #0467BB;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .pharmacist-dashboard__section-title {
+      color: #0467BB;
+      font-weight: 600;
+      border-bottom: 2px solid #0467BB;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Status badges */
+    .pharmacist-dashboard__badge {
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 0.25em 0.6em;
+      border-radius: 0.35rem;
+      color: #fff;
+      display: inline-block;
+    }
+    .pharmacist-dashboard__badge--pending {
+      background-color: #ffc107; /* yellow */
+      color: #212529;
+    }
+    .pharmacist-dashboard__badge--approved {
+      background-color: #198754; /* green */
+    }
+    .pharmacist-dashboard__badge--assigned {
+      background-color: #0d6efd; /* bootstrap primary blue */
+    }
+    .pharmacist-dashboard__badge--ready {
+      background-color: #20c997; /* teal green */
+    }
+    .pharmacist-dashboard__badge--collected {
+      background-color: #6c757d; /* gray */
+    }
+
+    /* QR code style */
+    .pharmacist-dashboard__qr-code {
+      width: 80px;
+      height: 80px;
+      background-color: #e9ecef;
+      border-radius: 0.25rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 0.7rem;
+      color: #6c757d;
+      cursor: pointer;
+    }
+    @media (max-width: 575.98px) {
+      .pharmacist-dashboard__qr-code {
+        width: 60px;
+        height: 60px;
+        font-size: 0.6rem;
+      }
+    }
+
+    /* Smaller buttons */
+    .pharmacist-dashboard__btn-sm {
+      font-size: 0.8rem;
+      padding: 0.25rem 0.5rem;
+    }
+
+    /* Table responsive scroll */
+    .pharmacist-dashboard__table-responsive {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    /* Links */
+    .pharmacist-dashboard__link {
+      color: #0467BB;
+      text-decoration: none;
+    }
+    .pharmacist-dashboard__link:hover,
+    .pharmacist-dashboard__link:focus {
+      text-decoration: underline;
+      color: #034a8c;
+    }
+
+
+
+
+
+
+
 
 
 

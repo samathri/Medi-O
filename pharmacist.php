@@ -24,7 +24,6 @@
 
 <body>
 
-
     <!-- Header -->
     <header class="medi-o-header-container">
         <nav class="medi-o-navbar navbar navbar-expand-lg">
@@ -100,85 +99,123 @@
         </nav>
     </header>
 
-<!-- Contact Us Hero Section -->
-<section class="medi-o-hero contact-hero py-5">
-</section>
 
+ <div class="pharmacist-dashboard">
 
-<!-- Contact Us Section -->
-<section class="contact-us-section py-5">
-    <div class="container">
-        <div class="text-center mb-4 ">
-            <h2 class="contact-title">HAVE A QUESTION OR NEED SUPPORT?</h2>
-            <p class="contact-description contact-section">We’re here to help. Reach out to us for any inquiries about your orders, prescriptions, or general assistance.</p>
+    <h1 class="pharmacist-dashboard__title">Pharmacist Dashboard</h1>
+
+    <!-- Assigned Prescriptions Table -->
+    <section aria-label="Assigned Prescriptions">
+      <h2 class="pharmacist-dashboard__section-title">Assigned Prescriptions</h2>
+      <div class="pharmacist-dashboard__table-responsive">
+        <table class="table table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Patient Name</th>
+              <th>Upload Date</th>
+              <th>Prescription File</th>
+              <th>Status</th>
+              <th>QR Code</th>
+              <th class="text-center">Update Status</th>
+            </tr>
+          </thead>
+          <tbody id="prescriptionsTableBody">
+            <!-- Example row -->
+            <tr>
+              <td>John Doe</td>
+              <td>2025-07-28</td>
+              <td>
+                <a href="prescription_01.pdf" target="_blank" rel="noopener" aria-label="View prescription file for John Doe" class="pharmacist-dashboard__link">
+                  prescription_01.pdf <i class="bi bi-box-arrow-up-right"></i>
+                </a>
+              </td>
+              <td><span class="pharmacist-dashboard__badge pharmacist-dashboard__badge--assigned">Assigned</span></td>
+              <td>
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=prescription_01" alt="QR Code for prescription 01" class="pharmacist-dashboard__qr-code" title="Click to enlarge QR Code" onclick="showQRModal('prescription_01')" />
+              </td>
+              <td class="text-center">
+                <div class="btn-group" role="group" aria-label="Update prescription status buttons">
+                  <button class="btn btn-warning pharmacist-dashboard__btn-sm" onclick="updateStatus(this, 'Packing')" title="Start Packing">Start Packing</button>
+                  <button class="btn btn-success pharmacist-dashboard__btn-sm" onclick="updateStatus(this, 'Ready')" title="Mark as Ready">Complete & Ready</button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>Mary Smith</td>
+              <td>2025-07-20</td>
+              <td>
+                <a href="prescription_02.pdf" target="_blank" rel="noopener" aria-label="View prescription file for Mary Smith" class="pharmacist-dashboard__link">
+                  prescription_02.pdf <i class="bi bi-box-arrow-up-right"></i>
+                </a>
+              </td>
+              <td><span class="pharmacist-dashboard__badge pharmacist-dashboard__badge--pending" style="color:#212529;">Packing</span></td>
+              <td>
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=prescription_02" alt="QR Code for prescription 02" class="pharmacist-dashboard__qr-code" title="Click to enlarge QR Code" onclick="showQRModal('prescription_02')" />
+              </td>
+              <td class="text-center">
+                <div class="btn-group" role="group" aria-label="Update prescription status buttons">
+                  <button class="btn btn-warning pharmacist-dashboard__btn-sm" disabled title="Already packing">Start Packing</button>
+                  <button class="btn btn-success pharmacist-dashboard__btn-sm" onclick="updateStatus(this, 'Ready')" title="Mark as Ready">Complete & Ready</button>
+                </div>
+              </td>
+            </tr>
+            <!-- More rows dynamically added here -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Activity History -->
+    <section aria-label="Activity History" class="mt-5">
+      <h2 class="pharmacist-dashboard__section-title">Activity History</h2>
+      <div class="pharmacist-dashboard__table-responsive">
+        <table class="table table-striped table-sm">
+          <thead>
+            <tr>
+              <th>Date/Time</th>
+              <th>Prescription ID</th>
+              <th>Previous Status</th>
+              <th>Updated Status</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody id="activityHistoryBody">
+            <!-- Example logs -->
+            <tr>
+              <td>2025-07-28 15:30</td>
+              <td>P001</td>
+              <td>Assigned</td>
+              <td>Packing</td>
+              <td>Started packing</td>
+            </tr>
+            <tr>
+              <td>2025-07-29 10:15</td>
+              <td>P002</td>
+              <td>Packing</td>
+              <td>Ready</td>
+              <td>Marked as ready for pickup</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- QR Code Modal -->
+    <div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="qrModalLabel">Prescription QR Code</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <img id="qrModalImg" src="" alt="QR Code Enlarged" style="max-width: 100%; height: auto;" />
+          </div>
         </div>
-        
-        <!-- Contact Info and Inquiry Form -->
-        <div class="row justify-content-center">
-            <!-- Contact Info Section -->
-            <div class="col-md-5 contact-info">
-                <div class="contact-info-item">
-                    <i class="bi bi-geo-alt-fill "><span class="gap-c">Location</span></i>
-                    <br><span>Colombo, Sri Lanka</span>
-                </div>
-                <div class="contact-info-item">
-                    <i class="bi bi-envelope-fill"><span class="gap-c">Email</span></i>
-                    <br><span>info@medio.com</span>
-                </div>
-                <div class="contact-info-item">
-                    <i class="bi bi-telephone-fill"><span class="gap-c">Phone</span></i>
-                    <br><span>+94 77 123 4567</span>
-                </div>
-
-                <!-- Social Media Icons -->
-                <div class="social-icons mt-4">
-                    <a href="#" class="social-icon"><i class="bi bi-youtube"></i></a>
-                    <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
-                    <a href="#" class="social-icon"><i class="bi bi-twitter"></i></a>
-                    <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
-                </div>
-            </div>
-
-            <!-- Inquiry Form Section -->
-            <div class="col-md-5 inquiry-form">
-                <h3 class="form-title">Send Your Inquiry</h3>
-                <form action="#" method="POST">
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Your Name</label>
-                        <input type="text" id="name" name="name" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" id="email" name="email" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="message" class="form-label">Message</label>
-                        <textarea id="message" name="message" rows="4" class="form-control" required></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </form>
-            </div>
-        </div>
+      </div>
     </div>
-</section>
 
-
-<div class="page-container">
-    <div class="map-container">
-        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3173.1348596502137!2d79.97726591477539!3d6.927079429369139!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae258b2ef0c8f9d%3A0xf68e6191a5012337!2sColombo%2C%20Sri%20Lanka!5e0!3m2!1sen!2sus!4v1682992125105!5m2!1sen!2sus" width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-    </div>
-</div>
-
-
-
-
-
-
-
-
-
-
-
+  </div>
 
 
 
@@ -226,10 +263,12 @@
         </div>
     </footer>
 
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Swiper JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
     <script src="js/script.js"></script>
 
 

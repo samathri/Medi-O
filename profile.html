@@ -24,7 +24,6 @@
 
 <body>
 
-
     <!-- Header -->
     <header class="medi-o-header-container">
         <nav class="medi-o-navbar navbar navbar-expand-lg">
@@ -100,83 +99,168 @@
         </nav>
     </header>
 
-<!-- Contact Us Hero Section -->
-<section class="medi-o-hero contact-hero py-5">
-</section>
 
 
-<!-- Contact Us Section -->
-<section class="contact-us-section py-5">
-    <div class="container">
-        <div class="text-center mb-4 ">
-            <h2 class="contact-title">HAVE A QUESTION OR NEED SUPPORT?</h2>
-            <p class="contact-description contact-section">We’re here to help. Reach out to us for any inquiries about your orders, prescriptions, or general assistance.</p>
-        </div>
-        
-        <!-- Contact Info and Inquiry Form -->
-        <div class="row justify-content-center">
-            <!-- Contact Info Section -->
-            <div class="col-md-5 contact-info">
-                <div class="contact-info-item">
-                    <i class="bi bi-geo-alt-fill "><span class="gap-c">Location</span></i>
-                    <br><span>Colombo, Sri Lanka</span>
-                </div>
-                <div class="contact-info-item">
-                    <i class="bi bi-envelope-fill"><span class="gap-c">Email</span></i>
-                    <br><span>info@medio.com</span>
-                </div>
-                <div class="contact-info-item">
-                    <i class="bi bi-telephone-fill"><span class="gap-c">Phone</span></i>
-                    <br><span>+94 77 123 4567</span>
-                </div>
+<main class="container my-5 c-profile">
 
-                <!-- Social Media Icons -->
-                <div class="social-icons mt-4">
-                    <a href="#" class="social-icon"><i class="bi bi-youtube"></i></a>
-                    <a href="#" class="social-icon"><i class="bi bi-instagram"></i></a>
-                    <a href="#" class="social-icon"><i class="bi bi-twitter"></i></a>
-                    <a href="#" class="social-icon"><i class="bi bi-facebook"></i></a>
+        <!-- Prescription Status Dashboard -->
+        <section aria-labelledby="dashboard-section-title" class="mb-5">
+            <h2 id="dashboard-section-title" class="section-title">Prescription Dashboard</h2>
+            <div class="row text-center gy-3">
+                <div class="col-6 col-md-3">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">Pending</h5>
+                            <p class="card-text fs-3 text-warning" id="countPending">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">Order Processing</h5>
+                            <p class="card-text fs-3 text-info" id="countStartToPack">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">Ready to Collect</h5>
+                            <p class="card-text fs-3 text-success" id="countReadyToCollect">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">Collected</h5>
+                            <p class="card-text fs-3 text-primary" id="countCollected">0</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Inquiry Form Section -->
-            <div class="col-md-5 inquiry-form">
-                <h3 class="form-title">Send Your Inquiry</h3>
-                <form action="#" method="POST">
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Your Name</label>
-                        <input type="text" id="name" name="name" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
-                        <input type="email" id="email" name="email" class="form-control" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="message" class="form-label">Message</label>
-                        <textarea id="message" name="message" rows="4" class="form-control" required></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
-                </form>
+            <div class="mt-4" style="max-width: 400px; margin: auto;">
+                <canvas id="prescriptionStatusChart" aria-label="Prescription status chart" role="img"></canvas>
             </div>
-        </div>
-    </div>
-</section>
+        </section>
 
+        <!-- Account Section -->
+        <section aria-labelledby="account-section-title" class="form-section">
+            <h2 id="account-section-title" class="section-title">Account Details</h2>
+            <form id="profileForm" novalidate>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="name" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="name" placeholder="John Doe" required />
+                    </div>
+                    <div class="col-md-6">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" class="form-control" id="email" placeholder="john@example.com" required />
+                    </div>
+                    <div class="col-md-6">
+                        <label for="phone" class="form-label">Phone Number</label>
+                        <input type="tel" class="form-control" id="phone" placeholder="+94 77 123 4567" required />
+                    </div>
+                    <div class="col-md-6">
+                        <label for="address" class="form-label">Address</label>
+                        <input type="text" class="form-control" id="address" placeholder="123 Street, City, Country"
+                            required />
+                    </div>
+                </div>
 
-<div class="page-container">
-    <div class="map-container">
-        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3173.1348596502137!2d79.97726591477539!3d6.927079429369139!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae258b2ef0c8f9d%3A0xf68e6191a5012337!2sColombo%2C%20Sri%20Lanka!5e0!3m2!1sen!2sus!4v1682992125105!5m2!1sen!2sus" width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
-    </div>
-</div>
+                <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+            </form>
 
+            <!-- Change Password -->
+            <hr class="my-4" />
+            <h3 class="section-title">Change Password</h3>
+            <form id="passwordForm" novalidate>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="oldPassword" class="form-label">Old Password</label>
+                        <input type="password" class="form-control" id="oldPassword" required />
+                    </div>
+                    <div class="col-md-4">
+                        <label for="newPassword" class="form-label">New Password</label>
+                        <input type="password" class="form-control" id="newPassword" required />
+                    </div>
+                    <div class="col-md-4">
+                        <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                        <input type="password" class="form-control" id="confirmPassword" required />
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-outline-primary mt-3">Update Password</button>
+            </form>
+        </section>
 
+        <!-- My Prescriptions Section -->
+        <section aria-labelledby="prescriptions-section-title" class="form-section">
+            <h2 id="prescriptions-section-title" class="section-title">My Prescriptions</h2>
 
-
-
-
-
-
-
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th scope="col">File Name</th>
+                            <th scope="col">Upload Date</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Pharmacist</th>
+                            <th scope="col">Collected Date</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="prescriptionList">
+                        <tr>
+                            <td>prescription1.pdf</td>
+                            <td>2023-07-10</td>
+                            <td><span class="text-warning">Pending</span></td>
+                            <td>John Smith</td>
+                            <td>-</td>
+                            <td>
+                                <a href="#" class="btn btn-primary btn-sm">Download</a>
+                                <button class="btn btn-danger btn-sm">Delete</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>prescription2.pdf</td>
+                            <td>2023-06-25</td>
+                            <td><span class="text-info">Order Processing</span></td>
+                            <td>Mary Jones</td>
+                            <td>2023-07-05</td>
+                            <td>
+                                <a href="#" class="btn btn-primary btn-sm">Download</a>
+                                <button class="btn btn-danger btn-sm">Delete</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>prescription3.pdf</td>
+                            <td>2023-06-20</td>
+                            <td><span class="text-primary">Collected</span></td>
+                            <td>David Lee</td>
+                            <td>2023-06-30</td>
+                            <td>
+                                <a href="#" class="btn btn-primary btn-sm">Download</a>
+                                <button class="btn btn-danger btn-sm">Delete</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>prescription4.pdf</td>
+                            <td>2023-07-01</td>
+                            <td><span class="text-success">Ready to Collect</span></td>
+                            <td>Emily Johnson</td>
+                            <td>-</td>
+                            <td>
+                                <a href="#" class="btn btn-primary btn-sm">Download</a>
+                                <button class="btn btn-danger btn-sm">Delete</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
 
 
 
@@ -226,10 +310,12 @@
         </div>
     </footer>
 
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Swiper JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
     <script src="js/script.js"></script>
 
 
