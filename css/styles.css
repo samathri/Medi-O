@@ -1710,5 +1710,5 @@ button[type="submit"]:hover {
 }
 
 .bi-telephone-fill {
-  text-decoration: none;
+  text-decoration: none !important;
 }
