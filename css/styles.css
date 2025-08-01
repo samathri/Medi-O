@@ -1438,6 +1438,205 @@ button[type="submit"]:hover {
 
 
 
+/* ===================== */
+/* Item Details Page */
+/* ===================== */
+
+.item-details-section {
+    padding: 150px;
+    margin-top: 100px;
+}
+
+.item-title {
+    font-size: 2rem;
+    color: #0467BB;
+    font-weight: 600;
+}
+
+.item-price {
+    font-size: 1.5rem;
+    color: #0467BB;
+    font-weight: 600;
+}
+
+.item-rating {
+    font-size: 1.2rem;
+    color: #FFD700;
+}
+
+.item-desc {
+    font-size: 1rem;
+    color: #333;
+    line-height: 1.6;
+}
+
+.item-thumbnails {
+    display: flex;
+    gap: 10px;
+}
+
+.item-thumbnails img {
+    width: 60px;
+    height: auto;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: transform 0.3s;
+}
+
+.item-thumbnails img:hover {
+    transform: scale(1.1);
+}
+
+/* Quantity Input */
+.item-quantity {
+    width: 150px;
+}
+
+.add-to-cart-btn {
+    width: 100%;
+}
+
+/* Mobile and Tablet Styles */
+@media (max-width: 768px) {
+    .item-title {
+        font-size: 1.5rem;
+    }
+
+    .item-price {
+        font-size: 1.2rem;
+    }
+
+    .item-desc {
+        font-size: 0.95rem;
+    }
+
+    .item-thumbnails {
+        justify-content: center;
+    }
+
+    .item-quantity {
+        width: 100%;
+    }
+
+    .add-to-cart-btn {
+        text-align: center;
+    }
+
+    /* Product Images */
+    .item-images img {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 576px) {
+    .item-title {
+        font-size: 1.4rem;
+    }
+
+    .item-price {
+        font-size: 1.1rem;
+    }
+
+    .item-desc {
+        font-size: 0.9rem;
+    }
+
+    /* Make the product description and price more compact */
+    .item-rating {
+        font-size: 1.1rem;
+    }
+
+    .item-thumbnails img {
+        width: 50px;
+    }
+
+    .item-thumbnails {
+        gap: 5px;
+    }
+}
+
+/* Main Image */
+.item-images img#mainImage {
+    width: 100%; /* Ensures it is responsive */
+    max-height: 500px; /* Set a max height for the main image */
+    object-fit: contain; /* Ensures the image is properly cropped */
+}
+
+/* Thumbnails */
+.item-thumbnails img.thumbnail {
+    width: 100%; /* Thumbnail will take up the full width of its container */
+    max-width: 100px; /* Set a smaller size for the thumbnails */
+    height: auto; /* Maintain aspect ratio */
+    cursor: pointer; /* Show pointer cursor to indicate clickable image */
+    border: 2px solid transparent; /* Border for thumbnails */
+    transition: border-color 0.3s ease; /* Smooth transition on hover */
+}
+
+/* Hover effect for thumbnails */
+.item-thumbnails img.thumbnail:hover {
+    border: 2px solid #0467BB; /* Blue border on hover */
+}
+
+/* Ensure the thumbnails container is aligned */
+.item-thumbnails {
+    display: flex;
+    gap: 10px; /* Space between thumbnails */
+    margin-top: 10px;
+}
+
+/* Make sure the thumbnail images are responsive on mobile */
+@media (max-width: 768px) {
+    .item-thumbnails img.thumbnail {
+        max-width: 80px; /* Smaller thumbnails on mobile */
+    }
+    
+    .item-images img#mainImage {
+        max-height: 400px; /* Resize main image for mobile */
+    }
+}
+
+
+/* Style for buttons */
+.btn {
+    font-size: 1rem;
+    padding: 12px 25px;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: #0467BB;
+    border: none;
+    color: white;
+}
+
+.btn-primary:hover {
+      background-color: transparent;
+  border: 2px solid #0467BB;
+  color: #0467BB;
+}
+
+.btn-success {
+    background-color: #0467BB;
+    border: none;
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: transparent;
+  border: 2px solid #0467BB;
+  color: #0467BB;
+}
+
+/* Ensure buttons are spaced apart */
+.d-flex {
+    display: flex;
+    justify-content: flex-start; /* Align buttons to the left */
+    gap: 15px; /* Space between buttons */
+}
+
 
 
 

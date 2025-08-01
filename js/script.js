@@ -94,3 +94,30 @@ updateSliderBackground();
 filterBtn.addEventListener('click', () => {
     alert(`Filter applied! Showing products in the price range Rs. 0.00 to Rs. ${priceSlider.value}.00`);
 });
+
+
+
+// details swiper code
+    // Function to change the main image when a thumbnail is clicked
+    function changeImage(thumbnail) {
+        // Get the source of the clicked thumbnail
+        var newSrc = thumbnail.src;
+
+        // Get the main image element
+        var mainImage = document.getElementById('mainImage');
+
+        // Update the main image's source to the clicked thumbnail
+        mainImage.src = newSrc;
+    }
+
+
+// Add event listeners for the buttons
+    document.querySelector('.btn-primary').addEventListener('click', function() {
+    alert("Product added to cart!");
+    // Here, you can add code to add the product to the cart in your cart system
+});
+
+document.querySelector('.btn-success').addEventListener('click', function() {
+    alert("Proceeding to checkout!");
+    // Here, you can redirect to a checkout page or trigger any checkout functionality
+});
