@@ -1568,7 +1568,7 @@ button[type="submit"]:hover {
 
     /* Adjust button width for mobile */
     .add-to-cart-btn, .btn-success, .btn-primary {
-        width: 100%;
+        width: 100% !important; /* Ensure buttons take full width on mobile */
     }
 
 }
