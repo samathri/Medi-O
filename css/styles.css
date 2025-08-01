@@ -157,113 +157,120 @@ body {
     margin-right: 20px;
   }
 }
-
 /* Overlay background – dims full screen */
 .medi-o-search-overlay {
-  position: fixed;
-  inset: 0; /* same as: top: 0; right: 0; bottom: 0; left: 0 */
-  background-color: rgba(0, 0, 0, 0.8); /* dim background */
-  z-index: 1100;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+    position: fixed;
+    inset: 0; /* same as: top: 0; right: 0; bottom: 0; left: 0 */
+    background-color: rgba(0, 0, 0, 0.8); /* Dim background */
+    z-index: 1100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
 /* Hide overlay by default */
 .medi-o-search-overlay.d-none {
-  display: none !important;
+    display: none !important;
 }
 
 /* Centered popup container */
 .medi-o-search-popup {
-  background-color: #fff;
-  display: flex;
-  justify-content: space-between; /* Ensures the search bar and button are side by side */
-  align-items: center;
-  gap: 15px;
-  padding: 10px 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  max-width: 600px;
-  width: 90% !important;
-  position: relative;
-  border-radius: 10px;
+    background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    max-width: 600px;
+    width: 90% !important;
+    position: relative;
+    border-radius: 10px;
 }
 
-/* Input */
+/* Input field */
 .medi-o-search-input-popup {
-  border-radius: 50px;
-  border: 2px solid #0467BB;
-  padding: 8px 40px 8px 15px;
-  font-size: 1rem;
-  width: 100%;
+    border-radius: 50px;
+    border: 2px solid #0467BB;
+    padding: 8px 40px 8px 15px;
+    font-size: 1rem;
+    width: 100%;
 }
 
 /* Position form relative so icon goes inside input */
 .medi-o-search-form-popup {
-  flex-grow: 1;
-  position: relative;
-  display: flex;
-  align-items: center;
+    flex-grow: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
 }
 
-/* Search icon inside input */
+/* Search button inside input */
 .medi-o-search-btn-popup {
-  position: absolute;
-  right: 10px;
-  top: 5%;
-  transform: translateY(-50%);
-  background-color: #fff;
-  border: none;
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #0467BB;
-  font-size: 1rem;
-  padding: 0;
-  cursor: pointer;
+    position: absolute;
+    right: 0;
+    top: 5%;
+    transform: translateY(-50%);
+    background-color: #fff;
+    border: none;
+    border-radius: 10px !important;
+    width: 32px;
+    height: auto !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0467BB;
+    font-size: 1rem;
+    padding: 0;
+    cursor: pointer;
 }
 
-/* Close button beside search bar */
+/* Close button (appears above search bar in mobile view, aligned to top-right corner) */
 .medi-o-search-close {
-  border: none;
-  background: none;
-  font-size: 1.6rem;
-  color: #0467BB;
-  cursor: pointer;
-  font-weight: bold;
-  line-height: 1;
-  padding: 0;
+    position: absolute;
+    top:  -50px !important; /* Increased top space for more gap between search bar and close button */
+    right: 10px; /* Align it to the top-right corner */
+    border: none;
+    background: none;
+    font-size: 2rem !important;
+    color: #b40505;
+    cursor: pointer;
+    font-weight: bold;
+    line-height: 1;
+    padding: 0;
+    font-weight: 300;
 }
 
-/* Responsive */
+/* Responsive styles */
 @media (max-width: 576px) {
-  .medi-o-search-popup {
-    flex-direction: row; /* Ensures input and close button are aligned in a row */
-    gap: 10px;
-    padding: 10px;
-    width: 100%;
-    justify-content: space-between; /* Adds space between search input and the close button */
-  }
+    .medi-o-search-popup {
+        flex-direction: column; /* Ensures the elements are stacked vertically */
+        gap: 10px;
+        padding: 10px;
+        width: 100%;
+        justify-content: flex-start;
+    }
 
-  .medi-o-search-btn-popup {
-    width: 25px;
-    height: 25px;
-  }
+    .medi-o-search-btn-popup {
+        width: 25px;
+        height: 25px;
+    }
 
-  .medi-o-search-input-popup {
-    font-size: 0.9rem;
-    padding: 6px 35px 6px 12px;
-    width: 100%;
-  }
+    .medi-o-search-input-popup {
+        font-size: 0.9rem;
+        padding: 6px 35px 6px 12px;
+    }
 
-  .medi-o-search-close {
-    font-size: 1.4rem;
-  }
+    /* Close button positioning in mobile */
+    .medi-o-search-close {
+        top: 15px; /* Ensure close button stays at the top with increased gap */
+        right: 10px; /* Align it to the top-right */
+        font-size: 1.4rem;
+    }
 }
+
 
 
 
@@ -354,14 +361,15 @@ body {
 
 .medi-o-search-btn {
   position: absolute;
-  right: 15px;
-  top: 50%;
+  right: 0px;
+  top: 4%;
   transform: translateY(-50%);
   border: none;
   background: none;
   color: #0467BB;
-  font-size: 1.4rem;
+  font-size: 1rem;
   cursor: pointer;
+  border-radius: 10px !important;
 }
 
 /* Categories */
