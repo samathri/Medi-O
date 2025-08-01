@@ -1688,7 +1688,7 @@ button[type="submit"]:hover {
 }
 
 .medi-o-footer-links a:hover {
-  text-decoration: underline;
+  text-decoration: underline !important;
   color: #e0e0e0;
 }
 
@@ -1711,4 +1711,5 @@ button[type="submit"]:hover {
 
 .footer-contact {
   text-decoration: none !important;
+  font-size: 1rem !important;
 }
