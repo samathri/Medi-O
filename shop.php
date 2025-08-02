@@ -1,6 +1,34 @@
 <?php
 include 'includes/db.php';
+
+// Handle filters
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$sort = isset($_GET['sort']) ? $_GET['sort'] : '';
+$max_price = isset($_GET['max_price']) ? (float) $_GET['max_price'] : 15000;
+
+// Build base query
+$sql = "SELECT * FROM products WHERE price <= $max_price";
+if (!empty($search)) {
+    $searchEscaped = $conn->real_escape_string($search);
+    $sql .= " AND name LIKE '%$searchEscaped%'";
+}
+switch ($sort) {
+    case 'low_high':
+        $sql .= " ORDER BY price ASC";
+        break;
+    case 'high_low':
+        $sql .= " ORDER BY price DESC";
+        break;
+    case 'newest':
+        $sql .= " ORDER BY created_at DESC";
+        break;
+    default:
+        $sql .= " ORDER BY id DESC";
+}
+$sql .= " LIMIT 40";
+$result = $conn->query($sql);
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,75 +47,56 @@ include 'includes/db.php';
 <?php include("components/header.php"); ?>
 
 <section class="medi-o-shop-page container-fluid px-3 px-md-5">
-    <div class="row">
+    <form method="GET" class="row">
         <!-- Sidebar -->
         <aside class="col-lg-3 mb-4">
             <h5 class="fw-bold text-primary">Categories</h5>
             <ul class="list-unstyled category-list d-none d-lg-block">
                 <li><a href="#">All</a></li>
-                <li><a href="#">Adult Care</a></li>
-                <li><a href="#">Ayurvedic Care</a></li>
-                <li><a href="#">Baby Care</a></li>
-                <li><a href="#">Dental Care</a></li>
-                <li><a href="#">Diabetes Care</a></li>
-                <li><a href="#">Dressings</a></li>
-                <li><a href="#">Doctors Equipment</a></li>
-                <li><a href="#">First Aid Items</a></li>
-                <li><a href="#">Orthopedic Aid</a></li>
-                <li><a href="#">Personal Care</a></li>
-                <li><a href="#">Supplements</a></li>
-                <li><a href="#">Veterinary</a></li>
-                <li><a href="#">Wellness Vouchers</a></li>
+                <!-- ... other categories -->
             </ul>
+
             <section class="price-slider-container mt-4">
                 <h5 class="fw-bold text-primary">By Price</h5>
-                <div class="price-slider">
-                    <input type="range" id="priceSlider" min="0" max="15000" value="7500" step="100" class="form-range">
-                    <div class="price-labels">
-                        <span id="priceLabel">Rs. 7500.00</span>
-                    </div>
-                    <div class="filter-btn-container">
-                        <button id="filterBtn" class="btn btn-primary">Apply Filter</button>
-                    </div>
+                <input type="range" name="max_price" id="priceSlider" min="0" max="15000"
+                    value="<?php echo $max_price; ?>" step="100" class="form-range" oninput="document.getElementById('priceLabel').textContent = 'Rs. ' + this.value + '.00'">
+                <div class="price-labels">
+                    <span id="priceLabel">Rs. <?php echo number_format($max_price, 2); ?></span>
                 </div>
+                <button type="submit" class="btn btn-primary mt-3">Apply Filter</button>
             </section>
         </aside>
 
         <!-- Product Listing -->
         <div class="col-lg-9">
             <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
-                <p class="mb-2 mb-md-0">Showing products</p>
+                <div class="mb-2 mb-md-0">Showing products</div>
                 <div class="d-flex align-items-center gap-2">
-                    <select class="form-select form-select-sm" style="width: auto;">
-                        <option>Best Seller</option>
-                        <option>Price: Low to High</option>
-                        <option>Price: High to Low</option>
-                        <option>Newest</option>
+                    <input type="text" name="search" placeholder="Search..." class="form-control form-control-sm"
+                        value="<?php echo htmlspecialchars($search); ?>" />
+                    <select name="sort" class="form-select form-select-sm" style="width: auto;">
+                        <option value="">Sort</option>
+                        <option value="low_high" <?php if ($sort == 'low_high') echo 'selected'; ?>>Price: Low to High</option>
+                        <option value="high_low" <?php if ($sort == 'high_low') echo 'selected'; ?>>Price: High to Low</option>
+                        <option value="newest" <?php if ($sort == 'newest') echo 'selected'; ?>>Newest</option>
                     </select>
-                    <button class="btn btn-outline-primary btn-sm"><i class="bi bi-grid-fill"></i></button>
-                    <button class="btn btn-outline-primary btn-sm"><i class="bi bi-list"></i></button>
+                    <button type="submit" class="btn btn-outline-primary btn-sm">Filter</button>
                 </div>
             </div>
 
             <!-- Product Cards -->
             <div class="row g-3 py-3">
                 <?php
-                $sql = "SELECT * FROM products LIMIT 40";
-                $result = $conn->query($sql);
-                if ($result->num_rows > 0):
+                if ($result && $result->num_rows > 0):
                     while ($row = $result->fetch_assoc()):
+                        $imagePaths = explode(',', $row['image_path']);
+                        $firstImage = trim($imagePaths[0]);
+                        $imageSrc = (strpos($firstImage, 'uploads/') === 0) ? $firstImage : 'uploads/' . $firstImage;
                 ?>
                 <div class="col-6 col-md-3 col-lg-3">
                     <div class="medi-o-product-card text-center">
-                    <?php
-$imagePaths = explode(',', $row['image_path']);
-$firstImage = trim($imagePaths[0]);
-
-// Avoid adding 'uploads/' twice
-$imageSrc = (strpos($firstImage, 'uploads/') === 0) ? $firstImage : 'uploads/' . $firstImage;
-?>
-<img src="<?php echo htmlspecialchars($imageSrc); ?>" class="bs-img img-fluid mb-3" alt="<?php echo htmlspecialchars($row['name']); ?>">
-
+                        <img src="<?php echo htmlspecialchars($imageSrc); ?>" class="bs-img img-fluid mb-3"
+                            alt="<?php echo htmlspecialchars($row['name']); ?>">
                         <h6 class="medi-o-product-title"><?php echo htmlspecialchars($row['name']); ?></h6>
                         <p class="medi-o-product-price mb-1">Rs. <?php echo number_format($row['price'], 2); ?></p>
                         <div class="text-warning">★ ★ ★ ☆ ☆</div>
@@ -101,23 +110,8 @@ $imageSrc = (strpos($firstImage, 'uploads/') === 0) ? $firstImage : 'uploads/' .
                 $conn->close();
                 ?>
             </div>
-
-            <!-- Pagination -->
-            <div class="d-flex justify-content-center my-4">
-                <nav aria-label="Page navigation">
-                    <ul class="pagination">
-                        <li class="page-item"><a class="page-link" href="#">«</a></li>
-                        <li class="page-item"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item"><a class="page-link" href="#">...</a></li>
-                        <li class="page-item"><a class="page-link" href="#">25</a></li>
-                        <li class="page-item"><a class="page-link" href="#">»</a></li>
-                    </ul>
-                </nav>
-            </div>
         </div>
-    </div>
+    </form>
 </section>
 
 <!-- Footer -->
@@ -126,6 +120,14 @@ $imageSrc = (strpos($firstImage, 'uploads/') === 0) ? $firstImage : 'uploads/' .
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-<script src="js/script.js"></script>
+<script>
+    // JS to update price label if JS is loaded after DOM
+    document.addEventListener("DOMContentLoaded", function () {
+        const priceSlider = document.getElementById("priceSlider");
+        if (priceSlider) {
+            document.getElementById("priceLabel").textContent = 'Rs. ' + priceSlider.value + '.00';
+        }
+    });
+</script>
 </body>
 </html>
