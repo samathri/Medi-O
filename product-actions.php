@@ -1,37 +1,46 @@
 <?php
 include 'includes/db.php';
 
-// Insert or Update
-if (isset($_POST['save_product'])) {
-  $id = $_POST['id'];
-  $name = $_POST['name'];
-  $category = $_POST['category'];
-  $price = $_POST['price'];
-  $stock = $_POST['stock'];
+if (isset($_POST['update_product'])) {
+    $id = intval($_POST['id']);
+    $name = $conn->real_escape_string($_POST['name']);
+    $description = $conn->real_escape_string($_POST['description']);
+    $price = floatval($_POST['price']);
+    $stock = intval($_POST['stock']);
+    $category = $conn->real_escape_string($_POST['category']);
+    $existingImages = $_POST['existing_images'];
 
-  if ($id) {
-    // Update
-    $stmt = $conn->prepare("UPDATE products SET name=?, category=?, price=?, stock=? WHERE id=?");
-    $stmt->bind_param("ssdii", $name, $category, $price, $stock, $id);
-  } else {
-    // Insert
-    $stmt = $conn->prepare("INSERT INTO products (name, category, price, stock, created_at) VALUES (?, ?, ?, ?, NOW())");
-    $stmt->bind_param("ssdi", $name, $category, $price, $stock);
-  }
+    $imagePaths = [];
 
-  $stmt->execute();
-  $stmt->close();
-  header("Location: admin.php");
-  exit;
+    // Handle new uploads
+    if (!empty($_FILES['image']['name'][0])) {
+        foreach ($_FILES['image']['tmp_name'] as $key => $tmpName) {
+            $fileName = basename($_FILES['image']['name'][$key]);
+            $targetPath = 'uploads/' . $fileName;
+            move_uploaded_file($tmpName, $targetPath);
+            $imagePaths[] = $fileName;
+        }
+    } else {
+        // No new image uploaded; use existing
+        $imagePaths = explode(',', $existingImages);
+    }
+
+    $finalImagePath = implode(',', $imagePaths);
+
+    $updateQuery = "UPDATE products SET 
+        name='$name',
+        description='$description',
+        price=$price,
+        stock=$stock,
+        category='$category',
+        image_path='$finalImagePath'
+        WHERE id=$id";
+
+    if ($conn->query($updateQuery)) {
+        header("Location: admin.php?msg=updated");
+    } else {
+        echo "Error updating product: " . $conn->error;
+    }
+    exit;
 }
-
-// Delete
-if (isset($_POST['delete_product'])) {
-  $id = $_POST['delete_id'];
-  $stmt = $conn->prepare("DELETE FROM products WHERE id = ?");
-  $stmt->bind_param("i", $id);
-  $stmt->execute();
-  $stmt->close();
-  header("Location: admin.php");
-  exit;
-}
+?>
