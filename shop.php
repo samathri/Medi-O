@@ -2,35 +2,6 @@
 session_start();
 ?>
 
-<?php
-require_once 'db_config.php'; // Include database connection
-
-// Fetch products from the database
-$sql = "SELECT * FROM products";
-$result = $conn->query($sql);
-
-if ($result->num_rows > 0) {
-    // Loop through the results and display each product
-    while ($row = $result->fetch_assoc()) {
-        echo '<div class="col-6 col-md-3 col-lg-3">
-                <div class="medi-o-product-card text-center">
-                    <img src="uploads/' . htmlspecialchars($row['image_path']) . '" class="bs-img img-fluid mb-3" alt="' . htmlspecialchars($row['name']) . '">
-                    <h6 class="medi-o-product-title">' . htmlspecialchars($row['name']) . '</h6>
-                    <p class="medi-o-product-price mb-1">Rs. ' . number_format($row['price'], 2) . '</p>
-                    <p class="medi-o-product-stock">Stock: ' . $row['stock'] . ' left</p>
-                    <div class="text-warning">★ ★ ★ ☆ ☆</div>';
-
-        // Show best seller badge if the product is a best seller
-        if ($row['best_selling'] == 1) {
-            echo '<span class="badge bg-success">Best Seller</span>';
-        }
-
-        echo '</div></div>';
-    }
-} else {
-    echo "No products available.";
-}
-?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -271,6 +242,94 @@ if ($result->num_rows > 0) {
                 </div>
 
                 <!-- Product Grid (use homepage card styles) -->
+                <div class="row g-3 py-3">
+                    <!-- Product Card 1 -->
+                    <div class="col-6  col-md-3 col-lg-3">
+                        <div class="medi-o-product-card text-center">
+                            <img src="images/Isocal-600x600.png" class="bs-img img-fluid mb-3" alt="Ortho Shield">
+                            <h6 class="medi-o-product-title">ISOCAL POWDER 425g</h6>
+                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
+                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 2 -->
+                    <div class="col-6  col-md-3 col-lg-3">
+                        <div class="medi-o-product-card text-center">
+                            <img src="images/Siddhalepa-Balm-50g 1.png" class="bs-img img-fluid mb-3"
+                                alt="Siddhalepa Balm">
+                            <h6 class="medi-o-product-title">SIDDHALEPA BALM 50G</h6>
+                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
+                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 3 -->
+                    <div class="col-6  col-md-3 col-lg-3">
+                        <div class="medi-o-product-card text-center">
+                            <img src="images/ACNE-AID 1.png" class="bs-img img-fluid mb-3" alt="Acne-Aid Bar">
+                            <h6 class="medi-o-product-title">ACNE-AID BAR 100g</h6>
+                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
+                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 4 -->
+                    <div class="col-6  col-md-3 col-lg-3">
+                        <div class="medi-o-product-card text-center">
+                            <img src="images/aknicarelotion 1.png" class="bs-img img-fluid mb-3"
+                                alt="Aknicare Cleanser">
+                            <h6 class="medi-o-product-title">AKNICARE CLEANSER 200ml</h6>
+                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
+                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-3 py-3">
+                    <!-- Product Card 1 -->
+                    <div class="col-6  col-md-3 col-lg-3">
+                        <div class="medi-o-product-card text-center">
+                            <img src="images/Isocal-600x600.png" class="bs-img img-fluid mb-3" alt="Ortho Shield">
+                            <h6 class="medi-o-product-title">ISOCAL POWDER 425g</h6>
+                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
+                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 2 -->
+                    <div class="col-6  col-md-3 col-lg-3">
+                        <div class="medi-o-product-card text-center">
+                            <img src="images/Siddhalepa-Balm-50g 1.png" class="bs-img img-fluid mb-3"
+                                alt="Siddhalepa Balm">
+                            <h6 class="medi-o-product-title">SIDDHALEPA BALM 50G</h6>
+                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
+                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 3 -->
+                    <div class="col-6  col-md-3 col-lg-3">
+                        <div class="medi-o-product-card text-center">
+                            <img src="images/ACNE-AID 1.png" class="bs-img img-fluid mb-3" alt="Acne-Aid Bar">
+                            <h6 class="medi-o-product-title">ACNE-AID BAR 100g</h6>
+                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
+                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 4 -->
+                    <div class="col-6  col-md-3 col-lg-3">
+                        <div class="medi-o-product-card text-center">
+                            <img src="images/aknicarelotion 1.png" class="bs-img img-fluid mb-3"
+                                alt="Aknicare Cleanser">
+                            <h6 class="medi-o-product-title">AKNICARE CLEANSER 200ml</h6>
+                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
+                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="row g-3 py-3">
                     <!-- Product Card 1 -->
                     <div class="col-6  col-md-3 col-lg-3">

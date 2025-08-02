@@ -150,72 +150,22 @@ session_start();
 
         <!-- Prescription Status Dashboard -->
         <section aria-labelledby="dashboard-section-title" class="mb-5">
-  <h2 id="dashboard-section-title" class="section-title">Prescription Dashboard</h2>
+            <h2 id="dashboard-section-title" class="section-title">Prescription Dashboard</h2>
 
-  <div class="progress-steps-container">
-    <div class="progress-step completed">
-      <div class="step-dot">1</div>
-      <div class="step-label">Pending</div>
-    </div>
-    <div class="progress-step completed">
-      <div class="step-dot">2</div>
-      <div class="step-label">Order Processing</div>
-    </div>
-    <div class="progress-step">
-      <div class="step-dot">3</div>
-      <div class="step-label">Ready to Collect</div>
-    </div>
-  </div>
-</section>
-
-
-        <!-- Account Section -->
-        <section aria-labelledby="account-section-title" class="form-section">
-            <h2 id="account-section-title" class="section-title">Account Details</h2>
-            <form id="profileForm" novalidate>
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label for="name" class="form-label">Full Name</label>
-                        <input type="text" class="form-control" id="name" placeholder="John Doe" required />
-                    </div>
-                    <div class="col-md-6">
-                        <label for="email" class="form-label">Email Address</label>
-                        <input type="email" class="form-control" id="email" placeholder="john@example.com" required />
-                    </div>
-                    <div class="col-md-6">
-                        <label for="phone" class="form-label">Phone Number</label>
-                        <input type="tel" class="form-control" id="phone" placeholder="+94 77 123 4567" required />
-                    </div>
-                    <div class="col-md-6">
-                        <label for="address" class="form-label">Address</label>
-                        <input type="text" class="form-control" id="address" placeholder="123 Street, City, Country"
-                            required />
-                    </div>
+            <div class="progress-steps-container">
+                <div class="progress-step completed">
+                    <div class="step-dot">1</div>
+                    <div class="step-label">Pending</div>
                 </div>
-
-                <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
-            </form>
-
-            <!-- Change Password -->
-            <hr class="my-4" />
-            <h3 class="section-title">Change Password</h3>
-            <form id="passwordForm" novalidate>
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <label for="oldPassword" class="form-label">Old Password</label>
-                        <input type="password" class="form-control" id="oldPassword" required />
-                    </div>
-                    <div class="col-md-4">
-                        <label for="newPassword" class="form-label">New Password</label>
-                        <input type="password" class="form-control" id="newPassword" required />
-                    </div>
-                    <div class="col-md-4">
-                        <label for="confirmPassword" class="form-label">Confirm New Password</label>
-                        <input type="password" class="form-control" id="confirmPassword" required />
-                    </div>
+                <div class="progress-step completed">
+                    <div class="step-dot">2</div>
+                    <div class="step-label">Order Processing</div>
                 </div>
-                <button type="submit" class="btn btn-outline-primary mt-3">Update Password</button>
-            </form>
+                <div class="progress-step">
+                    <div class="step-dot">3</div>
+                    <div class="step-label">Ready to Collect</div>
+                </div>
+            </div>
         </section>
 
         <!-- My Prescriptions Section -->
@@ -283,6 +233,57 @@ session_start();
                 </table>
             </div>
         </section>
+
+
+        <!-- Account Section -->
+        <section aria-labelledby="account-section-title" class="form-section">
+            <h2 id="account-section-title" class="section-title">Account Details</h2>
+            <form id="profileForm" novalidate>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="name" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="name" placeholder="John Doe" required />
+                    </div>
+                    <div class="col-md-6">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" class="form-control" id="email" placeholder="john@example.com" required />
+                    </div>
+                    <div class="col-md-6">
+                        <label for="phone" class="form-label">Phone Number</label>
+                        <input type="tel" class="form-control" id="phone" placeholder="+94 77 123 4567" required />
+                    </div>
+                    <div class="col-md-6">
+                        <label for="address" class="form-label">Address</label>
+                        <input type="text" class="form-control" id="address" placeholder="123 Street, City, Country"
+                            required />
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+            </form>
+
+            <!-- Change Password -->
+            <hr class="my-4" />
+            <h3 class="section-title">Change Password</h3>
+            <form id="passwordForm" novalidate>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="oldPassword" class="form-label">Old Password</label>
+                        <input type="password" class="form-control" id="oldPassword" required />
+                    </div>
+                    <div class="col-md-4">
+                        <label for="newPassword" class="form-label">New Password</label>
+                        <input type="password" class="form-control" id="newPassword" required />
+                    </div>
+                    <div class="col-md-4">
+                        <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                        <input type="password" class="form-control" id="confirmPassword" required />
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-outline-primary mt-3">Update Password</button>
+            </form>
+        </section>
+
     </main>
 
 
@@ -347,31 +348,31 @@ session_start();
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/script.js"></script>
-                            
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-  const steps = document.querySelectorAll('.progress-step');
+            const steps = document.querySelectorAll('.progress-step');
 
-  // Suppose currentStatus can be 'pending', 'order-processing', or 'ready-to-collect'
-  // Map each status to index 0,1,2
-  const currentStatus = 'order-processing'; // Example
+            // Suppose currentStatus can be 'pending', 'order-processing', or 'ready-to-collect'
+            // Map each status to index 0,1,2
+            const currentStatus = 'order-processing'; // Example
 
-  const statusMap = {
-    'pending': 0,
-    'order-processing': 1,
-    'ready-to-collect': 2
-  };
+            const statusMap = {
+                'pending': 0,
+                'order-processing': 1,
+                'ready-to-collect': 2
+            };
 
-  const currentIndex = statusMap[currentStatus];
+            const currentIndex = statusMap[currentStatus];
 
-  steps.forEach((step, index) => {
-    if(index <= currentIndex) {
-      step.classList.add('completed');
-    } else {
-      step.classList.remove('completed');
-    }
-  });
-});
+            steps.forEach((step, index) => {
+                if (index <= currentIndex) {
+                    step.classList.add('completed');
+                } else {
+                    step.classList.remove('completed');
+                }
+            });
+        });
 
     </script>
 
