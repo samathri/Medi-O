@@ -584,7 +584,46 @@
   }
 });
 
+document.addEventListener('DOMContentLoaded', () => {
+  const searchInput = document.getElementById('prescriptionSearch');
+  const statusFilter = document.getElementById('statusFilter');
+  const clearBtn = document.getElementById('clearFilters');
+  const tableBody = document.getElementById('prescriptionTableBody');
+
+  function filterTable() {
+    const searchValue = searchInput.value.toLowerCase();
+    const statusValue = statusFilter.value;
+
+    Array.from(tableBody.rows).forEach(row => {
+      const id = row.cells[0].textContent.toLowerCase();
+      const user = row.cells[1].textContent.toLowerCase();
+      const statusBadge = row.cells[4].textContent.toLowerCase();
+
+      const matchesSearch = id.includes(searchValue) || user.includes(searchValue) || statusBadge.includes(searchValue);
+      const matchesStatus = statusValue === '' || statusBadge.includes(statusValue.toLowerCase());
+
+      if (matchesSearch && matchesStatus) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  }
+
+  searchInput.addEventListener('input', filterTable);
+  statusFilter.addEventListener('change', filterTable);
+
+  clearBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    statusFilter.value = '';
+    filterTable();
+  });
+});
+
+
     </script>
+
+
 
 
 </body>
