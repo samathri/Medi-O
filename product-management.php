@@ -8,17 +8,23 @@ if (isset($_POST['add_product'])) {
     $price = $_POST['price'];
     $stock = $_POST['stock'];
     $category = $_POST['category'];
-    
-    // Image upload
-    $image_path = '';
-    if ($_FILES['image']['name']) {
+
+    // Handle multiple images
+    $image_paths = [];
+    if (!empty($_FILES['images']['name'][0])) {
         $target_dir = "uploads/";
-        $image_path = $target_dir . basename($_FILES["image"]["name"]);
-        move_uploaded_file($_FILES["image"]["tmp_name"], $image_path);
+        foreach ($_FILES['images']['tmp_name'] as $key => $tmp_name) {
+            $filename = basename($_FILES['images']['name'][$key]);
+            $target_file = $target_dir . $filename;
+            move_uploaded_file($tmp_name, $target_file);
+            $image_paths[] = $target_file;
+        }
     }
 
+    $image_path_str = implode(',', $image_paths);
+
     $stmt = $conn->prepare("INSERT INTO products (name, description, price, stock, category, image_path, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
-    $stmt->bind_param("ssdiss", $name, $description, $price, $stock, $category, $image_path);
+    $stmt->bind_param("ssdiss", $name, $description, $price, $stock, $category, $image_path_str);
     $stmt->execute();
     header("Location: admin.php");
     exit;
@@ -57,7 +63,7 @@ if (isset($_POST['update_product'])) {
 ?>
 
 <!-- Product Management UI -->
-<section id="productManagementSection" class="mt-5" tabindex="0">
+<section id="productManagementSection" class="mt-5">
   <h2 class="section-title">Product Management</h2>
   <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#productModal">Add New Product</button>
 
@@ -67,10 +73,11 @@ if (isset($_POST['update_product'])) {
         <tr>
           <th>ID</th>
           <th>Title</th>
+          <th>Description</th>
           <th>Category</th>
           <th>Price</th>
           <th>Stock</th>
-          <th>Image</th>
+          <th>Images</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -82,20 +89,29 @@ if (isset($_POST['update_product'])) {
         <tr>
           <td><?= $row['id'] ?></td>
           <td><?= htmlspecialchars($row['name']) ?></td>
+          <td><?= htmlspecialchars($row['description']) ?></td>
           <td><?= htmlspecialchars($row['category']) ?></td>
           <td>$<?= number_format($row['price'], 2) ?></td>
           <td><?= $row['stock'] ?></td>
           <td>
-            <?php if ($row['image_path']): ?>
-              <img src="<?= $row['image_path'] ?>" width="50">
-            <?php else: ?>
-              No image
-            <?php endif; ?>
+            <?php
+            $images = explode(',', $row['image_path']);
+            foreach ($images as $img) {
+              $img = trim($img);
+              if ($img) {
+                  $imgSrc = (strpos($img, 'uploads/') === 0) ? $img : 'uploads/' . $img;
+                  echo "<img src='" . htmlspecialchars($imgSrc) . "' width='50' class='me-1 mb-1'>";
+              }
+          }
+          
+            ?>
           </td>
           <td>
             <!-- Update Button -->
-            <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
-                    data-bs-target="#updateModal<?= $row['id'] ?>"><i class="bi bi-pencil"></i></button>
+            <a href="edit-product.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-warning">
+  <i class="bi bi-pencil"></i>
+</a>
+
             <!-- Delete -->
             <a href="?delete=<?= $row['id'] ?>" class="btn btn-sm btn-danger"
                onclick="return confirm('Are you sure?')"><i class="bi bi-trash"></i></a>
@@ -103,7 +119,8 @@ if (isset($_POST['update_product'])) {
         </tr>
 
         <!-- Update Modal -->
-        <div class="modal fade" id="updateModal<?= $row['id'] ?>" tabindex="-1">
+        <div class="modal fade" id="updateModal<?= $row['id'] ?>" tabindex="-1" aria-hidden="true">
+
           <div class="modal-dialog">
             <form method="POST" enctype="multipart/form-data" class="modal-content">
               <input type="hidden" name="id" value="<?= $row['id'] ?>">
@@ -117,7 +134,7 @@ if (isset($_POST['update_product'])) {
                 <input type="number" step="0.01" name="price" class="form-control mb-2" value="<?= $row['price'] ?>" required>
                 <input type="number" name="stock" class="form-control mb-2" value="<?= $row['stock'] ?>" required>
                 <input type="text" name="category" class="form-control mb-2" value="<?= htmlspecialchars($row['category']) ?>" required>
-                <input type="file" name="image" class="form-control">
+                <input type="file" name="image" class="form-control mb-2">
               </div>
               <div class="modal-footer">
                 <button type="submit" name="update_product" class="btn btn-success">Update</button>
@@ -145,7 +162,7 @@ if (isset($_POST['update_product'])) {
         <input type="number" step="0.01" name="price" class="form-control mb-2" placeholder="Price" required>
         <input type="number" name="stock" class="form-control mb-2" placeholder="Stock" required>
         <input type="text" name="category" class="form-control mb-2" placeholder="Category" required>
-        <input type="file" name="image" class="form-control">
+        <input type="file" name="images[]" multiple class="form-control">
       </div>
       <div class="modal-footer">
         <button type="submit" name="add_product" class="btn btn-primary">Add Product</button>

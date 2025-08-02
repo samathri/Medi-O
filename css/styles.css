@@ -20,6 +20,13 @@ body {
   font-weight: 600;
   color: #333;
 }
+#productManagementSection img {
+  object-fit: cover;
+  height: 50px;
+  width: 50px;
+  border-radius: 4px;
+  margin-right: 4px;
+}
 
 #productManagementSection table {
   border-collapse: collapse;
