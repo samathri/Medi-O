@@ -7,36 +7,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $cart = $_SESSION['cart'] ?? [];
 
     if (!$user_id || empty($cart)) {
-        die('Cart empty or user not logged in.');
+        die('Cart is empty or user not logged in.');
     }
 
-    // Collect billing data
-    $name = $_POST['fullName'];
-    $email = $_POST['email'];
-    $phone = $_POST['phone'];
-    $address = $_POST['address'];
-    $city = $_POST['city'];
-    $postal = $_POST['postalCode'];
-    $country = $_POST['country'];
-    $payment_method = $_POST['payment_method'];
+    // Safely fetch billing form data
+    $name = $_POST['fullName'] ?? '';
+    $email = $_POST['email'] ?? '';
+    $phone = $_POST['phone'] ?? '';
+    $address = $_POST['address'] ?? '';
+    $city = $_POST['city'] ?? '';
+    $postal = $_POST['postalCode'] ?? '';
+    $country = $_POST['country'] ?? '';
+    $payment_method = $_POST['payment_method'] ?? '';
 
-    // Store billing info in session for success page
+    // Store billing info in session for later use
     $_SESSION['billing_name'] = $name;
     $_SESSION['billing_email'] = $email;
     $_SESSION['billing_phone'] = $phone;
     $_SESSION['billing_address'] = "$address, $city, $postal, $country";
 
-    // Calculate total
+    // Calculate total order amount
     $total = 0;
     foreach ($cart as $item) {
         $total += $item['price'] * $item['quantity'];
     }
 
-    // Insert order
-    $stmt = $conn->prepare("INSERT INTO orders (user_id, total_amount, status) VALUES (?, ?, 'Pending')");
-    $stmt->bind_param("id", $user_id, $total);
+    // Insert into orders table
+    $order_date = date('Y-m-d H:i:s');
+    $status = 'Pending';
+
+    $stmt = $conn->prepare("INSERT INTO orders (user_id, order_date, total_amount, status) VALUES (?, ?, ?, ?)");
+    $stmt->bind_param("isds", $user_id, $order_date, $total, $status);
     $stmt->execute();
     $order_id = $stmt->insert_id;
+    $stmt->close();
 
     // Insert order items
     $stmt = $conn->prepare("INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)");
@@ -44,14 +48,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_param("iiid", $order_id, $item['product_id'], $item['quantity'], $item['price']);
         $stmt->execute();
     }
+    $stmt->close();
 
-    // Clear cart
+    // Clear cart session
     unset($_SESSION['cart']);
 
-    // ✅ Redirect to updated success page
+    // Redirect to success page
     header("Location: successful.php?order_id=" . $order_id);
     exit;
+
 } else {
+    // Redirect to checkout page if not a POST request
     header("Location: checkout.php");
     exit;
 }
