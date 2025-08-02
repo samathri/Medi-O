@@ -1,10 +1,49 @@
 <?php
 session_start();
+<<<<<<< Updated upstream
+=======
+include 'includes/db.php';
+
+// Validate order_id
+if (!isset($_GET['order_id'])) {
+    echo "<div class='alert alert-danger'>No order ID provided.</div>";
+    exit;
+}
+
+$order_id = intval($_GET['order_id']);
+
+// Fetch order
+$stmt = $conn->prepare("SELECT o.order_id, o.order_date, o.total_amount, o.status, o.qr_code, u.name AS customer_name
+                        FROM orders o
+                        JOIN users u ON o.user_id = u.id
+                        WHERE o.order_id = ?");
+$stmt->bind_param("i", $order_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows === 0) {
+    echo "<div class='alert alert-warning'>Order not found.</div>";
+    exit;
+}
+
+$order = $result->fetch_assoc();
+$stmt->close();
+
+// Fetch items
+$stmt = $conn->prepare("SELECT oi.quantity, oi.price, p.name AS product_name
+                        FROM order_items oi
+                        JOIN products p ON oi.product_id = p.id
+                        WHERE oi.order_id = ?");
+$stmt->bind_param("i", $order_id);
+$stmt->execute();
+$items = $stmt->get_result();
+>>>>>>> Stashed changes
 ?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
+<<<<<<< Updated upstream
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Medi-O</title>
@@ -23,6 +62,11 @@ session_start();
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="css/styles.css" />
+=======
+    <meta charset="UTF-8">
+    <title>Order Success</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+>>>>>>> Stashed changes
 </head>
 
 <body>
@@ -88,8 +132,49 @@ session_start();
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/script.js"></script>
 
+<<<<<<< Updated upstream
 
 
+=======
+        <h5 class="mt-4">Billing Info</h5>
+        <ul class="list-unstyled">
+            <li><strong>Name:</strong> <?= $_SESSION['billing_name'] ?? 'N/A' ?></li>
+            <li><strong>Email:</strong> <?= $_SESSION['billing_email'] ?? 'N/A' ?></li>
+            <li><strong>Phone:</strong> <?= $_SESSION['billing_phone'] ?? 'N/A' ?></li>
+            <li><strong>Address:</strong> <?= $_SESSION['billing_address'] ?? 'N/A' ?></li>
+        </ul>
+
+        <h5 class="mt-4">Items Ordered</h5>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th class="text-center">Qty</th>
+                    <th class="text-end">Price</th>
+                    <th class="text-end">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+            <?php while ($item = $items->fetch_assoc()): ?>
+                <tr>
+                    <td><?= htmlspecialchars($item['product_name']) ?></td>
+                    <td class="text-center"><?= $item['quantity'] ?></td>
+                    <td class="text-end">Rs. <?= number_format($item['price'], 2) ?></td>
+                    <td class="text-end">Rs. <?= number_format($item['price'] * $item['quantity'], 2) ?></td>
+                </tr>
+            <?php endwhile; ?>
+            </tbody>
+        </table>
+
+        <?php if (!empty($order['qr_code'])): ?>
+            <h5 class="mt-4">QR Code</h5>
+            <img src="data:image/png;base64,<?= $order['qr_code'] ?>" alt="Order QR Code" class="border p-2" />
+        <?php endif; ?>
+
+        <a href="index.php" class="btn btn-primary mt-4">Back to Home</a>
+    </div>
+</div>
+>>>>>>> Stashed changes
 </body>
 
 </html>
