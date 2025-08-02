@@ -529,4 +529,345 @@ document.getElementById('forgotPasswordForm').addEventListener('submit', functio
         });
 
 
+ // Sidebar toggle for mobile
+    const sidebar = document.getElementById('sidebar');
+    const sidebarCollapse = document.getElementById('sidebarCollapse');
 
+    sidebarCollapse.addEventListener('click', () => {
+      sidebar.classList.toggle('active');
+    });
+
+    // Navigation section toggle
+    const navLinks = document.querySelectorAll('#sidebarMenu .nav-link');
+    const sections = document.querySelectorAll('main section');
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+
+        // Close sidebar on mobile after clicking
+        if (window.innerWidth <= 768) {
+          sidebar.classList.remove('active');
+        }
+
+        // Remove active class from all links
+        navLinks.forEach(nav => nav.classList.remove('active'));
+        link.classList.add('active');
+
+        // Hide all sections
+        sections.forEach(section => section.classList.add('d-none'));
+
+        // Show clicked section
+        const targetId = link.getAttribute('href').substring(1);
+        const targetSection = document.getElementById(targetId);
+        if (targetSection) {
+          targetSection.classList.remove('d-none');
+          targetSection.focus();
+        }
+      });
+    });
+
+    // Initialize dashboard chart
+    const ctx = document.getElementById('statusChart').getContext('2d');
+    const statusChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Pending', 'Approved', 'Rejected'],
+        datasets: [{
+          label: 'Prescription Status',
+          data: [89, 350, 50],
+          backgroundColor: ['#ffc107', '#198754', '#dc3545'],
+          hoverOffset: 30
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'bottom'
+          }
+        }
+      }
+    });
+
+
+    // Frontend integration example snippet (fetch users):
+    async function loadUsers() {
+  const tbody = document.querySelector('#usersTable tbody');
+  tbody.innerHTML = '';
+
+  try {
+    const res = await fetch('get_users.php');
+    const users = await res.json();
+
+    users.forEach(user => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${user.id}</td>
+        <td>${user.name}</td>
+        <td>${user.email}</td>
+        <td>${user.phone || '-'}</td>
+        <td>${user.role}</td>
+        <td>${new Date(user.created_at).toLocaleDateString()}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  } catch (error) {
+    console.error('Error loading users:', error);
+  }
+}
+
+loadUsers();
+
+
+async function loadUsers() {
+  const tbody = document.querySelector('#userManagementSection tbody');
+  try {
+    const res = await fetch('api/get_users.php');
+    const users = await res.json();
+
+    tbody.innerHTML = '';
+    users.forEach(user => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${user.id}</td>
+          <td>${user.name}</td>
+          <td>${user.email}</td>
+          <td><span class="badge bg-${user.status === 'Active' ? 'success' : 'secondary'}">${user.status}</span></td>
+          <td>${user.registered_date}</td>
+          <td>
+            <button class="btn btn-sm btn-info me-1">View</button>
+            <button class="btn btn-sm btn-danger">Suspend</button>
+          </td>
+        </tr>`;
+    });
+  } catch (error) {
+    console.error('Failed to load users:', error);
+  }
+}
+
+async function loadPrescriptions() {
+  const tbody = document.querySelector('#prescriptionManagementSection tbody');
+  try {
+    const res = await fetch('api/get_prescriptions.php');
+    const prescriptions = await res.json();
+
+    tbody.innerHTML = '';
+    prescriptions.forEach(p => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${p.id}</td>
+          <td>${p.user_name}</td>
+          <td>${p.pharmacist_name || 'Unassigned'}</td>
+          <td><span class="badge bg-${getBadgeClass(p.status)}">${p.status}</span></td>
+          <td>${p.created_at}</td>
+          <td>
+            ${getActions(p.status, p.id)}
+          </td>
+        </tr>`;
+    });
+  } catch (error) {
+    console.error('Failed to load prescriptions:', error);
+  }
+}
+
+function getBadgeClass(status) {
+  return {
+    'Pending': 'warning',
+    'Approved': 'success',
+    'Rejected': 'danger',
+    'Cancelled': 'secondary'
+  }[status] || 'secondary';
+}
+
+function getActions(status, id) {
+  if (status === 'Pending') {
+    return `
+      <button class="btn btn-sm btn-success me-1" onclick="updateStatus(${id}, 'Approved')">Approve</button>
+      <button class="btn btn-sm btn-danger" onclick="updateStatus(${id}, 'Rejected')">Reject</button>
+    `;
+  }
+  return `<button class="btn btn-sm btn-secondary me-1" disabled>Approve</button>
+          <button class="btn btn-sm btn-danger" onclick="updateStatus(${id}, 'Cancelled')">Cancel</button>`;
+}
+
+async function updateStatus(id, status) {
+  try {
+    const res = await fetch('api/update_prescription_status.php', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({id, status})
+    });
+    const result = await res.json();
+    if (res.ok) {
+      alert(result.message);
+      loadPrescriptions(); // refresh after update
+    } else {
+      alert('Error: ' + result.error);
+    }
+  } catch (e) {
+    alert('Failed to update status');
+  }
+}
+
+// Load initial data on page load or when sections are shown
+document.addEventListener('DOMContentLoaded', () => {
+  loadUsers();
+  loadPrescriptions();
+});
+
+
+
+async function loadProducts() {
+  const tbody = document.querySelector('#productManagementSection tbody');
+
+  try {
+    const response = await fetch('api/get_products.php');
+    if (!response.ok) throw new Error('Network response was not ok');
+
+    const products = await response.json();
+
+    tbody.innerHTML = ''; // clear existing rows
+
+    products.forEach(product => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${product.id}</td>
+          <td>${product.name}</td>
+          <td>${product.description}</td>
+          <td>${parseFloat(product.price).toFixed(2)}</td>
+          <td>${product.stock_quantity}</td>
+          <td>${new Date(product.created_at).toLocaleString()}</td>
+          <td>
+            <button class="btn btn-sm btn-primary" onclick="editProduct(${product.id})">Edit</button>
+            <button class="btn btn-sm btn-danger" onclick="deleteProduct(${product.id})">Delete</button>
+          </td>
+        </tr>
+      `;
+    });
+  } catch (error) {
+    console.error('Failed to load products:', error);
+    tbody.innerHTML = `<tr><td colspan="7">Failed to load products.</td></tr>`;
+  }
+}
+
+// Call loadProducts on page load
+document.addEventListener('DOMContentLoaded', loadProducts);
+
+
+async function deleteProduct(id) {
+  if (!confirm('Are you sure you want to delete this product?')) return;
+
+  try {
+    const response = await fetch('api/delete_product.php', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({id})
+    });
+
+    const result = await response.json();
+    if (response.ok) {
+      alert(result.message);
+      loadProducts(); // refresh table
+    } else {
+      alert('Error: ' + result.error);
+    }
+  } catch (error) {
+    alert('Failed to delete product');
+  }
+}
+
+
+// Example product data (replace with backend fetch later)
+let products = [
+  { id: 1, name: "Vitamin D3", description: "Supports bone health", price: 10.99, stock_quantity: 150, created_at: "2025-07-01" },
+  { id: 2, name: "Paracetamol", description: "Pain reliever", price: 5.99, stock_quantity: 200, created_at: "2025-07-05" }
+];
+
+// Function to render products in the table
+function renderProducts() {
+  const tbody = document.getElementById("productTableBody");
+  tbody.innerHTML = ""; // Clear existing rows
+
+  products.forEach(product => {
+    const tr = document.createElement("tr");
+
+    tr.innerHTML = `
+      <td>${product.id}</td>
+      <td>${product.name}</td>
+      <td>${product.description}</td>
+      <td>${product.price.toFixed(2)}</td>
+      <td>${product.stock_quantity}</td>
+      <td>${product.created_at}</td>
+      <td>
+        <button class="btn btn-sm btn-warning" onclick="editProduct(${product.id})">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteProduct(${product.id})">Delete</button>
+      </td>
+    `;
+
+    tbody.appendChild(tr);
+  });
+}
+
+// Handle form submission to add product
+document.getElementById("addProductForm").addEventListener("submit", function(e) {
+  e.preventDefault();
+
+  // Get form values
+  const name = document.getElementById("productName").value.trim();
+  const description = document.getElementById("productDescription").value.trim();
+  const price = parseFloat(document.getElementById("productPrice").value);
+  const stock = parseInt(document.getElementById("productStock").value);
+
+  if (!name || !description || isNaN(price) || isNaN(stock)) {
+    displayMessage("Please fill in all fields correctly.", "danger");
+    return;
+  }
+
+  // Create new product object (mock id and created_at)
+  const newProduct = {
+    id: products.length ? products[products.length - 1].id + 1 : 1,
+    name,
+    description,
+    price,
+    stock_quantity: stock,
+    created_at: new Date().toISOString().split("T")[0]
+  };
+
+  // Add to products array (replace with backend API call)
+  products.push(newProduct);
+
+  // Reset form
+  this.reset();
+
+  // Refresh table
+  renderProducts();
+
+  displayMessage("Product added successfully!", "success");
+});
+
+// Simple message display function
+function displayMessage(msg, type) {
+  const messageDiv = document.getElementById("addProductMessage");
+  messageDiv.textContent = msg;
+  messageDiv.className = type === "success" ? "text-success" : "text-danger";
+  setTimeout(() => {
+    messageDiv.textContent = "";
+    messageDiv.className = "";
+  }, 3000);
+}
+
+// Placeholder functions for Edit/Delete (implement later)
+function editProduct(id) {
+  alert("Edit product with ID: " + id);
+}
+
+function deleteProduct(id) {
+  if (confirm("Are you sure you want to delete this product?")) {
+    products = products.filter(p => p.id !== id);
+    renderProducts();
+  }
+}
+
+// Initial rendering on page load
+renderProducts();

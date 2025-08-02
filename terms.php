@@ -145,167 +145,80 @@ session_start();
     </header>
 
 
-
-    <main class="container my-5 c-profile">
-
-        <!-- Prescription Status Dashboard -->
-        <section aria-labelledby="dashboard-section-title" class="mb-5">
-            <h2 id="dashboard-section-title" class="section-title">Prescription Dashboard</h2>
-            <div class="row text-center gy-3">
-                <div class="col-6 col-md-3">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Pending</h5>
-                            <p class="card-text fs-3 text-warning" id="countPending">0</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Order Processing</h5>
-                            <p class="card-text fs-3 text-info" id="countStartToPack">0</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Ready to Collect</h5>
-                            <p class="card-text fs-3 text-success" id="countReadyToCollect">0</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Collected</h5>
-                            <p class="card-text fs-3 text-primary" id="countCollected">0</p>
-                        </div>
-                    </div>
-                </div>
+    <!-- Terms and Conditions Section -->
+    <section class="terms-policy-section py-5">
+        <div class="container">
+            <div class="text-center">
+                <h1 class="terms-policy-title mb-4">Terms and Conditions</h1>
+                <p class="terms-policy-description">
+                    By accessing and using Medi-O, you agree to the following terms and conditions. Please read them
+                    carefully before using the website or placing any orders.
+                </p>
             </div>
 
-            <div class="mt-4" style="max-width: 400px; margin: auto;">
-                <canvas id="prescriptionStatusChart" aria-label="Prescription status chart" role="img"></canvas>
+            <!-- Policy Content -->
+            <div class="terms-policy-content">
+                <h3 class="terms-policy-subtitle">1. Acceptance of Terms</h3>
+                <p>By registering an account, uploading prescriptions, or placing an order, you confirm that you accept
+                    these terms and agree to follow them.</p>
+
+                <h3 class="terms-policy-subtitle">2. Eligibility</h3>
+                <p>You must be at least 18 years old to use Medi-O or have parental/guardian supervision. Certain
+                    medications may require a valid prescription before they can be processed.</p>
+
+                <h3 class="terms-policy-subtitle">3. Orders and Prescriptions</h3>
+                <ul class="terms-policy-list">
+                    <li>Orders containing prescription-required medicine must include a valid prescription.</li>
+                    <li>All prescriptions are subject to pharmacist review and approval.</li>
+                    <li>We reserve the right to cancel any order if the prescription is invalid or incomplete.</li>
+                </ul>
+
+                <h3 class="terms-policy-subtitle">4. Account Responsibility</h3>
+                <ul class="terms-policy-list">
+                    <li>Users are responsible for maintaining the confidentiality of their login credentials.</li>
+                    <li>Medi-O is not liable for unauthorized access resulting from user negligence.</li>
+                </ul>
+
+                <h3 class="terms-policy-subtitle">5. Payments</h3>
+                <ul class="terms-policy-list">
+                    <li>All transactions must be completed using approved, secure payment methods.</li>
+                    <li>Orders are confirmed only after payment is successfully processed.</li>
+                </ul>
+
+                <h3 class="terms-policy-subtitle">6. Delivery</h3>
+                <ul class="terms-policy-list">
+                    <li>We aim to deliver orders within the specified timeframe; however, delays may occur due to
+                        unforeseen circumstances.</li>
+                    <li>Medi-O is not responsible for delays caused by courier services or external factors.</li>
+                </ul>
+
+                <h3 class="terms-policy-subtitle">7. Product Availability</h3>
+                <ul class="terms-policy-list">
+                    <li>Product availability may vary. If an item is out of stock, you’ll be notified and offered an
+                        alternative or refund.</li>
+                    <li>Prices and product details may change without notice.</li>
+                </ul>
+
+                <h3 class="terms-policy-subtitle">8. Medical Disclaimer</h3>
+                <ul class="terms-policy-list">
+                    <li>All content provided on the site is for informational purposes only.</li>
+                    <li>Always follow your doctor’s advice and consult a licensed professional before taking any
+                        medication.</li>
+                </ul>
+
+                <h3 class="terms-policy-subtitle">9. Prohibited Use</h3>
+                <p>Misuse of the platform (fraudulent prescriptions, false identity, abusive language) may result in
+                    account suspension or legal action.</p>
+
+                <h3 class="terms-policy-subtitle">10. Changes to Terms</h3>
+                <p>Medi-O reserves the right to update these terms at any time. Updated terms will be posted on this
+                    page with the updated effective date.</p>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Account Section -->
-        <section aria-labelledby="account-section-title" class="form-section">
-            <h2 id="account-section-title" class="section-title">Account Details</h2>
-            <form id="profileForm" novalidate>
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label for="name" class="form-label">Full Name</label>
-                        <input type="text" class="form-control" id="name" placeholder="John Doe" required />
-                    </div>
-                    <div class="col-md-6">
-                        <label for="email" class="form-label">Email Address</label>
-                        <input type="email" class="form-control" id="email" placeholder="john@example.com" required />
-                    </div>
-                    <div class="col-md-6">
-                        <label for="phone" class="form-label">Phone Number</label>
-                        <input type="tel" class="form-control" id="phone" placeholder="+94 77 123 4567" required />
-                    </div>
-                    <div class="col-md-6">
-                        <label for="address" class="form-label">Address</label>
-                        <input type="text" class="form-control" id="address" placeholder="123 Street, City, Country"
-                            required />
-                    </div>
-                </div>
 
-                <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
-            </form>
 
-            <!-- Change Password -->
-            <hr class="my-4" />
-            <h3 class="section-title">Change Password</h3>
-            <form id="passwordForm" novalidate>
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <label for="oldPassword" class="form-label">Old Password</label>
-                        <input type="password" class="form-control" id="oldPassword" required />
-                    </div>
-                    <div class="col-md-4">
-                        <label for="newPassword" class="form-label">New Password</label>
-                        <input type="password" class="form-control" id="newPassword" required />
-                    </div>
-                    <div class="col-md-4">
-                        <label for="confirmPassword" class="form-label">Confirm New Password</label>
-                        <input type="password" class="form-control" id="confirmPassword" required />
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-outline-primary mt-3">Update Password</button>
-            </form>
-        </section>
-
-        <!-- My Prescriptions Section -->
-        <section aria-labelledby="prescriptions-section-title" class="form-section">
-            <h2 id="prescriptions-section-title" class="section-title">My Prescriptions</h2>
-
-            <div class="table-responsive">
-                <table class="table align-middle">
-                    <thead>
-                        <tr>
-                            <th scope="col">File Name</th>
-                            <th scope="col">Upload Date</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Pharmacist</th>
-                            <th scope="col">Collected Date</th>
-                            <th scope="col">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="prescriptionList">
-                        <tr>
-                            <td>prescription1.pdf</td>
-                            <td>2023-07-10</td>
-                            <td><span class="text-warning">Pending</span></td>
-                            <td>John Smith</td>
-                            <td>-</td>
-                            <td>
-                                <a href="#" class="btn btn-primary btn-sm">Download</a>
-                                <button class="btn btn-danger btn-sm">Delete</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>prescription2.pdf</td>
-                            <td>2023-06-25</td>
-                            <td><span class="text-info">Order Processing</span></td>
-                            <td>Mary Jones</td>
-                            <td>2023-07-05</td>
-                            <td>
-                                <a href="#" class="btn btn-primary btn-sm">Download</a>
-                                <button class="btn btn-danger btn-sm">Delete</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>prescription3.pdf</td>
-                            <td>2023-06-20</td>
-                            <td><span class="text-primary">Collected</span></td>
-                            <td>David Lee</td>
-                            <td>2023-06-30</td>
-                            <td>
-                                <a href="#" class="btn btn-primary btn-sm">Download</a>
-                                <button class="btn btn-danger btn-sm">Delete</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>prescription4.pdf</td>
-                            <td>2023-07-01</td>
-                            <td><span class="text-success">Ready to Collect</span></td>
-                            <td>Emily Johnson</td>
-                            <td>-</td>
-                            <td>
-                                <a href="#" class="btn btn-primary btn-sm">Download</a>
-                                <button class="btn btn-danger btn-sm">Delete</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-    </main>
 
 
 

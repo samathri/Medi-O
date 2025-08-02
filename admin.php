@@ -140,90 +140,337 @@
             </div>
         </section>
 
-        <!-- User Management -->
-        <section id="userManagementSection" class="d-none" tabindex="0">
-            <!-- Your existing User Management content here -->
-        </section>
+<!-- User Management -->
+<section id="userManagementSection" class="d-none" tabindex="0">
+  <h2 class="section-title">User Management</h2>
+  <p>View and manage all registered users.</p>
+  <input type="search" class="form-control mb-3" placeholder="Search users..." aria-label="Search users" />
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead>
+        <tr>
+          <th>User ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>U001</td>
+          <td>Alice Johnson</td>
+          <td>alice@example.com</td>
+          <td><span class="badge bg-success">Active</span></td>
+          <td>
+            <button class="btn btn-sm btn-warning" title="Suspend"><i class="bi bi-person-x"></i></button>
+            <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
+          </td>
+        </tr>
+        <tr>
+          <td>U002</td>
+          <td>Bob Williams</td>
+          <td>bob@example.com</td>
+          <td><span class="badge bg-secondary">Suspended</span></td>
+          <td>
+            <button class="btn btn-sm btn-success" title="Reactivate"><i class="bi bi-person-check"></i></button>
+            <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
 
-        <!-- Prescription Management -->
-        <section id="prescriptionManagementSection" class="d-none" tabindex="0">
-            <h2 class="section-title">Prescription Management</h2>
+<section id="prescriptionManagementSection" class="d-none" tabindex="0">
+  <h2 class="section-title">Prescription Management</h2>
 
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead class="table-light">
-                        <tr>
-                            <th scope="col">Prescription ID</th>
-                            <th scope="col">User</th>
-                            <th scope="col">File Name</th>
-                            <th scope="col">Upload Date</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Pharmacist</th>
-                            <th scope="col" class="text-center">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="prescriptionTableBody">
-                        <tr>
-                            <td>P001</td>
-                            <td>John Doe</td>
-                            <td>prescription_01.pdf</td>
-                            <td>2025-07-28</td>
-                            <td><span class="badge bg-warning text-dark">Pending</span></td>
-                            <td>Not Assigned</td>
-                            <td class="text-center">
-                                <button class="btn btn-sm btn-success me-1" title="Approve"><i
-                                        class="bi bi-check-lg"></i></button>
-                                <button class="btn btn-sm btn-danger me-1" title="Reject"><i
-                                        class="bi bi-x-lg"></i></button>
-                                <button class="btn btn-sm btn-primary me-1" title="Assign Pharmacist"><i
-                                        class="bi bi-person-plus"></i></button>
-                                <button class="btn btn-sm btn-info" title="View Logs"><i
-                                        class="bi bi-journal-text"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>P002</td>
-                            <td>Mary Smith</td>
-                            <td>prescription_02.pdf</td>
-                            <td>2025-07-20</td>
-                            <td><span class="badge bg-success">Approved</span></td>
-                            <td>Pharmacist A</td>
-                            <td class="text-center">
-                                <button class="btn btn-sm btn-primary me-1" title="Assign Pharmacist"><i
-                                        class="bi bi-person-plus"></i></button>
-                                <button class="btn btn-sm btn-info" title="View Logs"><i
-                                        class="bi bi-journal-text"></i></button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
+  <!-- Search and Filter -->
+  <div class="row mb-3">
+    <div class="col-md-6">
+      <input type="text" id="prescriptionSearch" class="form-control" placeholder="Search by User, ID, or Status" aria-label="Search prescriptions" />
+    </div>
+    <div class="col-md-3">
+      <select id="statusFilter" class="form-select" aria-label="Filter by prescription status">
+        <option value="">All Statuses</option>
+        <option value="Pending">Pending</option>
+        <option value="Approved">Approved</option>
+        <option value="Rejected">Rejected</option>
+      </select>
+    </div>
+    <div class="col-md-3 text-end">
+      <button id="clearFilters" class="btn btn-secondary">Clear Filters</button>
+    </div>
+  </div>
 
-        <!-- Pharmacist Management -->
-        <section id="pharmacistManagementSection" class="d-none" tabindex="0">
-            <!-- Existing Pharmacist Management content -->
-        </section>
+  <div class="table-responsive">
+    <table class="table table-hover align-middle" aria-describedby="prescriptionTableCaption">
+      <caption id="prescriptionTableCaption" class="visually-hidden">List of user prescriptions for management</caption>
+      <thead class="table-light">
+        <tr>
+          <th scope="col">Prescription ID</th>
+          <th scope="col">User</th>
+          <th scope="col">File Name</th>
+          <th scope="col">Upload Date</th>
+          <th scope="col">Status</th>
+          <th scope="col">Pharmacist</th>
+          <th scope="col" class="text-center">Actions</th>
+        </tr>
+      </thead>
+      <tbody id="prescriptionTableBody">
+        <tr>
+          <td>P001</td>
+          <td>John Doe</td>
+          <td><a href="uploads/prescription_01.pdf" target="_blank" rel="noopener noreferrer">prescription_01.pdf</a></td>
+          <td>2025-07-28</td>
+          <td><span class="badge bg-warning text-dark">Pending</span></td>
+          <td>Not Assigned</td>
+          <td class="text-center">
+            <button class="btn btn-sm btn-success me-1" title="Approve"><i class="bi bi-check-lg"></i></button>
+            <button class="btn btn-sm btn-danger me-1" title="Reject"><i class="bi bi-x-lg"></i></button>
+            <button class="btn btn-sm btn-primary me-1" title="Assign Pharmacist"><i class="bi bi-person-plus"></i></button>
+            <button class="btn btn-sm btn-info" title="View Logs"><i class="bi bi-journal-text"></i></button>
+          </td>
+        </tr>
+        <tr>
+          <td>P002</td>
+          <td>Mary Smith</td>
+          <td><a href="uploads/prescription_02.pdf" target="_blank" rel="noopener noreferrer">prescription_02.pdf</a></td>
+          <td>2025-07-20</td>
+          <td><span class="badge bg-success">Approved</span></td>
+          <td>Pharmacist A</td>
+          <td class="text-center">
+            <button class="btn btn-sm btn-primary me-1" title="Assign Pharmacist"><i class="bi bi-person-plus"></i></button>
+            <button class="btn btn-sm btn-info" title="View Logs"><i class="bi bi-journal-text"></i></button>
+          </td>
+        </tr>
+        <tr>
+          <td>P003</td>
+          <td>Mark Johnson</td>
+          <td><a href="uploads/prescription_03.pdf" target="_blank" rel="noopener noreferrer">prescription_03.pdf</a></td>
+          <td>2025-07-22</td>
+          <td><span class="badge bg-danger">Rejected</span></td>
+          <td>Pharmacist B</td>
+          <td class="text-center">
+            <button class="btn btn-sm btn-primary me-1" title="Assign Pharmacist"><i class="bi bi-person-plus"></i></button>
+            <button class="btn btn-sm btn-info" title="View Logs"><i class="bi bi-journal-text"></i></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
-        <!-- Product Management -->
-        <section id="productManagementSection" class="d-none" tabindex="0">
-            <!-- Existing Product Management content -->
-        </section>
+  <!-- Pagination -->
+  <nav aria-label="Prescription table pagination" class="mt-3">
+    <ul class="pagination justify-content-center">
+      <li class="page-item disabled"><button class="page-link" tabindex="-1" aria-disabled="true">Previous</button></li>
+      <li class="page-item active"><button class="page-link">1</button></li>
+      <li class="page-item"><button class="page-link">2</button></li>
+      <li class="page-item"><button class="page-link">3</button></li>
+      <li class="page-item"><button class="page-link">Next</button></li>
+    </ul>
+  </nav>
+</section>
 
-        <!-- Best-Selling Items Management -->
-        <section id="bestSellingSection" class="d-none" tabindex="0">
-            <!-- Existing Best-Selling Items Management content -->
-        </section>
 
-        <!-- CMS / Page Content Management -->
-        <section id="cmsSection" class="d-none" tabindex="0">
-            <!-- Existing CMS content -->
-        </section>
+<!-- Pharmacist Management -->
+<section id="pharmacistManagementSection" class="d-none" tabindex="0">
+  <h2 class="section-title">Pharmacist Management</h2>
+  <button class="btn btn-primary mb-3">Add New Pharmacist</button>
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead>
+        <tr>
+          <th>Pharmacist ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Prescriptions Handled</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>PH001</td>
+          <td>Dr. Sarah Lee</td>
+          <td>sarah.lee@example.com</td>
+          <td>45</td>
+          <td>
+            <button class="btn btn-sm btn-warning" title="Edit"><i class="bi bi-pencil"></i></button>
+            <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
+          </td>
+        </tr>
+        <tr>
+          <td>PH002</td>
+          <td>Dr. Michael Chen</td>
+          <td>michael.chen@example.com</td>
+          <td>38</td>
+          <td>
+            <button class="btn btn-sm btn-warning" title="Edit"><i class="bi bi-pencil"></i></button>
+            <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
 
-        <!-- Contact Inquiry Management -->
-        <section id="contactInquirySection" class="d-none" tabindex="0">
-            <!-- Existing Contact Inquiry Management content -->
-        </section>
+<!-- Product Management -->
+<section id="productManagementSection" class="d-none" tabindex="0">
+  <h2 class="section-title">Product Management</h2>
+  <button class="btn btn-primary mb-3">Add New Product</button>
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead>
+        <tr>
+          <th>Product ID</th>
+          <th>Title</th>
+          <th>Category</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>PR001</td>
+          <td>Paracetamol</td>
+          <td>Pain Relief</td>
+          <td>$5.00</td>
+          <td>120</td>
+          <td><span class="badge bg-success">Active</span></td>
+          <td>
+            <button class="btn btn-sm btn-warning" title="Edit"><i class="bi bi-pencil"></i></button>
+            <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
+            <button class="btn btn-sm btn-secondary" title="Toggle Stock Status"><i class="bi bi-toggle-on"></i></button>
+          </td>
+        </tr>
+        <tr>
+          <td>PR002</td>
+          <td>Ibuprofen</td>
+          <td>Pain Relief</td>
+          <td>$6.50</td>
+          <td>0</td>
+          <td><span class="badge bg-danger">Out of Stock</span></td>
+          <td>
+            <button class="btn btn-sm btn-warning" title="Edit"><i class="bi bi-pencil"></i></button>
+            <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
+            <button class="btn btn-sm btn-secondary" title="Toggle Stock Status"><i class="bi bi-toggle-off"></i></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- Best-Selling Items Management -->
+<section id="bestSellingSection" class="d-none" tabindex="0">
+  <h2 class="section-title">Best-Selling Items Management</h2>
+  <p>Manually mark or unmark products as "Best-Selling".</p>
+  <ul class="list-group mb-3">
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      Paracetamol
+      <button class="btn btn-sm btn-outline-danger">Unmark</button>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      Vitamin C
+      <button class="btn btn-sm btn-outline-danger">Unmark</button>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      Aspirin
+      <button class="btn btn-sm btn-outline-danger">Unmark</button>
+    </li>
+  </ul>
+  <div class="form-check form-switch">
+    <input class="form-check-input" type="checkbox" id="autoMarkToggle" />
+    <label class="form-check-label" for="autoMarkToggle">Enable auto-marking based on sales (future feature)</label>
+  </div>
+</section>
+
+<!-- CMS / Content Management -->
+<section id="cmsSection" class="d-none" tabindex="0">
+  <h2 class="section-title">CMS / Content Management</h2>
+  <p>Manage static pages and homepage content.</p>
+  <button class="btn btn-primary mb-3">Add New Page</button>
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead>
+        <tr>
+          <th>Page ID</th>
+          <th>Title</th>
+          <th>Status</th>
+          <th>Last Updated</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>PG001</td>
+          <td>About Us</td>
+          <td><span class="badge bg-success">Published</span></td>
+          <td>2025-07-20</td>
+          <td>
+            <button class="btn btn-sm btn-warning" title="Edit"><i class="bi bi-pencil"></i></button>
+            <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
+          </td>
+        </tr>
+        <tr>
+          <td>PG002</td>
+          <td>Privacy Policy</td>
+          <td><span class="badge bg-secondary">Draft</span></td>
+          <td>2025-07-15</td>
+          <td>
+            <button class="btn btn-sm btn-warning" title="Edit"><i class="bi bi-pencil"></i></button>
+            <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- Contact Inquiry Management -->
+<section id="contactInquirySection" class="d-none" tabindex="0">
+  <h2 class="section-title">Contact Inquiry Management</h2>
+  <p>View and respond to contact form submissions.</p>
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead>
+        <tr>
+          <th>Inquiry ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Message</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>C001</td>
+          <td>Emma Watson</td>
+          <td>emma@example.com</td>
+          <td>Question about product availability.</td>
+          <td><span class="badge bg-warning text-dark">Pending</span></td>
+          <td>
+            <button class="btn btn-sm btn-success" title="Mark as Responded"><i class="bi bi-check-lg"></i></button>
+          </td>
+        </tr>
+        <tr>
+          <td>C002</td>
+          <td>James Brown</td>
+          <td>james@example.com</td>
+          <td>Request for refund process.</td>
+          <td><span class="badge bg-success">Responded</span></td>
+          <td>
+            <button class="btn btn-sm btn-info" title="View Reply"><i class="bi bi-envelope-open"></i></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
 
         <!-- Admin Profile & Security -->
         <section id="adminProfileSection" class="d-none" tabindex="0">
@@ -295,6 +542,49 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/script.js"></script>
 
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+  const sidebarLinks = document.querySelectorAll('#sidebarMenu .nav-link');
+  const sections = document.querySelectorAll('main > section');
+
+  function hideAllSections() {
+    sections.forEach(sec => sec.classList.add('d-none'));
+  }
+
+  sidebarLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+
+      // Remove active class from all links
+      sidebarLinks.forEach(l => l.classList.remove('active'));
+      // Add active class to clicked link
+      link.classList.add('active');
+
+      // Hide all sections
+      hideAllSections();
+
+      // Get the target section ID from href
+      const targetId = link.getAttribute('href').substring(1); // remove #
+
+      // Show the targeted section
+      const targetSection = document.getElementById(targetId);
+      if(targetSection) {
+        targetSection.classList.remove('d-none');
+        // Optionally focus for accessibility
+        targetSection.focus();
+      }
+    });
+  });
+
+  // Optionally: Show dashboard by default
+  hideAllSections();
+  const defaultSection = document.getElementById('dashboardSection');
+  if(defaultSection) {
+    defaultSection.classList.remove('d-none');
+  }
+});
+
+    </script>
 
 
 </body>

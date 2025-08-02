@@ -146,170 +146,144 @@ session_start();
 
 
 
-    <main class="container my-5 c-profile">
 
-        <!-- Prescription Status Dashboard -->
-        <section aria-labelledby="dashboard-section-title" class="mb-5">
-            <h2 id="dashboard-section-title" class="section-title">Prescription Dashboard</h2>
-            <div class="row text-center gy-3">
-                <div class="col-6 col-md-3">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Pending</h5>
-                            <p class="card-text fs-3 text-warning" id="countPending">0</p>
+    <!-- Cart Page Section -->
+    <section class="cart-page py-5">
+        <div class="container">
+            <h2 class="cart-title text-center mb-4">Your Cart</h2>
+
+            <div class="row">
+                <!-- Cart Items -->
+                <div class="col-lg-8">
+                    <!-- Cart Item 1 -->
+                    <div class="cart-item d-flex justify-content-between align-items-center mb-4">
+                        <div class="cart-item-info d-flex align-items-center">
+                            <!-- Product Image -->
+                            <img src="images/aknicarelotion 1.png" alt="Product Image" class="cart-item-img" />
+                            <div class="cart-item-details ms-3">
+                                <h4 class="cart-item-title">Aknicare Cleanser</h4>
+                                <p class="cart-item-price">Rs. 2,910.00</p>
+                            </div>
+                        </div>
+                        <!-- Quantity and Remove -->
+                        <div class="cart-item-actions d-flex align-items-center">
+                            <input type="number" class="form-control cart-item-quantity" value="1" min="1" max="10" />
+                            <button class="btn btn-outline-danger ms-3">Remove</button>
                         </div>
                     </div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Order Processing</h5>
-                            <p class="card-text fs-3 text-info" id="countStartToPack">0</p>
+
+                    <!-- Cart Item 2 -->
+                    <div class="cart-item d-flex justify-content-between align-items-center mb-4">
+                        <div class="cart-item-info d-flex align-items-center">
+                            <!-- Product Image -->
+                            <img src="images/ACNE-AID 1.png" alt="Product Image" class="cart-item-img" />
+                            <div class="cart-item-details ms-3">
+                                <h4 class="cart-item-title">Acne-Aid Bar</h4>
+                                <p class="cart-item-price">Rs. 2,200.00</p>
+                            </div>
+                        </div>
+                        <!-- Quantity and Remove -->
+                        <div class="cart-item-actions d-flex align-items-center">
+                            <input type="number" class="form-control cart-item-quantity" value="1" min="1" max="10" />
+                            <button class="btn btn-outline-danger ms-3">Remove</button>
                         </div>
                     </div>
+
                 </div>
-                <div class="col-6 col-md-3">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Ready to Collect</h5>
-                            <p class="card-text fs-3 text-success" id="countReadyToCollect">0</p>
+
+                <!-- Cart Summary -->
+                <div class="col-lg-4">
+                    <div class="cart-summary p-4 border rounded">
+                        <h4 class="cart-summary-title">Cart Summary</h4>
+                        <div class="d-flex justify-content-between mb-3">
+                            <p class="mb-0">Subtotal:</p>
+                            <p class="mb-0">Rs. 5,110.00</p>
                         </div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Collected</h5>
-                            <p class="card-text fs-3 text-primary" id="countCollected">0</p>
+                        <div class="d-flex justify-content-between mb-3">
+                            <p class="mb-0">Shipping:</p>
+                            <p class="mb-0">Rs. 150.00</p>
                         </div>
+                        <div class="d-flex justify-content-between mb-4">
+                            <p class="mb-0">Total:</p>
+                            <p class="mb-0">Rs. 5,260.00</p>
+                        </div>
+                        <!-- Link Buttons -->
+                        <a href="checkout.php" class="btn btn-primary w-100 mb-3">Checkout</a>
+                        <a href="shop.php" class="btn btn-outline-primary w-100">Continue Shopping</a>
                     </div>
                 </div>
             </div>
+        </div>
+    </section>
 
-            <div class="mt-4" style="max-width: 400px; margin: auto;">
-                <canvas id="prescriptionStatusChart" aria-label="Prescription status chart" role="img"></canvas>
-            </div>
-        </section>
 
-        <!-- Account Section -->
-        <section aria-labelledby="account-section-title" class="form-section">
-            <h2 id="account-section-title" class="section-title">Account Details</h2>
-            <form id="profileForm" novalidate>
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label for="name" class="form-label">Full Name</label>
-                        <input type="text" class="form-control" id="name" placeholder="John Doe" required />
+    <!-- Best Selling Section -->
+
+    <section class="medi-o-best-selling-section text-center py-5">
+        <div class="container medi-o-container">
+            <h2 class="text-primary fw-semibold mb-5">BEST SELLING</h2>
+
+            <!-- Swiper -->
+            <div class="swiper mySwiper">
+                <div class="swiper-wrapper">
+                    <!-- Product Card 1 -->
+                    <div class="swiper-slide">
+                        <div class="medi-o-product-card text-center">
+                            <img src="images/Isocal-600x600.png" class="bs-img img-fluid mb-3" alt="Ortho Shield">
+                            <h6 class="medi-o-product-title">ISOCAL POWDER 425g</h6>
+                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
+                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <label for="email" class="form-label">Email Address</label>
-                        <input type="email" class="form-control" id="email" placeholder="john@example.com" required />
+
+                    <!-- Product Card 2 -->
+                    <div class="swiper-slide">
+                        <div class="medi-o-product-card text-center">
+                            <img src="images/Siddhalepa-Balm-50g 1.png" class="bs-img img-fluid mb-3"
+                                alt="Siddhalepa Balm">
+                            <h6 class="medi-o-product-title">SIDDHALEPA BALM 50G</h6>
+                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
+                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <label for="phone" class="form-label">Phone Number</label>
-                        <input type="tel" class="form-control" id="phone" placeholder="+94 77 123 4567" required />
+
+                    <!-- Product Card 3 -->
+                    <div class="swiper-slide">
+                        <div class="medi-o-product-card text-center">
+                            <img src="images/ACNE-AID 1.png" class="bs-img img-fluid mb-3" alt="Acne-Aid Bar">
+                            <h6 class="medi-o-product-title">ACNE-AID BAR 100g</h6>
+                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
+                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <label for="address" class="form-label">Address</label>
-                        <input type="text" class="form-control" id="address" placeholder="123 Street, City, Country"
-                            required />
+
+                    <!-- Product Card 4 -->
+                    <div class="swiper-slide">
+                        <div class="medi-o-product-card text-center">
+                            <img src="images/aknicarelotion 1.png" class="bs-img img-fluid mb-3"
+                                alt="Aknicare Cleanser">
+                            <h6 class="medi-o-product-title">AKNICARE CLEANSER 200ml</h6>
+                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
+                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
+                        </div>
                     </div>
+
+                    <!-- Product Card 4 -->
+                    <div class="swiper-slide">
+                        <div class="medi-o-product-card text-center">
+                            <img src="images/aknicarelotion 1.png" class="bs-img img-fluid mb-3"
+                                alt="Aknicare Cleanser">
+                            <h6 class="medi-o-product-title">AKNICARE CLEANSER 200ml</h6>
+                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
+                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
+                        </div>
+                    </div>
+
+
                 </div>
-
-                <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
-            </form>
-
-            <!-- Change Password -->
-            <hr class="my-4" />
-            <h3 class="section-title">Change Password</h3>
-            <form id="passwordForm" novalidate>
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <label for="oldPassword" class="form-label">Old Password</label>
-                        <input type="password" class="form-control" id="oldPassword" required />
-                    </div>
-                    <div class="col-md-4">
-                        <label for="newPassword" class="form-label">New Password</label>
-                        <input type="password" class="form-control" id="newPassword" required />
-                    </div>
-                    <div class="col-md-4">
-                        <label for="confirmPassword" class="form-label">Confirm New Password</label>
-                        <input type="password" class="form-control" id="confirmPassword" required />
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-outline-primary mt-3">Update Password</button>
-            </form>
-        </section>
-
-        <!-- My Prescriptions Section -->
-        <section aria-labelledby="prescriptions-section-title" class="form-section">
-            <h2 id="prescriptions-section-title" class="section-title">My Prescriptions</h2>
-
-            <div class="table-responsive">
-                <table class="table align-middle">
-                    <thead>
-                        <tr>
-                            <th scope="col">File Name</th>
-                            <th scope="col">Upload Date</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Pharmacist</th>
-                            <th scope="col">Collected Date</th>
-                            <th scope="col">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="prescriptionList">
-                        <tr>
-                            <td>prescription1.pdf</td>
-                            <td>2023-07-10</td>
-                            <td><span class="text-warning">Pending</span></td>
-                            <td>John Smith</td>
-                            <td>-</td>
-                            <td>
-                                <a href="#" class="btn btn-primary btn-sm">Download</a>
-                                <button class="btn btn-danger btn-sm">Delete</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>prescription2.pdf</td>
-                            <td>2023-06-25</td>
-                            <td><span class="text-info">Order Processing</span></td>
-                            <td>Mary Jones</td>
-                            <td>2023-07-05</td>
-                            <td>
-                                <a href="#" class="btn btn-primary btn-sm">Download</a>
-                                <button class="btn btn-danger btn-sm">Delete</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>prescription3.pdf</td>
-                            <td>2023-06-20</td>
-                            <td><span class="text-primary">Collected</span></td>
-                            <td>David Lee</td>
-                            <td>2023-06-30</td>
-                            <td>
-                                <a href="#" class="btn btn-primary btn-sm">Download</a>
-                                <button class="btn btn-danger btn-sm">Delete</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>prescription4.pdf</td>
-                            <td>2023-07-01</td>
-                            <td><span class="text-success">Ready to Collect</span></td>
-                            <td>Emily Johnson</td>
-                            <td>-</td>
-                            <td>
-                                <a href="#" class="btn btn-primary btn-sm">Download</a>
-                                <button class="btn btn-danger btn-sm">Delete</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
             </div>
-        </section>
-    </main>
-
-
-
-
+        </div>
+    </section>
 
 
 

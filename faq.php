@@ -145,167 +145,195 @@ session_start();
     </header>
 
 
+    <!-- FAQ Section -->
+    <section class="faq-section py-5">
+        <div class="container">
+            <!-- Title -->
+            <div class="row text-center mb-4">
+                <h2 class="faq-title">FREQUENTLY ASKED QUESTIONS</h2>
+                <p class="faq-subtitle">We are here to answer all your Frequently Asked Questions</p>
+            </div>
 
-    <main class="container my-5 c-profile">
+            <!-- Accordion for FAQ -->
+            <div class="accordion" id="faqAccordion">
+                <!-- FAQ Item 1 -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faqHeading1">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#faqCollapse1" aria-expanded="true" aria-controls="faqCollapse1">
+                            1. How do I place an order on Medi-O?
+                        </button>
+                    </h2>
+                    <div id="faqCollapse1" class="accordion-collapse collapse show" aria-labelledby="faqHeading1"
+                        data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Placing an order is easy! Simply register or log in, browse our medicine catalog, add items
+                            to your cart, upload a prescription if required, and proceed to checkout.
+                        </div>
+                    </div>
+                </div>
 
-        <!-- Prescription Status Dashboard -->
-        <section aria-labelledby="dashboard-section-title" class="mb-5">
-            <h2 id="dashboard-section-title" class="section-title">Prescription Dashboard</h2>
-            <div class="row text-center gy-3">
-                <div class="col-6 col-md-3">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Pending</h5>
-                            <p class="card-text fs-3 text-warning" id="countPending">0</p>
+                <!-- FAQ Item 2 -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faqHeading2">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#faqCollapse2" aria-expanded="false" aria-controls="faqCollapse2">
+                            2. Do I need a prescription to order medicine?
+                        </button>
+                    </h2>
+                    <div id="faqCollapse2" class="accordion-collapse collapse" aria-labelledby="faqHeading2"
+                        data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            You only need a prescription for certain types of medicines. The system will notify you if a
+                            prescription is required for your chosen items.
                         </div>
                     </div>
                 </div>
-                <div class="col-6 col-md-3">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Order Processing</h5>
-                            <p class="card-text fs-3 text-info" id="countStartToPack">0</p>
+
+                <!-- FAQ Item 3 -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faqHeading3">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#faqCollapse3" aria-expanded="false" aria-controls="faqCollapse3">
+                            3. How does prescription verification work?
+                        </button>
+                    </h2>
+                    <div id="faqCollapse3" class="accordion-collapse collapse" aria-labelledby="faqHeading3"
+                        data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Once you upload your prescription, our team of certified pharmacists will review and verify
+                            the document before processing your order.
                         </div>
                     </div>
                 </div>
-                <div class="col-6 col-md-3">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Ready to Collect</h5>
-                            <p class="card-text fs-3 text-success" id="countReadyToCollect">0</p>
+
+                <!-- FAQ Item 4 -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faqHeading4">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#faqCollapse4" aria-expanded="false" aria-controls="faqCollapse4">
+                            4. How long does delivery take?
+                        </button>
+                    </h2>
+                    <div id="faqCollapse4" class="accordion-collapse collapse" aria-labelledby="faqHeading4"
+                        data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Delivery typically takes 3-5 business days, depending on your location. You will receive an
+                            email with tracking information once your order has shipped.
                         </div>
                     </div>
                 </div>
-                <div class="col-6 col-md-3">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Collected</h5>
-                            <p class="card-text fs-3 text-primary" id="countCollected">0</p>
+
+                <!-- FAQ Item 5 -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faqHeading5">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#faqCollapse5" aria-expanded="false" aria-controls="faqCollapse5">
+                            5. Is it safe to order medicine online?
+                        </button>
+                    </h2>
+                    <div id="faqCollapse5" class="accordion-collapse collapse" aria-labelledby="faqHeading5"
+                        data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Yes, it is completely safe! We prioritize the privacy and safety of your personal and
+                            payment information. We use secure payment methods and encrypted data transmission.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 6 -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faqHeading6">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#faqCollapse6" aria-expanded="false" aria-controls="faqCollapse6">
+                            6. Can I track my order?
+                        </button>
+                    </h2>
+                    <div id="faqCollapse6" class="accordion-collapse collapse" aria-labelledby="faqHeading6"
+                        data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Yes, once your order is shipped, you will receive an email with a tracking link to follow
+                            your order’s progress until it reaches your doorstep.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 7 -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faqHeading7">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#faqCollapse7" aria-expanded="false" aria-controls="faqCollapse7">
+                            7. What payment methods are accepted?
+                        </button>
+                    </h2>
+                    <div id="faqCollapse7" class="accordion-collapse collapse" aria-labelledby="faqHeading7"
+                        data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            We accept various payment methods including credit/debit cards, mobile payments, and bank
+                            transfers for your convenience.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 8 -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faqHeading8">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#faqCollapse8" aria-expanded="false" aria-controls="faqCollapse8">
+                            8. Can I get reminders to take my medicine?
+                        </button>
+                    </h2>
+                    <div id="faqCollapse8" class="accordion-collapse collapse" aria-labelledby="faqHeading8"
+                        data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Yes, we offer an optional medication reminder service, which will send you notifications to
+                            remind you when it’s time to take your medicine.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 9 -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faqHeading9">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#faqCollapse9" aria-expanded="false" aria-controls="faqCollapse9">
+                            9. Is my personal and medical information safe?
+                        </button>
+                    </h2>
+                    <div id="faqCollapse9" class="accordion-collapse collapse" aria-labelledby="faqHeading9"
+                        data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Yes, your privacy is important to us. All personal and medical information is stored
+                            securely and will never be shared without your consent.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 10 -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="faqHeading10">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#faqCollapse10" aria-expanded="false" aria-controls="faqCollapse10">
+                            10. Who can I contact if I need help?
+                        </button>
+                    </h2>
+                    <div id="faqCollapse10" class="accordion-collapse collapse" aria-labelledby="faqHeading10"
+                        data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            You can contact our customer support team by email at <a
+                                href="mailto:info@medio.com">info@medio.com</a> or by calling our helpline at +94 77 123
+                            4567.
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </section>
 
-            <div class="mt-4" style="max-width: 400px; margin: auto;">
-                <canvas id="prescriptionStatusChart" aria-label="Prescription status chart" role="img"></canvas>
-            </div>
-        </section>
 
-        <!-- Account Section -->
-        <section aria-labelledby="account-section-title" class="form-section">
-            <h2 id="account-section-title" class="section-title">Account Details</h2>
-            <form id="profileForm" novalidate>
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label for="name" class="form-label">Full Name</label>
-                        <input type="text" class="form-control" id="name" placeholder="John Doe" required />
-                    </div>
-                    <div class="col-md-6">
-                        <label for="email" class="form-label">Email Address</label>
-                        <input type="email" class="form-control" id="email" placeholder="john@example.com" required />
-                    </div>
-                    <div class="col-md-6">
-                        <label for="phone" class="form-label">Phone Number</label>
-                        <input type="tel" class="form-control" id="phone" placeholder="+94 77 123 4567" required />
-                    </div>
-                    <div class="col-md-6">
-                        <label for="address" class="form-label">Address</label>
-                        <input type="text" class="form-control" id="address" placeholder="123 Street, City, Country"
-                            required />
-                    </div>
-                </div>
 
-                <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
-            </form>
 
-            <!-- Change Password -->
-            <hr class="my-4" />
-            <h3 class="section-title">Change Password</h3>
-            <form id="passwordForm" novalidate>
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <label for="oldPassword" class="form-label">Old Password</label>
-                        <input type="password" class="form-control" id="oldPassword" required />
-                    </div>
-                    <div class="col-md-4">
-                        <label for="newPassword" class="form-label">New Password</label>
-                        <input type="password" class="form-control" id="newPassword" required />
-                    </div>
-                    <div class="col-md-4">
-                        <label for="confirmPassword" class="form-label">Confirm New Password</label>
-                        <input type="password" class="form-control" id="confirmPassword" required />
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-outline-primary mt-3">Update Password</button>
-            </form>
-        </section>
 
-        <!-- My Prescriptions Section -->
-        <section aria-labelledby="prescriptions-section-title" class="form-section">
-            <h2 id="prescriptions-section-title" class="section-title">My Prescriptions</h2>
-
-            <div class="table-responsive">
-                <table class="table align-middle">
-                    <thead>
-                        <tr>
-                            <th scope="col">File Name</th>
-                            <th scope="col">Upload Date</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Pharmacist</th>
-                            <th scope="col">Collected Date</th>
-                            <th scope="col">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="prescriptionList">
-                        <tr>
-                            <td>prescription1.pdf</td>
-                            <td>2023-07-10</td>
-                            <td><span class="text-warning">Pending</span></td>
-                            <td>John Smith</td>
-                            <td>-</td>
-                            <td>
-                                <a href="#" class="btn btn-primary btn-sm">Download</a>
-                                <button class="btn btn-danger btn-sm">Delete</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>prescription2.pdf</td>
-                            <td>2023-06-25</td>
-                            <td><span class="text-info">Order Processing</span></td>
-                            <td>Mary Jones</td>
-                            <td>2023-07-05</td>
-                            <td>
-                                <a href="#" class="btn btn-primary btn-sm">Download</a>
-                                <button class="btn btn-danger btn-sm">Delete</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>prescription3.pdf</td>
-                            <td>2023-06-20</td>
-                            <td><span class="text-primary">Collected</span></td>
-                            <td>David Lee</td>
-                            <td>2023-06-30</td>
-                            <td>
-                                <a href="#" class="btn btn-primary btn-sm">Download</a>
-                                <button class="btn btn-danger btn-sm">Delete</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>prescription4.pdf</td>
-                            <td>2023-07-01</td>
-                            <td><span class="text-success">Ready to Collect</span></td>
-                            <td>Emily Johnson</td>
-                            <td>-</td>
-                            <td>
-                                <a href="#" class="btn btn-primary btn-sm">Download</a>
-                                <button class="btn btn-danger btn-sm">Delete</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-    </main>
 
 
 

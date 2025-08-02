@@ -146,166 +146,78 @@ session_start();
 
 
 
-    <main class="container my-5 c-profile">
 
-        <!-- Prescription Status Dashboard -->
-        <section aria-labelledby="dashboard-section-title" class="mb-5">
-            <h2 id="dashboard-section-title" class="section-title">Prescription Dashboard</h2>
-            <div class="row text-center gy-3">
-                <div class="col-6 col-md-3">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Pending</h5>
-                            <p class="card-text fs-3 text-warning" id="countPending">0</p>
-                        </div>
-                    </div>
+    <!-- Hero Section -->
+    <section class="medi-o-hero about-hero py-5">
+    </section>
+
+
+
+
+
+    <!-- About Us Section -->
+    <section class="who-we-are py-5">
+        <div class="container">
+            <div class="row text-center">
+                <h2 class="who-we-are-title mb-4">WHO WE ARE</h2>
+                <p class="who-we-are-desc mb-4">
+                    Medi-O was developed to transform traditional pharmacy services into a secure, digital experience —
+                    allowing users to order medications, upload prescriptions, and receive verified treatments from the
+                    comfort of their homes.
+                    <br><br>
+                    With a focus on reliability, convenience, and innovation, Medi-O introduces features like
+                    QR-code-based prescription verification, automated medicine reminders, and a streamlined order
+                    process. Built with care and powered by technology, Medi-O is committed to becoming a trusted name
+                    in digital healthcare — offering a smarter way to manage your medication needs.
+                </p>
+            </div>
+
+            <!-- Range of Products Section -->
+            <div class="row my-5 align-items-center justify-content-center">
+                <!-- Image on the left and Text on the right -->
+                <div class="col-md-5 d-flex justify-content-center">
+                    <img src="images/products.png" alt="Products Icon" class="icon-img mb-3">
                 </div>
-                <div class="col-6 col-md-3">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Order Processing</h5>
-                            <p class="card-text fs-3 text-info" id="countStartToPack">0</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Ready to Collect</h5>
-                            <p class="card-text fs-3 text-success" id="countReadyToCollect">0</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Collected</h5>
-                            <p class="card-text fs-3 text-primary" id="countCollected">0</p>
-                        </div>
-                    </div>
+                <div class="col-md-7 text-md-start text-center">
+                    <h4 class="section-title">Range of Products</h4>
+                    <p class="section-desc">
+                        We ensure ourselves on offering an extensive range of carefully selected products to meet the
+                        everyday health and wellness needs of our customers.
+                        From essential prescription medicines and over-the-counter drugs to premium skincare and
+                        cosmetic items, our catalogue covers both pharmaceutical and cosmetic categories.
+                    </p>
                 </div>
             </div>
 
-            <div class="mt-4" style="max-width: 400px; margin: auto;">
-                <canvas id="prescriptionStatusChart" aria-label="Prescription status chart" role="img"></canvas>
-            </div>
-        </section>
-
-        <!-- Account Section -->
-        <section aria-labelledby="account-section-title" class="form-section">
-            <h2 id="account-section-title" class="section-title">Account Details</h2>
-            <form id="profileForm" novalidate>
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label for="name" class="form-label">Full Name</label>
-                        <input type="text" class="form-control" id="name" placeholder="John Doe" required />
-                    </div>
-                    <div class="col-md-6">
-                        <label for="email" class="form-label">Email Address</label>
-                        <input type="email" class="form-control" id="email" placeholder="john@example.com" required />
-                    </div>
-                    <div class="col-md-6">
-                        <label for="phone" class="form-label">Phone Number</label>
-                        <input type="tel" class="form-control" id="phone" placeholder="+94 77 123 4567" required />
-                    </div>
-                    <div class="col-md-6">
-                        <label for="address" class="form-label">Address</label>
-                        <input type="text" class="form-control" id="address" placeholder="123 Street, City, Country"
-                            required />
-                    </div>
+            <!-- Customer Care Section --><!-- Customer Care Section -->
+            <div class="row my-5 align-items-center justify-content-center">
+                <!-- Image on top for mobile view, left for desktop view -->
+                <div class="col-12 col-md-5 d-flex justify-content-center order-1 order-md-2">
+                    <img src="images/customer.png" alt="Customer Care Icon" class="icon-img mb-3">
                 </div>
 
-                <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
-            </form>
-
-            <!-- Change Password -->
-            <hr class="my-4" />
-            <h3 class="section-title">Change Password</h3>
-            <form id="passwordForm" novalidate>
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <label for="oldPassword" class="form-label">Old Password</label>
-                        <input type="password" class="form-control" id="oldPassword" required />
-                    </div>
-                    <div class="col-md-4">
-                        <label for="newPassword" class="form-label">New Password</label>
-                        <input type="password" class="form-control" id="newPassword" required />
-                    </div>
-                    <div class="col-md-4">
-                        <label for="confirmPassword" class="form-label">Confirm New Password</label>
-                        <input type="password" class="form-control" id="confirmPassword" required />
-                    </div>
+                <!-- Text on the bottom for mobile view, left for desktop view -->
+                <div class="col-12 col-md-7 text-center text-md-start order-2 order-md-1">
+                    <h4 class="section-title">Customer Care</h4>
+                    <p class="section-desc">
+                        Our team of professionally trained pharmacists is committed to delivering outstanding customer
+                        service with care and precision. Whether you're seeking advice on your medication, assistance
+                        with your prescription, or support with your order, we ensure every interaction is handled with
+                        the highest level of professionalism, compassion, and trust. Your health and satisfaction are
+                        our top priorities.
+                    </p>
                 </div>
-                <button type="submit" class="btn btn-outline-primary mt-3">Update Password</button>
-            </form>
-        </section>
-
-        <!-- My Prescriptions Section -->
-        <section aria-labelledby="prescriptions-section-title" class="form-section">
-            <h2 id="prescriptions-section-title" class="section-title">My Prescriptions</h2>
-
-            <div class="table-responsive">
-                <table class="table align-middle">
-                    <thead>
-                        <tr>
-                            <th scope="col">File Name</th>
-                            <th scope="col">Upload Date</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Pharmacist</th>
-                            <th scope="col">Collected Date</th>
-                            <th scope="col">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="prescriptionList">
-                        <tr>
-                            <td>prescription1.pdf</td>
-                            <td>2023-07-10</td>
-                            <td><span class="text-warning">Pending</span></td>
-                            <td>John Smith</td>
-                            <td>-</td>
-                            <td>
-                                <a href="#" class="btn btn-primary btn-sm">Download</a>
-                                <button class="btn btn-danger btn-sm">Delete</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>prescription2.pdf</td>
-                            <td>2023-06-25</td>
-                            <td><span class="text-info">Order Processing</span></td>
-                            <td>Mary Jones</td>
-                            <td>2023-07-05</td>
-                            <td>
-                                <a href="#" class="btn btn-primary btn-sm">Download</a>
-                                <button class="btn btn-danger btn-sm">Delete</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>prescription3.pdf</td>
-                            <td>2023-06-20</td>
-                            <td><span class="text-primary">Collected</span></td>
-                            <td>David Lee</td>
-                            <td>2023-06-30</td>
-                            <td>
-                                <a href="#" class="btn btn-primary btn-sm">Download</a>
-                                <button class="btn btn-danger btn-sm">Delete</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>prescription4.pdf</td>
-                            <td>2023-07-01</td>
-                            <td><span class="text-success">Ready to Collect</span></td>
-                            <td>Emily Johnson</td>
-                            <td>-</td>
-                            <td>
-                                <a href="#" class="btn btn-primary btn-sm">Download</a>
-                                <button class="btn btn-danger btn-sm">Delete</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
             </div>
-        </section>
-    </main>
+
+
+
+        </div>
+    </section>
+
+
+
+
+
 
 
 

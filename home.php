@@ -144,168 +144,216 @@ session_start();
         </nav>
     </header>
 
-
-
-    <main class="container my-5 c-profile">
-
-        <!-- Prescription Status Dashboard -->
-        <section aria-labelledby="dashboard-section-title" class="mb-5">
-            <h2 id="dashboard-section-title" class="section-title">Prescription Dashboard</h2>
-            <div class="row text-center gy-3">
-                <div class="col-6 col-md-3">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Pending</h5>
-                            <p class="card-text fs-3 text-warning" id="countPending">0</p>
-                        </div>
+    <!-- Hero Section -->
+    <section class="medi-o-hero hero py-5">
+        <div class="container medi-o-container">
+            <div class="row medi-o-row align-items-center text-center">
+                <!-- Text -->
+                <div class="col-lg-6 medi-o-col">
+                    <div class="medi-o-hero-content hero-content">
+                        <h2 class="medi-o-hero-title hero__title">Medicine at Your Fingertips!</h2>
+                        <p class="medi-o-hero-desc hero__desc">Skip the queues and manage your prescriptions online.
+                            Medi-O lets you order medicines, upload prescriptions, and receive trusted care from
+                            home.</p>
+                        <button class="btn btn-primary medi-o-btn-primary hero__btn">Upload Your
+                            Prescription</button>
                     </div>
                 </div>
-                <div class="col-6 col-md-3">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Order Processing</h5>
-                            <p class="card-text fs-3 text-info" id="countStartToPack">0</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Ready to Collect</h5>
-                            <p class="card-text fs-3 text-success" id="countReadyToCollect">0</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Collected</h5>
-                            <p class="card-text fs-3 text-primary" id="countCollected">0</p>
-                        </div>
-                    </div>
-                </div>
+                <!-- Image could go here if needed -->
             </div>
+        </div>
+    </section>
 
-            <div class="mt-4" style="max-width: 400px; margin: auto;">
-                <canvas id="prescriptionStatusChart" aria-label="Prescription status chart" role="img"></canvas>
-            </div>
-        </section>
+    <!-- Search Bar -->
+    <section class="medi-o-search-bar search-bar mb-5">
+        <div class="container medi-o-container">
+            <form class="d-flex justify-content-center position-relative medi-o-search-form" role="search"
+                aria-label="Site search">
+                <input type="search" id="medi-o-search-input-001" class="form-control medi-o-search-input search-input"
+                    placeholder="Search Here....." aria-labelledby="medi-o-search-label-001" />
+                <label id="medi-o-search-label-001" for="medi-o-search-input-001" class="visually-hidden">Search</label>
 
-        <!-- Account Section -->
-        <section aria-labelledby="account-section-title" class="form-section">
-            <h2 id="account-section-title" class="section-title">Account Details</h2>
-            <form id="profileForm" novalidate>
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label for="name" class="form-label">Full Name</label>
-                        <input type="text" class="form-control" id="name" placeholder="John Doe" required />
-                    </div>
-                    <div class="col-md-6">
-                        <label for="email" class="form-label">Email Address</label>
-                        <input type="email" class="form-control" id="email" placeholder="john@example.com" required />
-                    </div>
-                    <div class="col-md-6">
-                        <label for="phone" class="form-label">Phone Number</label>
-                        <input type="tel" class="form-control" id="phone" placeholder="+94 77 123 4567" required />
-                    </div>
-                    <div class="col-md-6">
-                        <label for="address" class="form-label">Address</label>
-                        <input type="text" class="form-control" id="address" placeholder="123 Street, City, Country"
-                            required />
-                    </div>
-                </div>
-
-                <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+                <button type="submit" id="medi-o-search-btn-001" class="btn medi-o-search-btn search-btn"
+                    aria-label="Submit search">
+                    <i class="bi bi-search"></i>
+                </button>
             </form>
+        </div>
+    </section>
 
-            <!-- Change Password -->
-            <hr class="my-4" />
-            <h3 class="section-title">Change Password</h3>
-            <form id="passwordForm" novalidate>
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <label for="oldPassword" class="form-label">Old Password</label>
-                        <input type="password" class="form-control" id="oldPassword" required />
+
+    <!-- Categories -->
+    <section class="medi-o-categories categories mb-5">
+        <div class="container medi-o-container">
+            <div class="row g-3 justify-content-center medi-o-categories-row">
+
+                <!-- Category 1 -->
+                <div class="col-6 col-md-3 medi-o-category-col">
+                    <a href="shop.php" class="text-decoration-none">
+                        <div class="medi-o-category-card category-card p-4">
+                            <img src="images/Adult-Care1-01 1.png" alt="Adult Care Icon"
+                                class="medi-o-category-icon-img" />
+                            <p class="medi-o-category-text category-text mt-3">Adult Care</p>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Category 2 -->
+                <div class="col-6 col-md-3 medi-o-category-col">
+                    <a href="shop.php" class="text-decoration-none">
+                        <div class="medi-o-category-card category-card p-4">
+                            <img src="images/Personal-Care-01-01-01 1.png" alt="Personal Care Icon"
+                                class="medi-o-category-icon-img" />
+                            <p class="medi-o-category-text category-text mt-3">Personal Care</p>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Category 3 -->
+                <div class="col-6 col-md-3 medi-o-category-col">
+                    <a href="shop.php" class="text-decoration-none">
+                        <div class="medi-o-category-card category-card p-4">
+                            <img src="images/Diabetic.png" alt="Diabetes Care Icon" class="medi-o-category-icon-img" />
+                            <p class="medi-o-category-text category-text mt-3">Diabetes Care</p>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Category 4 -->
+                <div class="col-6 col-md-3 medi-o-category-col">
+                    <a href="shop.php" class="text-decoration-none">
+                        <div class="medi-o-category-card category-card p-4">
+                            <img src="images/baby.png" alt="Baby Care Icon" class="medi-o-category-icon-img" />
+                            <p class="medi-o-category-text category-text mt-3">Baby Care</p>
+                        </div>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+    <!-- About Medi-O Section -->
+    <section class="medi-o-about-section text-white text-center py-5">
+        <div class="container medi-o-container">
+            <h2 class="medi-o-about-title fw-semibold mb-4">About Medi-O</h2>
+            <p class="medi-o-about-text mb-3 px-2 px-md-5">
+                Medi-O was developed to transform traditional pharmacy services into a secure, digital experience —
+                allowing users to order medications, upload prescriptions, and receive verified treatments from
+                the comfort of their homes.
+            </p>
+            <p class="medi-o-about-text mb-4 px-2 px-md-5">
+                With a focus on reliability, convenience, and innovation, Medi-O introduces features like
+                QR-code–based prescription verification, automated medicine reminders, and a streamlined order
+                process. Built with care and powered by technology, Medi-O is committed to becoming a trusted
+                name in digital healthcare — offering a smarter way to manage your medication needs.
+            </p>
+            <a href="#" class="btn btn-outline-light rounded-pill px-4 py-2 medi-o-btn-outline">Read More</a>
+        </div>
+    </section>
+
+    <!-- Best Selling Section -->
+
+    <section class="medi-o-best-selling-section text-center py-5">
+        <div class="container medi-o-container">
+            <h2 class="text-primary fw-semibold mb-5">BEST SELLING</h2>
+
+            <!-- Swiper -->
+            <div class="swiper mySwiper">
+                <div class="swiper-wrapper">
+                    <!-- Product Card 1 -->
+                    <div class="swiper-slide">
+                        <div class="medi-o-product-card text-center">
+                            <img src="images/Isocal-600x600.png" class="bs-img img-fluid mb-3" alt="Ortho Shield">
+                            <h6 class="medi-o-product-title">ISOCAL POWDER 425g</h6>
+                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
+                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
+                        </div>
                     </div>
-                    <div class="col-md-4">
-                        <label for="newPassword" class="form-label">New Password</label>
-                        <input type="password" class="form-control" id="newPassword" required />
+
+                    <!-- Product Card 2 -->
+                    <div class="swiper-slide">
+                        <div class="medi-o-product-card text-center">
+                            <img src="images/Siddhalepa-Balm-50g 1.png" class="bs-img img-fluid mb-3"
+                                alt="Siddhalepa Balm">
+                            <h6 class="medi-o-product-title">SIDDHALEPA BALM 50G</h6>
+                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
+                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
+                        </div>
                     </div>
-                    <div class="col-md-4">
-                        <label for="confirmPassword" class="form-label">Confirm New Password</label>
-                        <input type="password" class="form-control" id="confirmPassword" required />
+
+                    <!-- Product Card 3 -->
+                    <div class="swiper-slide">
+                        <div class="medi-o-product-card text-center">
+                            <img src="images/ACNE-AID 1.png" class="bs-img img-fluid mb-3" alt="Acne-Aid Bar">
+                            <h6 class="medi-o-product-title">ACNE-AID BAR 100g</h6>
+                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
+                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 4 -->
+                    <div class="swiper-slide">
+                        <div class="medi-o-product-card text-center">
+                            <img src="images/aknicarelotion 1.png" class="bs-img img-fluid mb-3"
+                                alt="Aknicare Cleanser">
+                            <h6 class="medi-o-product-title">AKNICARE CLEANSER 200ml</h6>
+                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
+                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 4 -->
+                    <div class="swiper-slide">
+                        <div class="medi-o-product-card text-center">
+                            <img src="images/aknicarelotion 1.png" class="bs-img img-fluid mb-3"
+                                alt="Aknicare Cleanser">
+                            <h6 class="medi-o-product-title">AKNICARE CLEANSER 200ml</h6>
+                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
+                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Trust Section -->
+    <section class="py-5 bg-white">
+        <div class="container">
+            <div class="row gy-4 text-center">
+
+                <!-- Box 1 -->
+                <div class="col-12 col-md-4">
+                    <div class="trust-box p-3 text-center">
+                        100% Secured Payment Methods
                     </div>
                 </div>
-                <button type="submit" class="btn btn-outline-primary mt-3">Update Password</button>
-            </form>
-        </section>
 
-        <!-- My Prescriptions Section -->
-        <section aria-labelledby="prescriptions-section-title" class="form-section">
-            <h2 id="prescriptions-section-title" class="section-title">My Prescriptions</h2>
+                <!-- Box 2 -->
+                <div class="col-12 col-md-4">
+                    <div class="trust-box p-3 text-center">
+                        365 Days Quick Support
+                    </div>
+                </div>
 
-            <div class="table-responsive">
-                <table class="table align-middle">
-                    <thead>
-                        <tr>
-                            <th scope="col">File Name</th>
-                            <th scope="col">Upload Date</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Pharmacist</th>
-                            <th scope="col">Collected Date</th>
-                            <th scope="col">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="prescriptionList">
-                        <tr>
-                            <td>prescription1.pdf</td>
-                            <td>2023-07-10</td>
-                            <td><span class="text-warning">Pending</span></td>
-                            <td>John Smith</td>
-                            <td>-</td>
-                            <td>
-                                <a href="#" class="btn btn-primary btn-sm">Download</a>
-                                <button class="btn btn-danger btn-sm">Delete</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>prescription2.pdf</td>
-                            <td>2023-06-25</td>
-                            <td><span class="text-info">Order Processing</span></td>
-                            <td>Mary Jones</td>
-                            <td>2023-07-05</td>
-                            <td>
-                                <a href="#" class="btn btn-primary btn-sm">Download</a>
-                                <button class="btn btn-danger btn-sm">Delete</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>prescription3.pdf</td>
-                            <td>2023-06-20</td>
-                            <td><span class="text-primary">Collected</span></td>
-                            <td>David Lee</td>
-                            <td>2023-06-30</td>
-                            <td>
-                                <a href="#" class="btn btn-primary btn-sm">Download</a>
-                                <button class="btn btn-danger btn-sm">Delete</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>prescription4.pdf</td>
-                            <td>2023-07-01</td>
-                            <td><span class="text-success">Ready to Collect</span></td>
-                            <td>Emily Johnson</td>
-                            <td>-</td>
-                            <td>
-                                <a href="#" class="btn btn-primary btn-sm">Download</a>
-                                <button class="btn btn-danger btn-sm">Delete</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <!-- Box 3 -->
+                <div class="col-12 col-md-4">
+                    <div class="trust-box p-3 text-center">
+                        Trusted Pharmacist Approval
+                    </div>
+                </div>
+
             </div>
-        </section>
-    </main>
+        </div>
+    </section>
+
+
+
 
 
 

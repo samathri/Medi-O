@@ -149,12 +149,17 @@ body {
     display: flex;
     justify-content: flex-end;
     width: 100%;
+    font-size: 16px !important;
+
   }
 
   .medi-o-nav-icons-mobile a {
-    font-size: 24px;
     margin-left: 0;
     margin-right: 20px;
+  }
+
+  .nav-m{
+    font-size: 20px !important;
   }
 }
 /* Overlay background – dims full screen */
@@ -2336,7 +2341,17 @@ form input.form-control {
     }
 
 
+.medi-o-nav-icons .dropdown-toggle {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
 
+
+.dropdown-item:hover {
+    background-color: none !important;
+    width: 80% !important;
+}
 
 
 

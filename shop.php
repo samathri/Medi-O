@@ -1,6 +1,37 @@
 <?php
 session_start();
 ?>
+
+<?php
+require_once 'db_config.php'; // Include database connection
+
+// Fetch products from the database
+$sql = "SELECT * FROM products";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+    // Loop through the results and display each product
+    while ($row = $result->fetch_assoc()) {
+        echo '<div class="col-6 col-md-3 col-lg-3">
+                <div class="medi-o-product-card text-center">
+                    <img src="uploads/' . htmlspecialchars($row['image_path']) . '" class="bs-img img-fluid mb-3" alt="' . htmlspecialchars($row['name']) . '">
+                    <h6 class="medi-o-product-title">' . htmlspecialchars($row['name']) . '</h6>
+                    <p class="medi-o-product-price mb-1">Rs. ' . number_format($row['price'], 2) . '</p>
+                    <p class="medi-o-product-stock">Stock: ' . $row['stock'] . ' left</p>
+                    <div class="text-warning">★ ★ ★ ☆ ☆</div>';
+
+        // Show best seller badge if the product is a best seller
+        if ($row['best_selling'] == 1) {
+            echo '<span class="badge bg-success">Best Seller</span>';
+        }
+
+        echo '</div></div>';
+    }
+} else {
+    echo "No products available.";
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -144,168 +175,186 @@ session_start();
         </nav>
     </header>
 
+    <section class="medi-o-shop-page container-fluid px-3 px-md-5">
+
+        <div class="row">
+            <!-- Sidebar -->
+            <aside class="col-lg-3 mb-4">
+                <h5 class="fw-bold text-primary">Categories</h5>
+                <!-- Accordion for mobile/tablet view -->
+                <div class="accordion d-lg-none" id="categoryAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="categoryHeading1">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#categoryCollapse1" aria-expanded="true"
+                                aria-controls="categoryCollapse1">
+                                All
+                            </button>
+                        </h2>
+                        <div id="categoryCollapse1" class="accordion-collapse collapse show"
+                            aria-labelledby="categoryHeading1" data-bs-parent="#categoryAccordion">
+                            <div class="accordion-body">
+                                <ul class="list-unstyled">
+                                    <li><a href="#">Adult Care</a></li>
+                                    <li><a href="#">Ayurvedic Care</a></li>
+                                    <li><a href="#">Baby Care</a></li>
+                                    <li><a href="#">Dental Care</a></li>
+                                    <li><a href="#">Diabetes Care</a></li>
+                                    <li><a href="#">Dressings</a></li>
+                                    <li><a href="#">Doctors Equipment</a></li>
+                                    <li><a href="#">First Aid Items</a></li>
+                                    <li><a href="#">Orthopedic Aid</a></li>
+                                    <li><a href="#">Personal Care</a></li>
+                                    <li><a href="#">Supplements</a></li>
+                                    <li><a href="#">Veterinary</a></li>
+                                    <li><a href="#">Wellness Vouchers</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Desktop view categories (hidden on small screens) -->
+                <ul class="list-unstyled category-list d-none d-lg-block">
+                    <li><a href="#">All</a></li>
+                    <li><a href="#">Adult Care</a></li>
+                    <li><a href="#">Ayurvedic Care</a></li>
+                    <li><a href="#">Baby Care</a></li>
+                    <li><a href="#">Dental Care</a></li>
+                    <li><a href="#">Diabetes Care</a></li>
+                    <li><a href="#">Dressings</a></li>
+                    <li><a href="#">Doctors Equipment</a></li>
+                    <li><a href="#">First Aid Items</a></li>
+                    <li><a href="#">Orthopedic Aid</a></li>
+                    <li><a href="#">Personal Care</a></li>
+                    <li><a href="#">Supplements</a></li>
+                    <li><a href="#">Veterinary</a></li>
+                    <li><a href="#">Wellness Vouchers</a></li>
+                </ul>
+                <section class="price-slider-container">
+                    <h5 class="fw-bold text-primary">By Price</h5>
+                    <div class="price-slider">
+                        <!-- Single Slider for price range -->
+                        <input type="range" id="priceSlider" min="0" max="15000" value="7500" step="100"
+                            class="form-range">
+
+                        <!-- Price Labels Display Below Slider -->
+                        <div class="price-labels">
+                            <span id="priceLabel">Rs. 7500.00</span>
+                        </div>
+
+                        <!-- Filter Button below the slider -->
+                        <div class="filter-btn-container">
+                            <button id="filterBtn" class="btn btn-primary">Apply Filter</button>
+                        </div>
+                    </div>
+                </section>
 
 
-    <main class="container my-5 c-profile">
+            </aside>
 
-        <!-- Prescription Status Dashboard -->
-        <section aria-labelledby="dashboard-section-title" class="mb-5">
-            <h2 id="dashboard-section-title" class="section-title">Prescription Dashboard</h2>
-            <div class="row text-center gy-3">
-                <div class="col-6 col-md-3">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Pending</h5>
-                            <p class="card-text fs-3 text-warning" id="countPending">0</p>
+
+            <!-- Products Section -->
+            <div class="col-lg-9">
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
+                    <p class="mb-2 mb-md-0">Showing 1 - 40 of 88 results</p>
+                    <div class="d-flex align-items-center gap-2">
+                        <select class="form-select form-select-sm" style="width: auto;">
+                            <option>Best Seller</option>
+                            <option>Price: Low to High</option>
+                            <option>Price: High to Low</option>
+                            <option>Newest</option>
+                        </select>
+                        <button class="btn btn-outline-primary btn-sm"><i class="bi bi-grid-fill"></i></button>
+                        <button class="btn btn-outline-primary btn-sm"><i class="bi bi-list"></i></button>
+                    </div>
+                </div>
+
+                <!-- Product Grid (use homepage card styles) -->
+                <div class="row g-3 py-3">
+                    <!-- Product Card 1 -->
+                    <div class="col-6  col-md-3 col-lg-3">
+                        <div class="medi-o-product-card text-center">
+                            <img src="images/Isocal-600x600.png" class="bs-img img-fluid mb-3" alt="Ortho Shield">
+                            <h6 class="medi-o-product-title">ISOCAL POWDER 425g</h6>
+                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
+                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 2 -->
+                    <div class="col-6  col-md-3 col-lg-3">
+                        <div class="medi-o-product-card text-center">
+                            <img src="images/Siddhalepa-Balm-50g 1.png" class="bs-img img-fluid mb-3"
+                                alt="Siddhalepa Balm">
+                            <h6 class="medi-o-product-title">SIDDHALEPA BALM 50G</h6>
+                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
+                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 3 -->
+                    <div class="col-6  col-md-3 col-lg-3">
+                        <div class="medi-o-product-card text-center">
+                            <img src="images/ACNE-AID 1.png" class="bs-img img-fluid mb-3" alt="Acne-Aid Bar">
+                            <h6 class="medi-o-product-title">ACNE-AID BAR 100g</h6>
+                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
+                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 4 -->
+                    <div class="col-6  col-md-3 col-lg-3">
+                        <div class="medi-o-product-card text-center">
+                            <img src="images/aknicarelotion 1.png" class="bs-img img-fluid mb-3"
+                                alt="Aknicare Cleanser">
+                            <h6 class="medi-o-product-title">AKNICARE CLEANSER 200ml</h6>
+                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
+                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
                         </div>
                     </div>
                 </div>
-                <div class="col-6 col-md-3">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Order Processing</h5>
-                            <p class="card-text fs-3 text-info" id="countStartToPack">0</p>
-                        </div>
-                    </div>
+                
+
+
+                <!-- Pagination Section -->
+                <div class="d-flex justify-content-center my-4">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            <li class="page-item">
+                                <a class="page-link" href="#" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item"><a class="page-link" href="#">4</a></li>
+                            <li class="page-item"><a class="page-link" href="#">...</a></li>
+                            <li class="page-item"><a class="page-link" href="#">25</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
-                <div class="col-6 col-md-3">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Ready to Collect</h5>
-                            <p class="card-text fs-3 text-success" id="countReadyToCollect">0</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Collected</h5>
-                            <p class="card-text fs-3 text-primary" id="countCollected">0</p>
-                        </div>
-                    </div>
-                </div>
+
+
+
+
+
+
+
             </div>
+        </div>
+    </section>
 
-            <div class="mt-4" style="max-width: 400px; margin: auto;">
-                <canvas id="prescriptionStatusChart" aria-label="Prescription status chart" role="img"></canvas>
-            </div>
-        </section>
 
-        <!-- Account Section -->
-        <section aria-labelledby="account-section-title" class="form-section">
-            <h2 id="account-section-title" class="section-title">Account Details</h2>
-            <form id="profileForm" novalidate>
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label for="name" class="form-label">Full Name</label>
-                        <input type="text" class="form-control" id="name" placeholder="John Doe" required />
-                    </div>
-                    <div class="col-md-6">
-                        <label for="email" class="form-label">Email Address</label>
-                        <input type="email" class="form-control" id="email" placeholder="john@example.com" required />
-                    </div>
-                    <div class="col-md-6">
-                        <label for="phone" class="form-label">Phone Number</label>
-                        <input type="tel" class="form-control" id="phone" placeholder="+94 77 123 4567" required />
-                    </div>
-                    <div class="col-md-6">
-                        <label for="address" class="form-label">Address</label>
-                        <input type="text" class="form-control" id="address" placeholder="123 Street, City, Country"
-                            required />
-                    </div>
-                </div>
 
-                <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
-            </form>
 
-            <!-- Change Password -->
-            <hr class="my-4" />
-            <h3 class="section-title">Change Password</h3>
-            <form id="passwordForm" novalidate>
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <label for="oldPassword" class="form-label">Old Password</label>
-                        <input type="password" class="form-control" id="oldPassword" required />
-                    </div>
-                    <div class="col-md-4">
-                        <label for="newPassword" class="form-label">New Password</label>
-                        <input type="password" class="form-control" id="newPassword" required />
-                    </div>
-                    <div class="col-md-4">
-                        <label for="confirmPassword" class="form-label">Confirm New Password</label>
-                        <input type="password" class="form-control" id="confirmPassword" required />
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-outline-primary mt-3">Update Password</button>
-            </form>
-        </section>
 
-        <!-- My Prescriptions Section -->
-        <section aria-labelledby="prescriptions-section-title" class="form-section">
-            <h2 id="prescriptions-section-title" class="section-title">My Prescriptions</h2>
-
-            <div class="table-responsive">
-                <table class="table align-middle">
-                    <thead>
-                        <tr>
-                            <th scope="col">File Name</th>
-                            <th scope="col">Upload Date</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Pharmacist</th>
-                            <th scope="col">Collected Date</th>
-                            <th scope="col">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="prescriptionList">
-                        <tr>
-                            <td>prescription1.pdf</td>
-                            <td>2023-07-10</td>
-                            <td><span class="text-warning">Pending</span></td>
-                            <td>John Smith</td>
-                            <td>-</td>
-                            <td>
-                                <a href="#" class="btn btn-primary btn-sm">Download</a>
-                                <button class="btn btn-danger btn-sm">Delete</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>prescription2.pdf</td>
-                            <td>2023-06-25</td>
-                            <td><span class="text-info">Order Processing</span></td>
-                            <td>Mary Jones</td>
-                            <td>2023-07-05</td>
-                            <td>
-                                <a href="#" class="btn btn-primary btn-sm">Download</a>
-                                <button class="btn btn-danger btn-sm">Delete</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>prescription3.pdf</td>
-                            <td>2023-06-20</td>
-                            <td><span class="text-primary">Collected</span></td>
-                            <td>David Lee</td>
-                            <td>2023-06-30</td>
-                            <td>
-                                <a href="#" class="btn btn-primary btn-sm">Download</a>
-                                <button class="btn btn-danger btn-sm">Delete</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>prescription4.pdf</td>
-                            <td>2023-07-01</td>
-                            <td><span class="text-success">Ready to Collect</span></td>
-                            <td>Emily Johnson</td>
-                            <td>-</td>
-                            <td>
-                                <a href="#" class="btn btn-primary btn-sm">Download</a>
-                                <button class="btn btn-danger btn-sm">Delete</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-    </main>
 
 
 
