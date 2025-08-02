@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 01, 2025 at 07:32 PM
+-- Generation Time: Aug 02, 2025 at 07:22 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -99,6 +99,13 @@ CREATE TABLE `products` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `products`
+--
+
+INSERT INTO `products` (`id`, `name`, `description`, `price`, `stock`, `category`, `image_path`, `best_selling`, `created_at`) VALUES
+(1, 'test test', '', 234341.00, 12, 'dressings', 'uploads/688d91865693c_photo-1590272456521-1bbe160a18ce.png', 0, '2025-08-02 04:18:14');
+
 -- --------------------------------------------------------
 
 --
@@ -113,17 +120,20 @@ CREATE TABLE `users` (
   `phone` varchar(20) DEFAULT NULL,
   `address` text DEFAULT NULL,
   `role` enum('customer','admin','pharmacist') DEFAULT 'customer',
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `reset_token` varchar(255) DEFAULT NULL,
+  `reset_expires` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `email`, `password`, `phone`, `address`, `role`, `created_at`) VALUES
-(1, 'sam', 'sam@gmail.com', '$2y$10$6OwMHkVhQhmzUCSo0eHxuOrsN3/v4PvqxZFw.t4FrQjgnf8NWJHGa', '0767170438', 'adfjlfdj jdflaj asjfl', 'customer', '2025-08-01 15:20:02'),
-(2, 'testing 1', 'test@test.com', '$2y$10$0AHpLEyh7r3Vjyo7OyLo8O4BIkgb3DlRnQWiupz/fP/dXRNhvT/Jq', '0767170438', 'test@test.com', 'customer', '2025-08-01 15:40:02'),
-(4, 'testing 2', 'admin@gmail.com', '$2y$10$S/GZtVmFRpp/zRLuELcLuO8Wmb6ceJuhZNK.DprNyac2ZOod6atH2', '0767170438', 'adfjlfdj jdflaj asjfl', 'customer', '2025-08-01 15:51:11');
+INSERT INTO `users` (`id`, `name`, `email`, `password`, `phone`, `address`, `role`, `created_at`, `reset_token`, `reset_expires`) VALUES
+(1, 'sam', 'sam@gmail.com', '$2y$10$6OwMHkVhQhmzUCSo0eHxuOrsN3/v4PvqxZFw.t4FrQjgnf8NWJHGa', '0767170438', 'adfjlfdj jdflaj asjfl', 'customer', '2025-08-01 15:20:02', NULL, NULL),
+(2, 'testing 1', 'test@test.com', '$2y$10$0AHpLEyh7r3Vjyo7OyLo8O4BIkgb3DlRnQWiupz/fP/dXRNhvT/Jq', '0767170438', 'test@test.com', 'customer', '2025-08-01 15:40:02', NULL, NULL),
+(4, 'Samathri Abhayapala', 'admin@gmail.com', '$2y$10$S/GZtVmFRpp/zRLuELcLuO8Wmb6ceJuhZNK.DprNyac2ZOod6atH2', '0767170438', 'adfjlfdj jdflaj asjfl', 'customer', '2025-08-01 15:51:11', '3b727a0a88228a89282f0379dd619e29a0951a6aec3a99cd4ed16aceff0917d0', '2025-08-01 23:33:41'),
+(5, 'samathri Abhayapala', 'samathri.15@gmail.com', '$2y$10$VXyJnRDQcprdeejg41eqOeHFT.TVvqCVZ71VDNf7/.BhJbJ4AHq1u', '0767170438', 'sajith sajith sajith sajith', 'customer', '2025-08-01 20:36:48', 'aff09456089a6e51ec77d34c02294534ff1c13477019a63ab1adebb138e7f1ef', '2025-08-02 00:21:26');
 
 --
 -- Indexes for dumped tables
@@ -204,13 +214,13 @@ ALTER TABLE `prescriptions`
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Constraints for dumped tables

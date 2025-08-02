@@ -320,18 +320,19 @@
 <!-- Product Management -->
 <section id="productManagementSection" class="d-none" tabindex="0">
   <h2 class="section-title">Product Management</h2>
-  <button class="btn btn-primary mb-3">Add New Product</button>
+  <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#productModal">Add New Product</button>
+
   <div class="table-responsive">
     <table class="table table-hover align-middle">
-      <thead>
+      <thead class="table-light">
         <tr>
-          <th>Product ID</th>
-          <th>Title</th>
-          <th>Category</th>
-          <th>Price</th>
-          <th>Stock</th>
-          <th>Status</th>
-          <th>Actions</th>
+          <th scope="col">Product ID</th>
+          <th scope="col">Title</th>
+          <th scope="col">Category</th>
+          <th scope="col">Price</th>
+          <th scope="col">Stock</th>
+          <th scope="col">Status</th>
+          <th scope="col">Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -343,9 +344,9 @@
           <td>120</td>
           <td><span class="badge bg-success">Active</span></td>
           <td>
-            <button class="btn btn-sm btn-warning" title="Edit"><i class="bi bi-pencil"></i></button>
+            <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#productModal" title="Edit"><i class="bi bi-pencil"></i></button>
             <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
-            <button class="btn btn-sm btn-secondary" title="Toggle Stock Status"><i class="bi bi-toggle-on"></i></button>
+            <button class="btn btn-sm btn-outline-secondary toggle-stock" title="Toggle Stock Status"><i class="bi bi-toggle-on"></i></button>
           </td>
         </tr>
         <tr>
@@ -356,15 +357,76 @@
           <td>0</td>
           <td><span class="badge bg-danger">Out of Stock</span></td>
           <td>
-            <button class="btn btn-sm btn-warning" title="Edit"><i class="bi bi-pencil"></i></button>
+            <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#productModal" title="Edit"><i class="bi bi-pencil"></i></button>
             <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
-            <button class="btn btn-sm btn-secondary" title="Toggle Stock Status"><i class="bi bi-toggle-off"></i></button>
+            <button class="btn btn-sm btn-outline-secondary toggle-stock" title="Toggle Stock Status"><i class="bi bi-toggle-off"></i></button>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
 </section>
+
+<!-- Product Modal -->
+<div class="modal fade" id="productModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <form id="productForm" enctype="multipart/form-data">
+        <div class="modal-header">
+          <h5 class="modal-title" id="productModalLabel">Add / Edit Product</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body row g-3">
+          <div class="col-md-6">
+            <label for="productTitle" class="form-label">Product Title</label>
+            <input type="text" class="form-control" id="productTitle" required />
+          </div>
+          <div class="col-md-6">
+            <label for="productCategory" class="form-label">Category</label>
+            <input type="text" class="form-control" id="productCategory" required />
+          </div>
+          <div class="col-md-6">
+            <label for="productPrice" class="form-label">Price ($)</label>
+            <input type="number" step="0.01" class="form-control" id="productPrice" required />
+          </div>
+          <div class="col-md-6">
+            <label for="productStock" class="form-label">Stock</label>
+            <input type="number" class="form-control" id="productStock" required />
+          </div>
+
+          <div class="col-md-6">
+            <label for="productStatus" class="form-label">Status</label>
+            <select class="form-select" id="productStatus">
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+              <option value="outofstock">Out of Stock</option>
+            </select>
+          </div>
+
+          <!-- New Image Upload Field -->
+          <div class="col-md-6">
+            <label for="productImage" class="form-label">Product Image</label>
+            <input type="file" class="form-control" id="productImage" accept="image/*" />
+          </div>
+
+          <!-- Optional: Preview image before submission -->
+          <div class="col-12">
+            <label class="form-label d-block">Image Preview</label>
+            <img id="imagePreview" src="#" alt="Preview" class="img-thumbnail d-none" style="max-height: 150px;" />
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">Save Product</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
 
 <!-- Best-Selling Items Management -->
 <section id="bestSellingSection" class="d-none" tabindex="0">
@@ -387,48 +449,6 @@
   <div class="form-check form-switch">
     <input class="form-check-input" type="checkbox" id="autoMarkToggle" />
     <label class="form-check-label" for="autoMarkToggle">Enable auto-marking based on sales (future feature)</label>
-  </div>
-</section>
-
-<!-- CMS / Content Management -->
-<section id="cmsSection" class="d-none" tabindex="0">
-  <h2 class="section-title">CMS / Content Management</h2>
-  <p>Manage static pages and homepage content.</p>
-  <button class="btn btn-primary mb-3">Add New Page</button>
-  <div class="table-responsive">
-    <table class="table table-hover align-middle">
-      <thead>
-        <tr>
-          <th>Page ID</th>
-          <th>Title</th>
-          <th>Status</th>
-          <th>Last Updated</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>PG001</td>
-          <td>About Us</td>
-          <td><span class="badge bg-success">Published</span></td>
-          <td>2025-07-20</td>
-          <td>
-            <button class="btn btn-sm btn-warning" title="Edit"><i class="bi bi-pencil"></i></button>
-            <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
-          </td>
-        </tr>
-        <tr>
-          <td>PG002</td>
-          <td>Privacy Policy</td>
-          <td><span class="badge bg-secondary">Draft</span></td>
-          <td>2025-07-15</td>
-          <td>
-            <button class="btn btn-sm btn-warning" title="Edit"><i class="bi bi-pencil"></i></button>
-            <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
   </div>
 </section>
 

@@ -2,35 +2,6 @@
 session_start();
 ?>
 
-<?php
-require_once 'db_config.php'; // Include database connection
-
-// Fetch products from the database
-$sql = "SELECT * FROM products";
-$result = $conn->query($sql);
-
-if ($result->num_rows > 0) {
-    // Loop through the results and display each product
-    while ($row = $result->fetch_assoc()) {
-        echo '<div class="col-6 col-md-3 col-lg-3">
-                <div class="medi-o-product-card text-center">
-                    <img src="uploads/' . htmlspecialchars($row['image_path']) . '" class="bs-img img-fluid mb-3" alt="' . htmlspecialchars($row['name']) . '">
-                    <h6 class="medi-o-product-title">' . htmlspecialchars($row['name']) . '</h6>
-                    <p class="medi-o-product-price mb-1">Rs. ' . number_format($row['price'], 2) . '</p>
-                    <p class="medi-o-product-stock">Stock: ' . $row['stock'] . ' left</p>
-                    <div class="text-warning">★ ★ ★ ☆ ☆</div>';
-
-        // Show best seller badge if the product is a best seller
-        if ($row['best_selling'] == 1) {
-            echo '<span class="badge bg-success">Best Seller</span>';
-        }
-
-        echo '</div></div>';
-    }
-} else {
-    echo "No products available.";
-}
-?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -65,7 +36,7 @@ if ($result->num_rows > 0) {
             <div class="container-fluid medi-o-container-fluid">
 
                 <!-- Logo (left) -->
-                <a class="medi-o-navbar-brand navbar-brand" href="home.php">
+                <a class="medi-o-navbar-brand navbar-brand" href="index.php">
                     <img src="images/medi-o-logo.svg" alt="Medi-O Logo" class="medi-o-logo logo-h" />
                 </a>
 
@@ -83,7 +54,7 @@ if ($result->num_rows > 0) {
                         <!-- Nav Links -->
                         <ul class="medi-o-navbar-nav navbar-nav flex-lg-row mb-2 gap-3 mb-lg-0">
                             <li class="medi-o-nav-item nav-item"><a class="medi-o-nav-link nav-link"
-                                    href="home.php">Home</a></li>
+                                    href="index.php">Home</a></li>
                             <li class="medi-o-nav-item nav-item"><a class="medi-o-nav-link nav-link"
                                     href="shop.php">Shop</a></li>
                             <li class="medi-o-nav-item nav-item"><a class="medi-o-nav-link nav-link"
@@ -314,6 +285,94 @@ if ($result->num_rows > 0) {
                         </div>
                     </div>
                 </div>
+
+                <div class="row g-3 py-3">
+                    <!-- Product Card 1 -->
+                    <div class="col-6  col-md-3 col-lg-3">
+                        <div class="medi-o-product-card text-center">
+                            <img src="images/Isocal-600x600.png" class="bs-img img-fluid mb-3" alt="Ortho Shield">
+                            <h6 class="medi-o-product-title">ISOCAL POWDER 425g</h6>
+                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
+                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 2 -->
+                    <div class="col-6  col-md-3 col-lg-3">
+                        <div class="medi-o-product-card text-center">
+                            <img src="images/Siddhalepa-Balm-50g 1.png" class="bs-img img-fluid mb-3"
+                                alt="Siddhalepa Balm">
+                            <h6 class="medi-o-product-title">SIDDHALEPA BALM 50G</h6>
+                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
+                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 3 -->
+                    <div class="col-6  col-md-3 col-lg-3">
+                        <div class="medi-o-product-card text-center">
+                            <img src="images/ACNE-AID 1.png" class="bs-img img-fluid mb-3" alt="Acne-Aid Bar">
+                            <h6 class="medi-o-product-title">ACNE-AID BAR 100g</h6>
+                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
+                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 4 -->
+                    <div class="col-6  col-md-3 col-lg-3">
+                        <div class="medi-o-product-card text-center">
+                            <img src="images/aknicarelotion 1.png" class="bs-img img-fluid mb-3"
+                                alt="Aknicare Cleanser">
+                            <h6 class="medi-o-product-title">AKNICARE CLEANSER 200ml</h6>
+                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
+                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-3 py-3">
+                    <!-- Product Card 1 -->
+                    <div class="col-6  col-md-3 col-lg-3">
+                        <div class="medi-o-product-card text-center">
+                            <img src="images/Isocal-600x600.png" class="bs-img img-fluid mb-3" alt="Ortho Shield">
+                            <h6 class="medi-o-product-title">ISOCAL POWDER 425g</h6>
+                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
+                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 2 -->
+                    <div class="col-6  col-md-3 col-lg-3">
+                        <div class="medi-o-product-card text-center">
+                            <img src="images/Siddhalepa-Balm-50g 1.png" class="bs-img img-fluid mb-3"
+                                alt="Siddhalepa Balm">
+                            <h6 class="medi-o-product-title">SIDDHALEPA BALM 50G</h6>
+                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
+                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 3 -->
+                    <div class="col-6  col-md-3 col-lg-3">
+                        <div class="medi-o-product-card text-center">
+                            <img src="images/ACNE-AID 1.png" class="bs-img img-fluid mb-3" alt="Acne-Aid Bar">
+                            <h6 class="medi-o-product-title">ACNE-AID BAR 100g</h6>
+                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
+                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
+                        </div>
+                    </div>
+
+                    <!-- Product Card 4 -->
+                    <div class="col-6  col-md-3 col-lg-3">
+                        <div class="medi-o-product-card text-center">
+                            <img src="images/aknicarelotion 1.png" class="bs-img img-fluid mb-3"
+                                alt="Aknicare Cleanser">
+                            <h6 class="medi-o-product-title">AKNICARE CLEANSER 200ml</h6>
+                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
+                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
+                        </div>
+                    </div>
+                </div>
                 
 
 
@@ -368,7 +427,7 @@ if ($result->num_rows > 0) {
             <div class="row gy-4 text-center text-md-start">
                 <!-- Logo & Description -->
                 <div class="col-md-6">
-                    <a href="home.php"><img src="images/medi-o-logo-white.svg" alt="Medi-O Logo logo-f" height="60"
+                    <a href="index.php"><img src="images/medi-o-logo-white.svg" alt="Medi-O Logo logo-f" height="60"
                             class="medi-o-footer-logo mb-3 logo-f" /></a>
                     <p class="medi-o-footer-description mb-0">
                         Medi-O is a licensed and registered pharmacy compliant with NMRA (National Medicine Regulatory
