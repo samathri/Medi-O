@@ -1,3 +1,4 @@
+
 <?php
 include 'includes/db.php';
 
@@ -8,6 +9,7 @@ if (isset($_POST['add_product'])) {
     $price = $_POST['price'];
     $stock = $_POST['stock'];
     $category = $_POST['category'];
+    $rating = $_POST['rating']; // New
 
     // Handle multiple images
     $image_paths = [];
@@ -23,8 +25,8 @@ if (isset($_POST['add_product'])) {
 
     $image_path_str = implode(',', $image_paths);
 
-    $stmt = $conn->prepare("INSERT INTO products (name, description, price, stock, category, image_path, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())");
-    $stmt->bind_param("ssdiss", $name, $description, $price, $stock, $category, $image_path_str);
+    $stmt = $conn->prepare("INSERT INTO products (name, description, price, stock, category, image_path, rating, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, NOW())");
+    $stmt->bind_param("ssdissd", $name, $description, $price, $stock, $category, $image_path_str, $rating);
     $stmt->execute();
     header("Location: admin.php");
     exit;
@@ -46,6 +48,7 @@ if (isset($_POST['update_product'])) {
     $price = $_POST['price'];
     $stock = $_POST['stock'];
     $category = $_POST['category'];
+    $rating = $_POST['rating']; // New
 
     $image_sql = "";
     if ($_FILES['image']['name']) {
@@ -55,7 +58,7 @@ if (isset($_POST['update_product'])) {
         $image_sql = ", image_path='$image_path'";
     }
 
-    $sql = "UPDATE products SET name='$name', description='$description', price='$price', stock='$stock', category='$category' $image_sql WHERE id=$id";
+    $sql = "UPDATE products SET name='$name', description='$description', price='$price', stock='$stock', category='$category', rating='$rating' $image_sql WHERE id=$id";
     $conn->query($sql);
     header("Location: admin.php");
     exit;

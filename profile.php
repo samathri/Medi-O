@@ -2,6 +2,9 @@
 session_start();
 ?>
 
+<?php include 'upload-prescription.php'; ?>
+<?php include 'my-prescriptions.php'; ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -38,59 +41,76 @@ session_start();
 
 
     <main class="container my-5 c-profile">
+
+
 <!-- Upload Prescription Form -->
 <section aria-labelledby="upload-prescription-section-title" class="form-section">
-  <h2 id="upload-prescription-section-title" class="section-title">Upload Prescription</h2>
+    <h2 id="upload-prescription-section-title" class="section-title">Upload Prescription</h2>
   
-  <form action="/upload-prescription" method="POST" enctype="multipart/form-data">
-    <!-- Prescription file upload -->
-    <input type="file" id="prescription-file" name="prescription-file" accept="image/*,application/pdf" required />
-    
-    <!-- Submit button -->
-    <button type="submit">Upload Prescription</button>
-  </form>
+    <!-- Prescription upload form -->
+    <form action="upload-prescription.php" method="POST" enctype="multipart/form-data">
+        <!-- Prescription file upload -->
+        <div class="mb-3">
+            <label for="prescription-file" class="form-label">Prescription File</label>
+            <input type="file" id="prescription-file" name="prescription-file" accept="image/*,application/pdf" class="form-control" required />
+        </div>
+
+        <!-- Hidden field for user ID (or you can get it from the session) -->
+        <input type="hidden" name="user_id" value="<?= $_SESSION['user_id']; ?>" />
+
+        <!-- Submit button -->
+        <button type="submit" name="upload_prescription" style="width: fit-content;" class="btn btn-primary">Upload Prescription</button>
+    </form>
 </section>
+
 
 
 <!-- My Prescriptions Section -->
 <section aria-labelledby="prescriptions-section-title" class="form-section">
   <h2 id="prescriptions-section-title" class="section-title">My Prescriptions</h2>
-  
-  <!-- Placeholder for a list of prescriptions -->
-  <div class="prescriptions-list">
-    <!-- Each prescription will be displayed in the following structure -->
-    <div class="prescription-item">
-      <h3>Prescription ID: #12345</h3>
-      
-      <!-- Prescription status -->
-      <p>Status: <span class="status-pending">Pending</span></p>
 
-      <!-- If prescription is approved, show the QR code -->
-      <div class="qr-code" style="display: none;">
-        <p>Scan your QR Code for details:</p>
-        <img src="path/to/generated-qr-code.jpg" alt="QR Code for Prescription">
-      </div>
-      
-      <!-- Show customer details like name, address, phone (if approved) -->
-      <div class="prescription-details" style="display: none;">
-        <p>Name: John Doe</p>
-        <p>Phone: 123-456-7890</p>
-        <p>Address: 123 Main St, Some City, Some Country</p>
-      </div>
-      
-      <!-- Prescription file link -->
-      <p>Prescription File: <a href="path/to/prescription-file.pdf" target="_blank">Download File</a></p>
-      
-      <!-- Approval button (only visible if the prescription is in 'Reviewed' status) -->
-      <div class="action-buttons" style="display: none;">
-        <button class="approve-button">Approve</button>
-      </div>
-    </div>
-    
-    <!-- Repeat this block for each prescription -->
-    
+  <!-- Table for displaying prescriptions -->
+  <div class="table-responsive">
+    <table class="table table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>Prescription ID</th>
+          <th>Prescription File</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php if ($result->num_rows > 0): ?>
+          <?php while ($row = $result->fetch_assoc()): ?>
+            <tr>
+              <td><?= $row['id'] ?></td>
+              <td>
+                <a href="uploads/prescriptions/<?= htmlspecialchars($row['file_path']) ?>" target="_blank" download>
+                  View Prescription
+                </a>
+              </td>
+              <td>
+                <?php if ((int)$row['is_ready'] === 1): ?>
+                  <span class="badge bg-success">Ready to Pick</span>
+                <?php else: ?>
+                  <span class="badge bg-warning text-dark">Pending</span>
+                <?php endif; ?>
+              </td>
+            </tr>
+          <?php endwhile; ?>
+        <?php else: ?>
+          <tr>
+            <td colspan="3">No prescriptions found.</td>
+          </tr>
+        <?php endif; ?>
+      </tbody>
+    </table>
   </div>
 </section>
+
+
+
+
 
 
 
@@ -119,7 +139,7 @@ session_start();
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+                <button type="submit" style="width: fit-content;" class="btn btn-primary mt-3">Save Changes</button>
             </form>
 
             <!-- Change Password -->
@@ -140,7 +160,7 @@ session_start();
                         <input type="password" class="form-control" id="confirmPassword" required />
                     </div>
                 </div>
-                <button type="submit" class="btn btn-outline-primary mt-3">Update Password</button>
+                <button type="submit" style="width: fit-content;" class="btn btn-outline-primary mt-3">Update Password</button>
             </form>
         </section>
 

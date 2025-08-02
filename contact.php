@@ -28,11 +28,11 @@ session_start();
 <body>
 
 
- 
-<!-- Header -->
-<?php include("components/header.php"); ?>
 
-    
+    <!-- Header -->
+    <?php include("components/header.php"); ?>
+
+
 
     <!-- Contact Us Hero Section -->
     <section class="medi-o-hero contact-hero py-5">
@@ -77,7 +77,7 @@ session_start();
                 <!-- Inquiry Form Section -->
                 <div class="col-md-5 inquiry-form">
                     <h3 class="form-title">Send Your Inquiry</h3>
-                    <form action="#" method="POST">
+                    <form action="inquiry.php" method="POST">
                         <div class="mb-3">
                             <label for="name" class="form-label">Your Name</label>
                             <input type="text" id="name" name="name" class="form-control" required>
@@ -93,6 +93,7 @@ session_start();
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
                 </div>
+
             </div>
         </div>
     </section>
@@ -112,8 +113,8 @@ session_start();
 
 
 
-<!-- Footer -->
-<?php include("components/footer.php"); ?>
+    <!-- Footer -->
+    <?php include("components/footer.php"); ?>
 
 
 

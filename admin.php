@@ -3,6 +3,8 @@ session_start();
 ?>
 <?php include 'product-management.php'; ?>
 <?php include 'user-management.php'; ?>
+<?php include 'prescription-management.php'; ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -72,23 +74,20 @@ session_start();
       <h3 class="text-white mb-4 text-center">Medi-O Admin</h3>
       <ul class="nav flex-column" id="sidebarMenu">
         <li class="nav-item"><a class="nav-link active" href="#dashboardSection"><i
-              class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
+                            class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
+                
         <li class="nav-item"><a class="nav-link" href="#userManagementSection"><i class="bi bi-people me-2"></i>User
             Management</a></li>
         <li class="nav-item"><a class="nav-link" href="#prescriptionManagementSection"><i
               class="bi bi-file-earmark-medical me-2"></i>Prescription Management</a></li>
-        <li class="nav-item"><a class="nav-link" href="#pharmacistManagementSection"><i
-              class="bi bi-person-badge me-2"></i>Pharmacist Management</a></li>
+        
         <li class="nav-item"><a class="nav-link" href="#productManagementSection"><i
               class="bi bi-basket3 me-2"></i>Product Management</a></li>
-        <li class="nav-item"><a class="nav-link" href="#bestSellingSection"><i
-              class="bi bi-star-fill me-2"></i>Best-Selling Items</a></li>
-        <li class="nav-item"><a class="nav-link" href="#cmsSection"><i class="bi bi-file-text me-2"></i>CMS /
-            Content Management</a></li>
+        
+        
         <li class="nav-item"><a class="nav-link" href="#contactInquirySection"><i
               class="bi bi-envelope me-2"></i>Contact Inquiries</a></li>
-        <li class="nav-item"><a class="nav-link" href="#adminProfileSection"><i
-              class="bi bi-person-circle me-2"></i>Admin Profile & Security</a></li>
+        
         <li class="nav-item mt-3">
           <a href="logout.php" id="logoutBtn" class="btn btn-danger w-100 text-decoration-none">
             <i class="bi bi-box-arrow-right me-2"></i>Logout
@@ -105,72 +104,342 @@ session_start();
   </button>
   <main id="content" tabindex="-1">
     <!-- Dashboard Overview -->
-    <section id="dashboardSection" tabindex="0">
-      <h2 class="section-title">Dashboard Overview</h2>
-      <div class="row g-3 mb-4">
-        <div class="col-6 col-md-3">
-          <div class="card shadow-sm p-3">
-            <div class="card-icon mb-2 text-center"><i class="bi bi-people-fill"></i></div>
-            <h5>Total Users</h5>
-            <p class="fs-4 fw-bold" id="totalUsers">1234</p>
-          </div>
+<?php
+// Include the database connection
+include 'includes/db.php';
+
+// Fetch the count of users
+$sql_users = "SELECT COUNT(id) AS total_users FROM users";
+$result_users = $conn->query($sql_users);
+$total_users = $result_users->fetch_assoc()['total_users'];
+
+// Fetch the count of prescriptions
+$sql_prescriptions = "SELECT COUNT(id) AS total_prescriptions FROM prescriptions_2";
+$result_prescriptions = $conn->query($sql_prescriptions);
+$total_prescriptions = $result_prescriptions->fetch_assoc()['total_prescriptions'];
+
+// Fetch the count of products
+$sql_products = "SELECT COUNT(id) AS total_products FROM products";
+$result_products = $conn->query($sql_products);
+$total_products = $result_products->fetch_assoc()['total_products'];
+
+$conn->close();
+?>
+
+<section id="dashboardSection" tabindex="0">
+    <h2 class="section-title">Dashboard Overview</h2>
+
+    <!-- Row for Key Metrics (Total Users, Total Prescriptions, Total Products) -->
+    <div class="row g-3 mb-4">
+        <!-- Total Users -->
+        <div class="col-12 col-md-4">
+            <div class="card shadow-sm p-4 h-100">
+                <div class="card-icon mb-3 text-center">
+                    <i class="bi bi-people-fill fs-2 text-primary"></i>
+                </div>
+                <h5 class="text-center">Total Users</h5>
+                <p class="fs-4 fw-bold text-center" id="totalUsers"><?= number_format($total_users) ?></p>
+            </div>
         </div>
-        <div class="col-6 col-md-3">
-          <div class="card shadow-sm p-3">
-            <div class="card-icon mb-2 text-center"><i class="bi bi-file-earmark-text-fill"></i></div>
-            <h5>Total Prescriptions</h5>
-            <p class="fs-4 fw-bold" id="totalPrescriptions">567</p>
-          </div>
+
+        <!-- Total Prescriptions -->
+        <div class="col-12 col-md-4">
+            <div class="card shadow-sm p-4 h-100">
+                <div class="card-icon mb-3 text-center">
+                    <i class="bi bi-file-earmark-text-fill fs-2 text-success"></i>
+                </div>
+                <h5 class="text-center">Total Prescriptions</h5>
+                <p class="fs-4 fw-bold text-center" id="totalPrescriptions"><?= number_format($total_prescriptions) ?></p>
+            </div>
         </div>
-        <div class="col-6 col-md-3">
-          <div class="card shadow-sm p-3">
-            <div class="card-icon mb-2 text-center"><i class="bi bi-clock-history"></i></div>
-            <h5>Pending Approvals</h5>
-            <p class="fs-4 fw-bold" id="pendingApprovals">89</p>
-          </div>
+
+        <!-- Total Products -->
+        <div class="col-12 col-md-4">
+            <div class="card shadow-sm p-4 h-100">
+                <div class="card-icon mb-3 text-center">
+                    <i class="bi bi-box-seam fs-2 text-danger"></i>
+                </div>
+                <h5 class="text-center">Total Products</h5>
+                <p class="fs-4 fw-bold text-center" id="totalProducts"><?= number_format($total_products) ?></p>
+            </div>
         </div>
-        <div class="col-6 col-md-3">
-          <div class="card shadow-sm p-3">
-            <div class="card-icon mb-2 text-center"><i class="bi bi-box-seam"></i></div>
-            <h5>Total Products</h5>
-            <p class="fs-4 fw-bold" id="totalProducts">350</p>
-          </div>
-        </div>
-      </div>
-      <div class="row g-3 mb-4">
-        <div class="col-md-6">
-          <div class="card shadow-sm p-3">
-            <div class="card-icon mb-2 text-center"><i class="bi bi-cart-fill"></i></div>
-            <h5>Best-Selling Items</h5>
-            <ul id="bestSellingList" class="list-group list-group-flush">
-              <li class="list-group-item">Paracetamol</li>
-              <li class="list-group-item">Ibuprofen</li>
-              <li class="list-group-item">Vitamin C</li>
-            </ul>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="card shadow-sm p-3">
-            <h5 class="mb-3 text-center">Prescription Status Chart</h5>
-            <canvas id="statusChart" height="180" aria-label="Prescription status chart" role="img"></canvas>
-          </div>
-        </div>
-      </div>
-    </section>
+    </div>
+    </div>
+
+
+
+    <!-- best selling  -->
+
+
+<?php
+// Include database connection
+include 'includes/db.php';
+
+$editMode = false;
+$editItem = null;
+
+// Handle form submission for add or update
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $itemName = $_POST['item_name'];
+    $price = $_POST['price'];
+    $rating = $_POST['rating'];
+    $itemId = isset($_POST['item_id']) ? intval($_POST['item_id']) : null;
+
+    $uploadedImagePaths = [];
+    $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+    $maxFileSize = 5 * 1024 * 1024; // 5MB
+    $uploadDir = 'uploads/images/';
+    if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+
+    // Upload images if any
+    $errors = [];
+    if (!empty($_FILES['image_paths']['name'][0])) {
+        for ($i = 0; $i < count($_FILES['image_paths']['name']); $i++) {
+            $imageTmpName = $_FILES['image_paths']['tmp_name'][$i];
+            $imageName = basename($_FILES['image_paths']['name'][$i]);
+            $imageSize = $_FILES['image_paths']['size'][$i];
+            $imageType = $_FILES['image_paths']['type'][$i];
+
+            if (!in_array($imageType, $allowedTypes)) {
+                $errors[] = "Invalid file type: $imageName.";
+                continue;
+            }
+
+            if ($imageSize > $maxFileSize) {
+                $errors[] = "File too large: $imageName.";
+                continue;
+            }
+
+            $uniqueFileName = uniqid() . '-' . $imageName;
+            $uploadFilePath = $uploadDir . $uniqueFileName;
+            if (move_uploaded_file($imageTmpName, $uploadFilePath)) {
+                $uploadedImagePaths[] = $uploadFilePath;
+            } else {
+                $errors[] = "Upload failed: $imageName.";
+            }
+        }
+    }
+
+    if (empty($errors)) {
+        $imagePaths = !empty($uploadedImagePaths) ? implode(',', $uploadedImagePaths) : null;
+
+        if ($itemId) {
+            // UPDATE
+            if ($imagePaths) {
+                $sql = "UPDATE best_selling_items SET item_name = ?, image_paths = ?, price = ?, rating = ? WHERE id = ?";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("ssdii", $itemName, $imagePaths, $price, $rating, $itemId);
+            } else {
+                $sql = "UPDATE best_selling_items SET item_name = ?, price = ?, rating = ? WHERE id = ?";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("sdii", $itemName, $price, $rating, $itemId);
+            }
+
+            if ($stmt->execute()) {
+                echo "<div class='alert alert-success' id='success-message'>Item updated successfully!</div>";
+            } else {
+                echo "<div class='alert alert-danger'>Update failed: " . $conn->error . "</div>";
+            }
+        } else {
+            // INSERT
+            $sql = "INSERT INTO best_selling_items (item_name, image_paths, price, rating, created_at) 
+                    VALUES (?, ?, ?, ?, NOW())";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("ssdi", $itemName, $imagePaths, $price, $rating);
+
+            if ($stmt->execute()) {
+                echo "<div class='alert alert-success' id='success-message'>Item added successfully!</div>";
+            } else {
+                echo "<div class='alert alert-danger'>Add failed: " . $conn->error . "</div>";
+            }
+        }
+    } else {
+        foreach ($errors as $error) {
+            echo "<div class='alert alert-danger'>$error</div>";
+        }
+    }
+}
+
+// Handle delete
+if (isset($_GET['delete_id'])) {
+    $deleteId = $_GET['delete_id'];
+    $sql = "DELETE FROM best_selling_items WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $deleteId);
+    $stmt->execute();
+    echo "<div class='alert alert-success' id='success-message'>Item deleted.</div>";
+}
+
+// Handle edit - fetch item
+if (isset($_GET['edit_id'])) {
+    $editMode = true;
+    $editId = $_GET['edit_id'];
+    $stmt = $conn->prepare("SELECT * FROM best_selling_items WHERE id = ?");
+    $stmt->bind_param("i", $editId);
+    $stmt->execute();
+    $resultEdit = $stmt->get_result();
+    $editItem = $resultEdit->fetch_assoc();
+}
+
+// Fetch all items
+$result = $conn->query("SELECT * FROM best_selling_items ORDER BY created_at DESC");
+?>
+
+<style>
+    .star {
+        font-size: 24px;
+        color: #d3d3d3;
+    }
+    .star.filled {
+        color: #FFD700;
+    }
+</style>
+
+<h2><?= $editMode ? "Edit" : "Add" ?> Best-Selling Item</h2>
+
+<form method="POST" enctype="multipart/form-data" class="mb-5">
+    <?php if ($editMode): ?>
+        <input type="hidden" name="item_id" value="<?= $editItem['id'] ?>">
+    <?php endif; ?>
+
+    <div class="form-group">
+        <label>Item Name</label>
+        <input type="text" name="item_name" class="form-control" value="<?= $editMode ? htmlspecialchars($editItem['item_name']) : '' ?>" required>
+    </div>
+
+    <div class="form-group">
+        <label>Images <?= $editMode ? "(optional)" : "(required)" ?></label>
+        <input type="file" name="image_paths[]" class="form-control" multiple <?= $editMode ? "" : "required" ?> accept="image/*">
+    </div>
+
+    <div class="form-group">
+        <label>Price (Rs.)</label>
+        <input type="number" step="0.01" name="price" class="form-control" value="<?= $editMode ? $editItem['price'] : '' ?>" required>
+    </div>
+
+    <div class="form-group">
+        <label>Rating (0-5)</label>
+        <input type="number" step="0.1" min="0" max="5" name="rating" class="form-control" value="<?= $editMode ? $editItem['rating'] : '' ?>" required>
+    </div>
+
+    <div class="d-flex gap-2 align-items-center mt-3">
+    <button type="submit" style="width: fit-content;" class="btn btn-<?= $editMode ? 'warning' : 'primary' ?> px-4 py-2" >
+        <?= $editMode ? "Update Item" : "Add Item" ?>
+    </button>
+    
+    <?php if ($editMode): ?>
+        <a href="?" class="btn btn-secondary" style="border-radius: 50px; margin-top: 1%;">
+            Cancel
+        </a>
+    <?php endif; ?>
+</div>
+
+</form>
+
+<!-- Items Table -->
+<h4>Best-Selling Items List</h4>
+<table class="table table-bordered table-hover">
+    <thead class="thead-light">
+        <tr>
+            <th>Image</th>
+            <th>Item Name</th>
+            <th>Price</th>
+            <th>Rating</th>
+            <th>Added On</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php if ($result->num_rows > 0): ?>
+            <?php while ($row = $result->fetch_assoc()): ?>
+                <tr>
+                    <td>
+                        <?php
+                            $images = explode(',', $row['image_paths']);
+                            $firstImage = htmlspecialchars($images[0]);
+                        ?>
+                        <img src="<?= $firstImage ?>" alt="Image" style="max-width: 50px;" class="img-fluid">
+                    </td>
+                    <td><?= htmlspecialchars($row['item_name']) ?></td>
+                    <td>Rs. <?= number_format($row['price'], 2) ?></td>
+                    <td>
+                        <?php
+                            $rating = $row['rating'];
+                            $filled = floor($rating);
+                            $half = ($rating - $filled) >= 0.5;
+                            $empty = 5 - $filled - ($half ? 1 : 0);
+                            for ($i = 0; $i < $filled; $i++) echo '<span class="star filled">★</span>';
+                            if ($half) echo '<span class="star">☆</span>';
+                            for ($i = 0; $i < $empty; $i++) echo '<span class="star">☆</span>';
+                        ?>
+                    </td>
+                    <td><?= date("Y-m-d", strtotime($row['created_at'])) ?></td>
+                    <td>
+                        <a href="?edit_id=<?= $row['id'] ?>" class="btn btn-warning btn-sm">Edit</a>
+                        <a href="?delete_id=<?= $row['id'] ?>" onclick="return confirm('Delete this item?')" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+            <?php endwhile; ?>
+        <?php else: ?>
+            <tr><td colspan="6">No items found.</td></tr>
+        <?php endif; ?>
+    </tbody>
+</table>
+
+<script>
+    // This script will hide success messages after 10 seconds.
+    window.onload = function() {
+        const successMessage = document.getElementById('success-message');
+        if (successMessage) {
+            setTimeout(function() {
+                successMessage.style.display = 'none';
+            }, 5000); // 10 seconds
+        }
+    };
+</script>
+
+</section>
+
+
+
+
+<!-- User Management Section -->
+<?php
+include 'includes/db.php';
+
+// Handle Delete User
+if (isset($_GET['delete'])) {
+    $id = $_GET['delete'];
+    // Delete the user from the database
+    $conn->query("DELETE FROM users WHERE id=$id");
+    header("Location: admin.php?section=userManagement"); // Redirect to user management section
+    exit;
+}
+
+// Handle User Search
+$searchQuery = '';
+if (isset($_GET['search']) && !empty($_GET['search'])) {
+    $searchQuery = $_GET['search'];
+    $searchSql = " WHERE name LIKE '%$searchQuery%' OR email LIKE '%$searchQuery%'";
+} else {
+    $searchSql = '';
+}
+
+// Fetch Users (with optional search filter)
+$sql = "SELECT * FROM users" . $searchSql . " ORDER BY id DESC";
+$result = $conn->query($sql);
+?>
 
 <!-- User Management Section -->
 <section id="userManagementSection" class="d-none" tabindex="0">
   <h2 class="section-title">User Management</h2>
-  <p>View all registered users here .</p>
+  <p>View and manage all registered users.</p>
 
-  <!-- Search Form
-  <form method="GET" action="admin.php"> 
-   <div class="d-flex">
-      <button type="submit" class="btn btn-secondary mb-3 me-2">Search</button>
-      
-      <button type="button" class="btn btn-danger reset-a mb-3" onclick="window.location.href='admin.php?section=userManagement'">Reset</button>
-    </div>
-  </form> --> 
+  <!-- Search Form -->
+  <!-- <form method="GET">
+    <input type="text" class="form-control mb-3" name="search" placeholder="Search users..." value="<?= htmlspecialchars($searchQuery) ?>" aria-label="Search users">
+    <button type="submit" class="btn btn-secondary mb-3">Search</button>
+  </form> -->
 
   <div class="table-responsive">
     <table class="table table-hover align-middle">
@@ -181,6 +450,7 @@ session_start();
           <th>Email</th>
           <th>Phone</th>
           <th>Address</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -191,7 +461,12 @@ session_start();
           <td><?= htmlspecialchars($row['email']) ?></td>
           <td><?= htmlspecialchars($row['phone']) ?></td>
           <td><?= htmlspecialchars($row['address']) ?></td>
-          
+          <td>
+            <!-- Delete Button -->
+            <a href="?delete=<?= $row['id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this user?')">
+              <i class="bi bi-trash"></i> Delete
+            </a>
+          </td>
         </tr>
         <?php endwhile; ?>
       </tbody>
@@ -200,11 +475,27 @@ session_start();
 </section>
 
 
+<?php
+include 'includes/db.php'; // Database connection
 
+// Fetch Prescription and User Details, including is_picked_up
+$sql = "
+    SELECT p.id AS prescription_id, p.file_path, p.is_ready, p.is_picked_up,
+           u.name AS customer_name, u.phone AS customer_phone, 
+           u.address AS customer_address, u.email AS customer_email 
+    FROM `prescriptions_2` p
+    JOIN users u ON p.user_id = u.id
+    ORDER BY p.id DESC
+";
 
-   
-<!-- Prescription Management Section -->
-<section id="prescriptionManagementSection" class="d-none" tabindex="0">
+$result = $conn->query($sql);
+
+if ($result === false) {
+    echo "Error in fetching prescriptions: " . $conn->error;
+}
+?>
+
+<section id="prescriptionManagementSection" class="container mt-5">
     <h2 class="section-title">Prescription Management</h2>
     
     <!-- Table for displaying prescriptions -->
@@ -213,147 +504,102 @@ session_start();
             <thead>
                 <tr>
                     <th>Prescription ID</th>
-                    <th>Prescription Image</th>
+                    <th>Prescription File</th>
                     <th>Customer Name</th>
-                    <th>Customer Phone</th>
-                    <th>Customer Address</th>
-                    <th>QR Code</th>
-                    <th>Order Status</th>
-                    <th>Actions</th>
+                    <th>Phone</th>
+                    <th>Address</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Picked Up</th> <!-- New Column -->
                 </tr>
             </thead>
             <tbody>
-                <!-- Example Prescription Entry 1 -->
-                <tr>
-                    <td>PR001</td>
-                    <td>
-                        <a href="path/to/prescription-image.jpg" download>Download Prescription Image</a>
-                    </td>
-                    <td>John Doe</td>
-                    <td>123-456-7890</td>
-                    <td>123 Main St, Some City, Some Country</td>
-                    <td>
-                        <!-- QR Code link to customer's profile -->
-                        <a href="path/to/generated-qr-code.jpg" download>Download QR Code</a>
-                    </td>
-                    <td>
-                        <select class="form-select">
-                            <option value="Pending">Pending</option>
-                            <option value="Order Processing">Order Processing</option>
-                            <option value="Ready to Collect">Ready to Collect</option>
-                        </select>
-                    </td>
-                    <td>
-                        <button class="btn btn-sm btn-warning" title="Edit"><i class="bi bi-pencil"></i></button>
-                        <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
-                    </td>
-                </tr>
-
-                <!-- Example Prescription Entry 2 -->
-                <tr>
-                    <td>PR002</td>
-                    <td>
-                        <a href="path/to/prescription-image2.jpg" download>Download Prescription Image</a>
-                    </td>
-                    <td>Jane Smith</td>
-                    <td>987-654-3210</td>
-                    <td>456 Elm St, Some Other City, Some Other Country</td>
-                    <td>
-                        <a href="path/to/generated-qr-code2.jpg" download>Download QR Code</a>
-                    </td>
-                    <td>
-                        <select class="form-select">
-                            <option value="Pending">Pending</option>
-                            <option value="Order Processing">Order Processing</option>
-                            <option value="Ready to Collect">Ready to Collect</option>
-                        </select>
-                    </td>
-                    <td>
-                        <button class="btn btn-sm btn-warning" title="Edit"><i class="bi bi-pencil"></i></button>
-                        <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
-                    </td>
-                </tr>
-
-                <!-- Example Prescription Entry 3 -->
-                <tr>
-                    <td>PR003</td>
-                    <td>
-                        <a href="path/to/prescription-image3.jpg" download>Download Prescription Image</a>
-                    </td>
-                    <td>Emily Brown</td>
-                    <td>555-123-4567</td>
-                    <td>789 Oak St, Another City, Another Country</td>
-                    <td>
-                        <a href="path/to/generated-qr-code3.jpg" download>Download QR Code</a>
-                    </td>
-                    <td>
-                        <select class="form-select">
-                            <option value="Pending">Pending</option>
-                            <option value="Order Processing">Order Processing</option>
-                            <option value="Ready to Collect">Ready to Collect</option>
-                        </select>
-                    </td>
-                    <td>
-                        <button class="btn btn-sm btn-warning" title="Edit"><i class="bi bi-pencil"></i></button>
-                        <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
-                    </td>
-                </tr>
-
+                <?php if ($result->num_rows > 0): ?>
+                    <?php while ($row = $result->fetch_assoc()): ?>
+                        <tr id="prescription-row-<?php echo $row['prescription_id']; ?>">
+                            <td><?= htmlspecialchars($row['prescription_id']) ?></td>
+                            <td>
+                                <a href="uploads/prescriptions/<?= htmlspecialchars($row['file_path']) ?>" download>Download</a>
+                            </td>
+                            <td><?= htmlspecialchars($row['customer_name']) ?></td>
+                            <td><?= htmlspecialchars($row['customer_phone']) ?></td>
+                            <td><?= htmlspecialchars($row['customer_address']) ?></td>
+                            <td><?= htmlspecialchars($row['customer_email']) ?></td>
+                            <td>
+                                <?php if ((int)$row['is_ready'] === 0): ?>
+                                    <button class="btn btn-sm btn-success ready-to-pick-btn" data-prescription-id="<?= $row['prescription_id']; ?>" title="Mark as Ready to Pick">
+                                        <i class="bi bi-check-circle"></i> Ready to Pick
+                                    </button>
+                                <?php else: ?>
+                                    <span class="badge bg-success">Ready to Pick</span>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <?php if ((int)$row['is_picked_up'] === 1): ?>
+                                    <span class="badge bg-info">Picked Up</span>
+                                <?php else: ?>
+                                    <span class="badge bg-secondary">Not Picked</span>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endwhile; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="8">No prescriptions found.</td>
+                    </tr>
+                <?php endif; ?>
             </tbody>
         </table>
     </div>
 </section>
 
+<!-- jQuery (for AJAX) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    $('.ready-to-pick-btn').click(function() {
+        var prescriptionId = $(this).data('prescription-id');
+
+        $.ajax({
+            url: 'update_prescription_status.php',
+            method: 'POST',
+            data: {
+                prescription_id: prescriptionId
+            },
+            success: function(response) {
+                try {
+                    var data = JSON.parse(response);
+                    if (data.status === 'success') {
+                        $('#prescription-row-' + prescriptionId).find('.ready-to-pick-btn')
+                            .replaceWith('<span class="badge bg-success">Ready to Pick</span>');
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                } catch (e) {
+                    console.error('Invalid JSON response', response);
+                    alert('Unexpected server response.');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX error:', status, error);
+                alert('Failed to update status.');
+            }
+        });
+    });
+});
+</script>
 
 
-    <!-- Pharmacist Management -->
-    <section id="pharmacistManagementSection" class="d-none" tabindex="0">
-      <h2 class="section-title">Pharmacist Management</h2>
-      <button class="btn btn-primary mb-3">Add New Pharmacist</button>
-      <div class="table-responsive">
-        <table class="table table-hover align-middle">
-          <thead>
-            <tr>
-              <th>Pharmacist ID</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Prescriptions Handled</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>PH001</td>
-              <td>Dr. Sarah Lee</td>
-              <td>sarah.lee@example.com</td>
-              <td>45</td>
-              <td>
-                <button class="btn btn-sm btn-warning" title="Edit"><i class="bi bi-pencil"></i></button>
-                <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
-              </td>
-            </tr>
-            <tr>
-              <td>PH002</td>
-              <td>Dr. Michael Chen</td>
-              <td>michael.chen@example.com</td>
-              <td>38</td>
-              <td>
-                <button class="btn btn-sm btn-warning" title="Edit"><i class="bi bi-pencil"></i></button>
-                <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+
 
 <!-- Product Management UI -->
 <section id="productManagementSection" class="mt-5">
   <h2 class="section-title">Product Management</h2>
-  <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#productModal">Add New Product</button>
+  <button class="btn btn-primary mb-3" style="width:fit-content" data-bs-toggle="modal" data-bs-target="#productModal">Add New Product</button>
 
   <div class="table-responsive">
-    <table class="table table-hover align-middle">
+    <table class="table table-hover ">
       <thead class="table-light">
         <tr>
           <th>ID</th>
@@ -362,6 +608,7 @@ session_start();
           <th>Category</th>
           <th>Price</th>
           <th>Stock</th>
+          <th>Rating</th> <!-- New Column -->
           <th>Images</th>
           <th>Actions</th>
         </tr>
@@ -376,8 +623,9 @@ session_start();
           <td><?= htmlspecialchars($row['name']) ?></td>
           <td><?= htmlspecialchars($row['description']) ?></td>
           <td><?= htmlspecialchars($row['category']) ?></td>
-          <td>$<?= number_format($row['price'], 2) ?></td>
+          <td>Rs. <?= number_format($row['price'], 2) ?></td>
           <td><?= $row['stock'] ?></td>
+          <td><?= $row['rating'] ?></td> <!-- New Rating Value -->
           <td>
             <?php
             $images = explode(',', $row['image_path']);
@@ -388,14 +636,13 @@ session_start();
                   echo "<img src='" . htmlspecialchars($imgSrc) . "' width='50' class='me-1 mb-1'>";
               }
           }
-          
             ?>
           </td>
           <td>
             <!-- Update Button -->
-            <a href="edit-product.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-warning">
-  <i class="bi bi-pencil"></i>
-</a>
+            <a href="edit-product.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-warning ">
+              <i class="bi bi-pencil"></i>
+            </a>
 
             <!-- Delete -->
             <a href="?delete=<?= $row['id'] ?>" class="btn btn-sm btn-danger"
@@ -405,7 +652,6 @@ session_start();
 
         <!-- Update Modal -->
         <div class="modal fade" id="updateModal<?= $row['id'] ?>" tabindex="-1" aria-hidden="true">
-
           <div class="modal-dialog">
             <form method="POST" enctype="multipart/form-data" class="modal-content">
               <input type="hidden" name="id" value="<?= $row['id'] ?>">
@@ -419,6 +665,7 @@ session_start();
                 <input type="number" step="0.01" name="price" class="form-control mb-2" value="<?= $row['price'] ?>" required>
                 <input type="number" name="stock" class="form-control mb-2" value="<?= $row['stock'] ?>" required>
                 <input type="text" name="category" class="form-control mb-2" value="<?= htmlspecialchars($row['category']) ?>" required>
+                <input type="number" name="rating" class="form-control mb-2" min="0" max="5" step="0.1" value="<?= $row['rating'] ?>" required>
                 <input type="file" name="image" class="form-control mb-2">
               </div>
               <div class="modal-footer">
@@ -447,6 +694,7 @@ session_start();
         <input type="number" step="0.01" name="price" class="form-control mb-2" placeholder="Price" required>
         <input type="number" name="stock" class="form-control mb-2" placeholder="Stock" required>
         <input type="text" name="category" class="form-control mb-2" placeholder="Category" required>
+        <input type="number" name="rating" class="form-control mb-2" min="0" max="5" step="0.1" placeholder="Rating (1–5)" required>
         <input type="file" name="images[]" multiple class="form-control">
       </div>
       <div class="modal-footer">
@@ -458,71 +706,55 @@ session_start();
 
 
 
-    <!-- Best-Selling Items Management -->
-    <section id="bestSellingSection" class="d-none" tabindex="0">
-      <h2 class="section-title">Best-Selling Items Management</h2>
-      <p>Manually mark or unmark products as "Best-Selling".</p>
-      <ul class="list-group mb-3">
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          Paracetamol
-          <button class="btn btn-sm btn-outline-danger">Unmark</button>
-        </li>
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          Vitamin C
-          <button class="btn btn-sm btn-outline-danger">Unmark</button>
-        </li>
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          Aspirin
-          <button class="btn btn-sm btn-outline-danger">Unmark</button>
-        </li>
-      </ul>
-      <div class="form-check form-switch">
-        <input class="form-check-input" type="checkbox" id="autoMarkToggle" />
-        <label class="form-check-label" for="autoMarkToggle">Enable auto-marking based on sales (future feature)</label>
-      </div>
-    </section>
-
     <!-- Contact Inquiry Management -->
-    <section id="contactInquirySection" class="d-none" tabindex="0">
-      <h2 class="section-title">Contact Inquiry Management</h2>
-      <p>View and respond to contact form submissions.</p>
-      <div class="table-responsive">
+    <?php
+// Include the database connection file
+include 'includes/db.php';
+
+// Fetch inquiries from the contact_messages table
+$sql = "SELECT * FROM contact_messages ORDER BY id DESC"; // Fetching all records, ordered by ID
+$result = $conn->query($sql);
+?>
+
+<!-- Contact Inquiry Management Section -->
+<section id="contactInquirySection" class="d-none" tabindex="0">
+    <h2 class="section-title">Contact Inquiry Management</h2>
+    <p>View and respond to contact form submissions.</p>
+    <div class="table-responsive">
         <table class="table table-hover align-middle">
-          <thead>
-            <tr>
-              <th>Inquiry ID</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Message</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>C001</td>
-              <td>Emma Watson</td>
-              <td>emma@example.com</td>
-              <td>Question about product availability.</td>
-              <td><span class="badge bg-warning text-dark">Pending</span></td>
-              <td>
-                <button class="btn btn-sm btn-success" title="Mark as Responded"><i class="bi bi-check-lg"></i></button>
-              </td>
-            </tr>
-            <tr>
-              <td>C002</td>
-              <td>James Brown</td>
-              <td>james@example.com</td>
-              <td>Request for refund process.</td>
-              <td><span class="badge bg-success">Responded</span></td>
-              <td>
-                <button class="btn btn-sm btn-info" title="View Reply"><i class="bi bi-envelope-open"></i></button>
-              </td>
-            </tr>
-          </tbody>
+            <thead>
+                <tr>
+                    <th>Inquiry ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Message</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if ($result->num_rows > 0): ?>
+                    <?php while ($row = $result->fetch_assoc()): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($row['id']) ?></td>
+                            <td><?= htmlspecialchars($row['name']) ?></td>
+                            <td><?= htmlspecialchars($row['email']) ?></td>
+                            <td><?= htmlspecialchars($row['message']) ?></td>
+                        </tr>
+                    <?php endwhile; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="4">No inquiries found.</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
         </table>
-      </div>
-    </section>
+    </div>
+</section>
+
+<?php
+// Close the database connection
+$conn->close();
+?>
+
 
 
     <!-- Admin Profile & Security -->

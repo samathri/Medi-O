@@ -13,9 +13,8 @@ if (isset($_GET['delete'])) {
 // Handle User Search
 $searchQuery = '';
 if (isset($_GET['search']) && !empty($_GET['search'])) {
-    // Sanitize the search query to avoid SQL injection
-    $searchQuery = $conn->real_escape_string($_GET['search']);
-    $searchSql = " WHERE name LIKE '%$searchQuery%'"; // Search by name
+    $searchQuery = $_GET['search'];
+    $searchSql = " WHERE name LIKE '%$searchQuery%' OR email LIKE '%$searchQuery%'";
 } else {
     $searchSql = '';
 }
@@ -24,3 +23,4 @@ if (isset($_GET['search']) && !empty($_GET['search'])) {
 $sql = "SELECT * FROM users" . $searchSql . " ORDER BY id DESC";
 $result = $conn->query($sql);
 ?>
+

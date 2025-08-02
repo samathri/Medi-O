@@ -1804,6 +1804,21 @@ button[type="submit"]:hover {
 }
 
 /* Buttons Styling */
+.add-to:hover{
+    background-color: #0467BB !important;
+    border: none;
+    color: white !important;
+}
+.add-to {
+    background-color: transparent !important;
+    border: 2px solid #0467BB !important;
+    color: #0467BB !important;
+}
+
+.buy-now{
+  margin-top: 27px;
+}
+
 .btn {
     font-size: 1rem;
     padding: 12px 25px;
