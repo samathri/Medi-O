@@ -61,7 +61,7 @@ $_SESSION['reset_token'] = $token;
             <div class="container-fluid medi-o-container-fluid">
 
                 <!-- Logo (left) -->
-                <a class="medi-o-navbar-brand navbar-brand" href="home.php">
+                <a class="medi-o-navbar-brand navbar-brand" href="index.php">
                     <img src="images/medi-o-logo.svg" alt="Medi-O Logo" class="medi-o-logo logo-h" />
                 </a>
 
@@ -79,7 +79,7 @@ $_SESSION['reset_token'] = $token;
                         <!-- Nav Links -->
                         <ul class="medi-o-navbar-nav navbar-nav flex-lg-row mb-2 gap-3 mb-lg-0">
                             <li class="medi-o-nav-item nav-item"><a class="medi-o-nav-link nav-link"
-                                    href="home.php">Home</a></li>
+                                    href="index.php">Home</a></li>
                             <li class="medi-o-nav-item nav-item"><a class="medi-o-nav-link nav-link"
                                     href="shop.php">Shop</a></li>
                             <li class="medi-o-nav-item nav-item"><a class="medi-o-nav-link nav-link"
@@ -202,7 +202,7 @@ $_SESSION['reset_token'] = $token;
             <div class="row gy-4 text-center text-md-start">
                 <!-- Logo & Description -->
                 <div class="col-md-6">
-                    <a href="home.php"><img src="images/medi-o-logo-white.svg" alt="Medi-O Logo logo-f" height="60"
+                    <a href="index.php"><img src="images/medi-o-logo-white.svg" alt="Medi-O Logo logo-f" height="60"
                             class="medi-o-footer-logo mb-3 logo-f" /></a>
                     <p class="medi-o-footer-description mb-0">
                         Medi-O is a licensed and registered pharmacy compliant with NMRA (National Medicine Regulatory
