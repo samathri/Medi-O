@@ -1,3 +1,6 @@
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -25,7 +28,7 @@
 <body>
 
 
-
+<?php include 'product-management.php'; ?>
     
  <!-- Sidebar -->
   <nav id="sidebar" aria-label="Admin Sidebar Navigation">
