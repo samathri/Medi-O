@@ -150,46 +150,24 @@ session_start();
 
         <!-- Prescription Status Dashboard -->
         <section aria-labelledby="dashboard-section-title" class="mb-5">
-            <h2 id="dashboard-section-title" class="section-title">Prescription Dashboard</h2>
-            <div class="row text-center gy-3">
-                <div class="col-6 col-md-3">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Pending</h5>
-                            <p class="card-text fs-3 text-warning" id="countPending">0</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Order Processing</h5>
-                            <p class="card-text fs-3 text-info" id="countStartToPack">0</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Ready to Collect</h5>
-                            <p class="card-text fs-3 text-success" id="countReadyToCollect">0</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6 col-md-3">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title">Collected</h5>
-                            <p class="card-text fs-3 text-primary" id="countCollected">0</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <h2 id="dashboard-section-title" class="section-title">Prescription Dashboard</h2>
 
-            <div class="mt-4" style="max-width: 400px; margin: auto;">
-                <canvas id="prescriptionStatusChart" aria-label="Prescription status chart" role="img"></canvas>
-            </div>
-        </section>
+  <div class="progress-steps-container">
+    <div class="progress-step completed">
+      <div class="step-dot">1</div>
+      <div class="step-label">Pending</div>
+    </div>
+    <div class="progress-step completed">
+      <div class="step-dot">2</div>
+      <div class="step-label">Order Processing</div>
+    </div>
+    <div class="progress-step">
+      <div class="step-dot">3</div>
+      <div class="step-label">Ready to Collect</div>
+    </div>
+  </div>
+</section>
+
 
         <!-- Account Section -->
         <section aria-labelledby="account-section-title" class="form-section">
@@ -369,7 +347,33 @@ session_start();
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/script.js"></script>
+                            
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+  const steps = document.querySelectorAll('.progress-step');
 
+  // Suppose currentStatus can be 'pending', 'order-processing', or 'ready-to-collect'
+  // Map each status to index 0,1,2
+  const currentStatus = 'order-processing'; // Example
+
+  const statusMap = {
+    'pending': 0,
+    'order-processing': 1,
+    'ready-to-collect': 2
+  };
+
+  const currentIndex = statusMap[currentStatus];
+
+  steps.forEach((step, index) => {
+    if(index <= currentIndex) {
+      step.classList.add('completed');
+    } else {
+      step.classList.remove('completed');
+    }
+  });
+});
+
+    </script>
 
 
 </body>

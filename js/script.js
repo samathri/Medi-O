@@ -237,146 +237,146 @@ document.getElementById('forgotPasswordForm').addEventListener('submit', functio
     });
 
 
-    // Sidebar toggle script
-        document.getElementById('sidebarCollapse').addEventListener('click', function () {
-            document.getElementById('sidebar').classList.toggle('active');
-        });
+    // // Sidebar toggle script
+    //     document.getElementById('sidebarCollapse').addEventListener('click', function () {
+    //         document.getElementById('sidebar').classList.toggle('active');
+    //     });
 
-        // Section navigation
-        const sidebarLinks = document.querySelectorAll('#sidebarMenu a.nav-link');
-        const sections = document.querySelectorAll('main section');
+    //     // Section navigation
+    //     const sidebarLinks = document.querySelectorAll('#sidebarMenu a.nav-link');
+    //     const sections = document.querySelectorAll('main section');
 
-        function showSection(id) {
-            sections.forEach(section => {
-                if (section.id === id) {
-                    section.classList.remove('d-none');
-                } else {
-                    section.classList.add('d-none');
-                }
-            });
-        }
+    //     function showSection(id) {
+    //         sections.forEach(section => {
+    //             if (section.id === id) {
+    //                 section.classList.remove('d-none');
+    //             } else {
+    //                 section.classList.add('d-none');
+    //             }
+    //         });
+    //     }
 
-        sidebarLinks.forEach(link => {
-            link.addEventListener('click', e => {
-                e.preventDefault();
-                const targetId = link.getAttribute('href').substring(1);
-                showSection(targetId);
-                // Update active class
-                sidebarLinks.forEach(l => l.classList.remove('active'));
-                link.classList.add('active');
-            });
-        });
+    //     sidebarLinks.forEach(link => {
+    //         link.addEventListener('click', e => {
+    //             e.preventDefault();
+    //             const targetId = link.getAttribute('href').substring(1);
+    //             showSection(targetId);
+    //             // Update active class
+    //             sidebarLinks.forEach(l => l.classList.remove('active'));
+    //             link.classList.add('active');
+    //         });
+    //     });
 
-        // Show dashboard by default
-        showSection('dashboardSection');
+    //     // Show dashboard by default
+    //     showSection('dashboardSection');
 
-        // Data for dashboard cards and chart (simulate fetching from API)
-        const dashboardData = {
-            totalUsers: 1234,
-            totalPrescriptions: 567,
-            pendingApprovals: 89,
-            totalProducts: 350,
-            prescriptionStatusCount: {
-                Pending: 89,
-                Approved: 400,
-                Rejected: 78
-            },
-            bestSellingItems: ["Paracetamol", "Ibuprofen", "Vitamin C"]
-        };
+    //     // Data for dashboard cards and chart (simulate fetching from API)
+    //     const dashboardData = {
+    //         totalUsers: 1234,
+    //         totalPrescriptions: 567,
+    //         pendingApprovals: 89,
+    //         totalProducts: 350,
+    //         prescriptionStatusCount: {
+    //             Pending: 89,
+    //             Approved: 400,
+    //             Rejected: 78
+    //         },
+    //         bestSellingItems: ["Paracetamol", "Ibuprofen", "Vitamin C"]
+    //     };
 
-        // Update dashboard cards dynamically
-        document.getElementById('totalUsers').textContent = dashboardData.totalUsers;
-        document.getElementById('totalPrescriptions').textContent = dashboardData.totalPrescriptions;
-        document.getElementById('pendingApprovals').textContent = dashboardData.pendingApprovals;
-        document.getElementById('totalProducts').textContent = dashboardData.totalProducts;
+    //     // Update dashboard cards dynamically
+    //     document.getElementById('totalUsers').textContent = dashboardData.totalUsers;
+    //     document.getElementById('totalPrescriptions').textContent = dashboardData.totalPrescriptions;
+    //     document.getElementById('pendingApprovals').textContent = dashboardData.pendingApprovals;
+    //     document.getElementById('totalProducts').textContent = dashboardData.totalProducts;
 
-        // Update Best Selling Items list
-        const bestSellingList = document.getElementById('bestSellingList');
-        bestSellingList.innerHTML = '';
-        dashboardData.bestSellingItems.forEach(item => {
-            const li = document.createElement('li');
-            li.className = 'list-group-item';
-            li.textContent = item;
-            bestSellingList.appendChild(li);
-        });
+    //     // Update Best Selling Items list
+    //     const bestSellingList = document.getElementById('bestSellingList');
+    //     bestSellingList.innerHTML = '';
+    //     dashboardData.bestSellingItems.forEach(item => {
+    //         const li = document.createElement('li');
+    //         li.className = 'list-group-item';
+    //         li.textContent = item;
+    //         bestSellingList.appendChild(li);
+    //     });
 
-        // Initialize Chart.js for prescription statuses
-        const ctx = document.getElementById('statusChart').getContext('2d');
-        const statusChart = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: Object.keys(dashboardData.prescriptionStatusCount),
-                datasets: [{
-                    data: Object.values(dashboardData.prescriptionStatusCount),
-                    backgroundColor: ['#ffc107', '#198754', '#dc3545'],
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            font: { family: 'Poppins' }
-                        }
-                    },
-                    title: {
-                        display: false,
-                    }
-                }
-            }
-        });
+    //     // Initialize Chart.js for prescription statuses
+    //     const ctx = document.getElementById('statusChart').getContext('2d');
+    //     const statusChart = new Chart(ctx, {
+    //         type: 'doughnut',
+    //         data: {
+    //             labels: Object.keys(dashboardData.prescriptionStatusCount),
+    //             datasets: [{
+    //                 data: Object.values(dashboardData.prescriptionStatusCount),
+    //                 backgroundColor: ['#ffc107', '#198754', '#dc3545'],
+    //             }]
+    //         },
+    //         options: {
+    //             responsive: true,
+    //             plugins: {
+    //                 legend: {
+    //                     position: 'bottom',
+    //                     labels: {
+    //                         font: { family: 'Poppins' }
+    //                     }
+    //                 },
+    //                 title: {
+    //                     display: false,
+    //                 }
+    //             }
+    //         }
+    //     });
 
-        // Update Admin Profile Pending Approval count
-        const pendingApprovalCount = document.getElementById('pendingApprovalCount');
-        pendingApprovalCount.textContent = dashboardData.pendingApprovals + " prescriptions pending approval";
+    //     // Update Admin Profile Pending Approval count
+    //     const pendingApprovalCount = document.getElementById('pendingApprovalCount');
+    //     pendingApprovalCount.textContent = dashboardData.pendingApprovals + " prescriptions pending approval";
 
-        // Change password form (example basic validation)
-        document.getElementById('changePasswordForm').addEventListener('submit', e => {
-            e.preventDefault();
-            const currentPass = document.getElementById('currentPassword').value.trim();
-            const newPass = document.getElementById('newPassword').value.trim();
-            const confirmPass = document.getElementById('confirmNewPassword').value.trim();
+    //     // Change password form (example basic validation)
+    //     document.getElementById('changePasswordForm').addEventListener('submit', e => {
+    //         e.preventDefault();
+    //         const currentPass = document.getElementById('currentPassword').value.trim();
+    //         const newPass = document.getElementById('newPassword').value.trim();
+    //         const confirmPass = document.getElementById('confirmNewPassword').value.trim();
 
-            if (newPass !== confirmPass) {
-                alert("New passwords do not match!");
-                return;
-            }
+    //         if (newPass !== confirmPass) {
+    //             alert("New passwords do not match!");
+    //             return;
+    //         }
 
-            if (newPass.length < 6) {
-                alert("New password should be at least 6 characters.");
-                return;
-            }
+    //         if (newPass.length < 6) {
+    //             alert("New password should be at least 6 characters.");
+    //             return;
+    //         }
 
-            alert("Password changed successfully!");
-            e.target.reset();
-        });
+    //         alert("Password changed successfully!");
+    //         e.target.reset();
+    //     });
 
-        // Logout button
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            alert('Logging out...');
-            // Implement actual logout here
-        });
+    //     // Logout button
+    //     document.getElementById('logoutBtn').addEventListener('click', () => {
+    //         alert('Logging out...');
+    //         // Implement actual logout here
+    //     });
 
 
 
-    // User Search filter example
-    const userSearch = document.getElementById('userSearch');
-    const userTableBody = document.getElementById('userTableBody');
+    // // User Search filter example
+    // const userSearch = document.getElementById('userSearch');
+    // const userTableBody = document.getElementById('userTableBody');
 
-    userSearch.addEventListener('input', () => {
-      const filter = userSearch.value.toLowerCase();
-      const rows = userTableBody.querySelectorAll('tr');
+    // userSearch.addEventListener('input', () => {
+    //   const filter = userSearch.value.toLowerCase();
+    //   const rows = userTableBody.querySelectorAll('tr');
 
-      rows.forEach(row => {
-        const text = row.textContent.toLowerCase();
-        if (text.includes(filter)) {
-          row.style.display = '';
-        } else {
-          row.style.display = 'none';
-        }
-      });
-    });
+    //   rows.forEach(row => {
+    //     const text = row.textContent.toLowerCase();
+    //     if (text.includes(filter)) {
+    //       row.style.display = '';
+    //     } else {
+    //       row.style.display = 'none';
+    //     }
+    //   });
+    // });
 
     // Change password form submit (dummy)
     document.getElementById('changePasswordForm').addEventListener('submit', e => {
@@ -539,7 +539,6 @@ document.getElementById('forgotPasswordForm').addEventListener('submit', functio
 
     // Navigation section toggle
     const navLinks = document.querySelectorAll('#sidebarMenu .nav-link');
-    const sections = document.querySelectorAll('main section');
 
     navLinks.forEach(link => {
       link.addEventListener('click', e => {
@@ -567,29 +566,7 @@ document.getElementById('forgotPasswordForm').addEventListener('submit', functio
       });
     });
 
-    // Initialize dashboard chart
-    const ctx = document.getElementById('statusChart').getContext('2d');
-    const statusChart = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: ['Pending', 'Approved', 'Rejected'],
-        datasets: [{
-          label: 'Prescription Status',
-          data: [89, 350, 50],
-          backgroundColor: ['#ffc107', '#198754', '#dc3545'],
-          hoverOffset: 30
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: {
-            position: 'bottom'
-          }
-        }
-      }
-    });
-
+    
 
     // Frontend integration example snippet (fetch users):
     async function loadUsers() {
