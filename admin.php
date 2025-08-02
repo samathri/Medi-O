@@ -3,6 +3,7 @@ session_start();
 ?>
 <?php include 'product-management.php'; ?>
 <?php include 'user-management.php'; ?>
+<?php include 'prescription-management.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -71,24 +72,19 @@ session_start();
     <div class="p-4 ">
       <h3 class="text-white mb-4 text-center">Medi-O Admin</h3>
       <ul class="nav flex-column" id="sidebarMenu">
-        <li class="nav-item"><a class="nav-link active" href="#dashboardSection"><i
-              class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
+        
         <li class="nav-item"><a class="nav-link" href="#userManagementSection"><i class="bi bi-people me-2"></i>User
             Management</a></li>
         <li class="nav-item"><a class="nav-link" href="#prescriptionManagementSection"><i
               class="bi bi-file-earmark-medical me-2"></i>Prescription Management</a></li>
-        <li class="nav-item"><a class="nav-link" href="#pharmacistManagementSection"><i
-              class="bi bi-person-badge me-2"></i>Pharmacist Management</a></li>
+        
         <li class="nav-item"><a class="nav-link" href="#productManagementSection"><i
               class="bi bi-basket3 me-2"></i>Product Management</a></li>
-        <li class="nav-item"><a class="nav-link" href="#bestSellingSection"><i
-              class="bi bi-star-fill me-2"></i>Best-Selling Items</a></li>
-        <li class="nav-item"><a class="nav-link" href="#cmsSection"><i class="bi bi-file-text me-2"></i>CMS /
-            Content Management</a></li>
+        
+        
         <li class="nav-item"><a class="nav-link" href="#contactInquirySection"><i
               class="bi bi-envelope me-2"></i>Contact Inquiries</a></li>
-        <li class="nav-item"><a class="nav-link" href="#adminProfileSection"><i
-              class="bi bi-person-circle me-2"></i>Admin Profile & Security</a></li>
+        
         <li class="nav-item mt-3">
           <a href="logout.php" id="logoutBtn" class="btn btn-danger w-100 text-decoration-none">
             <i class="bi bi-box-arrow-right me-2"></i>Logout
@@ -202,7 +198,6 @@ session_start();
 
 
 
-   
 <!-- Prescription Management Section -->
 <section id="prescriptionManagementSection" class="d-none" tabindex="0">
     <h2 class="section-title">Prescription Management</h2>
@@ -217,88 +212,34 @@ session_start();
                     <th>Customer Name</th>
                     <th>Customer Phone</th>
                     <th>Customer Address</th>
-                    <th>QR Code</th>
-                    <th>Order Status</th>
-                    <th>Actions</th>
+                    <th>Customer Email</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
-                <!-- Example Prescription Entry 1 -->
+                <?php
+                $result = $conn->query("SELECT * FROM prescriptions"); // Fetch prescriptions from the DB
+                while ($row = $result->fetch_assoc()):
+                ?>
                 <tr>
-                    <td>PR001</td>
+                    <td><?= $row['prescription_id'] ?></td>
                     <td>
-                        <a href="path/to/prescription-image.jpg" download>Download Prescription Image</a>
+                        <a href="path/to/prescription-image.jpg" download>Download Prescription File</a>
                     </td>
-                    <td>John Doe</td>
-                    <td>123-456-7890</td>
-                    <td>123 Main St, Some City, Some Country</td>
+                    <td><?= htmlspecialchars($row['customer_name']) ?></td>
+                    <td><?= htmlspecialchars($row['customer_phone']) ?></td>
+                    <td><?= htmlspecialchars($row['customer_address']) ?></td>
+                    <td><?= htmlspecialchars($row['customer_email']) ?></td>
                     <td>
-                        <!-- QR Code link to customer's profile -->
-                        <a href="path/to/generated-qr-code.jpg" download>Download QR Code</a>
-                    </td>
-                    <td>
-                        <select class="form-select">
-                            <option value="Pending">Pending</option>
-                            <option value="Order Processing">Order Processing</option>
-                            <option value="Ready to Collect">Ready to Collect</option>
-                        </select>
-                    </td>
-                    <td>
-                        <button class="btn btn-sm btn-warning" title="Edit"><i class="bi bi-pencil"></i></button>
-                        <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
+                        <!-- Action Button to mark as Ready to Pick -->
+                        <a href="prescription-management.php?action=readyToPick&id=<?= $row['prescription_id'] ?>" 
+                           class="btn btn-sm btn-success" 
+                           title="Mark as Ready to Pick">
+                           <i class="bi bi-check-circle"></i> Ready to Pick
+                        </a>
                     </td>
                 </tr>
-
-                <!-- Example Prescription Entry 2 -->
-                <tr>
-                    <td>PR002</td>
-                    <td>
-                        <a href="path/to/prescription-image2.jpg" download>Download Prescription Image</a>
-                    </td>
-                    <td>Jane Smith</td>
-                    <td>987-654-3210</td>
-                    <td>456 Elm St, Some Other City, Some Other Country</td>
-                    <td>
-                        <a href="path/to/generated-qr-code2.jpg" download>Download QR Code</a>
-                    </td>
-                    <td>
-                        <select class="form-select">
-                            <option value="Pending">Pending</option>
-                            <option value="Order Processing">Order Processing</option>
-                            <option value="Ready to Collect">Ready to Collect</option>
-                        </select>
-                    </td>
-                    <td>
-                        <button class="btn btn-sm btn-warning" title="Edit"><i class="bi bi-pencil"></i></button>
-                        <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
-                    </td>
-                </tr>
-
-                <!-- Example Prescription Entry 3 -->
-                <tr>
-                    <td>PR003</td>
-                    <td>
-                        <a href="path/to/prescription-image3.jpg" download>Download Prescription Image</a>
-                    </td>
-                    <td>Emily Brown</td>
-                    <td>555-123-4567</td>
-                    <td>789 Oak St, Another City, Another Country</td>
-                    <td>
-                        <a href="path/to/generated-qr-code3.jpg" download>Download QR Code</a>
-                    </td>
-                    <td>
-                        <select class="form-select">
-                            <option value="Pending">Pending</option>
-                            <option value="Order Processing">Order Processing</option>
-                            <option value="Ready to Collect">Ready to Collect</option>
-                        </select>
-                    </td>
-                    <td>
-                        <button class="btn btn-sm btn-warning" title="Edit"><i class="bi bi-pencil"></i></button>
-                        <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
-                    </td>
-                </tr>
-
+                <?php endwhile; ?>
             </tbody>
         </table>
     </div>
@@ -306,46 +247,8 @@ session_start();
 
 
 
-    <!-- Pharmacist Management -->
-    <section id="pharmacistManagementSection" class="d-none" tabindex="0">
-      <h2 class="section-title">Pharmacist Management</h2>
-      <button class="btn btn-primary mb-3">Add New Pharmacist</button>
-      <div class="table-responsive">
-        <table class="table table-hover align-middle">
-          <thead>
-            <tr>
-              <th>Pharmacist ID</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Prescriptions Handled</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>PH001</td>
-              <td>Dr. Sarah Lee</td>
-              <td>sarah.lee@example.com</td>
-              <td>45</td>
-              <td>
-                <button class="btn btn-sm btn-warning" title="Edit"><i class="bi bi-pencil"></i></button>
-                <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
-              </td>
-            </tr>
-            <tr>
-              <td>PH002</td>
-              <td>Dr. Michael Chen</td>
-              <td>michael.chen@example.com</td>
-              <td>38</td>
-              <td>
-                <button class="btn btn-sm btn-warning" title="Edit"><i class="bi bi-pencil"></i></button>
-                <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+
+
 
 <!-- Product Management UI -->
 <section id="productManagementSection" class="mt-5">
@@ -457,31 +360,6 @@ session_start();
 </div>
 
 
-
-    <!-- Best-Selling Items Management -->
-    <section id="bestSellingSection" class="d-none" tabindex="0">
-      <h2 class="section-title">Best-Selling Items Management</h2>
-      <p>Manually mark or unmark products as "Best-Selling".</p>
-      <ul class="list-group mb-3">
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          Paracetamol
-          <button class="btn btn-sm btn-outline-danger">Unmark</button>
-        </li>
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          Vitamin C
-          <button class="btn btn-sm btn-outline-danger">Unmark</button>
-        </li>
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-          Aspirin
-          <button class="btn btn-sm btn-outline-danger">Unmark</button>
-        </li>
-      </ul>
-      <div class="form-check form-switch">
-        <input class="form-check-input" type="checkbox" id="autoMarkToggle" />
-        <label class="form-check-label" for="autoMarkToggle">Enable auto-marking based on sales (future feature)</label>
-      </div>
-    </section>
-
     <!-- Contact Inquiry Management -->
     <section id="contactInquirySection" class="d-none" tabindex="0">
       <h2 class="section-title">Contact Inquiry Management</h2>
@@ -525,54 +403,6 @@ session_start();
     </section>
 
 
-    <!-- Admin Profile & Security -->
-    <section id="adminProfileSection" class="d-none" tabindex="0">
-      <h2 class="section-title">Admin Profile & Security</h2>
-
-      <form id="changePasswordForm" class="mb-4" aria-label="Change password form">
-        <div class="mb-3">
-          <label for="currentPassword" class="form-label">Current Password</label>
-          <input type="password" class="form-control" id="currentPassword" required />
-        </div>
-        <div class="mb-3">
-          <label for="newPassword" class="form-label">New Password</label>
-          <input type="password" class="form-control" id="newPassword" required />
-        </div>
-        <div class="mb-3">
-          <label for="confirmNewPassword" class="form-label">Confirm New Password</label>
-          <input type="password" class="form-control" id="confirmNewPassword" required />
-        </div>
-        <button type="submit" class="btn btn-primary">Change Password</button>
-      </form>
-
-      <h3>Login Activity</h3>
-      <table class="table table-sm">
-        <thead>
-          <tr>
-            <th>Date/Time</th>
-            <th>IP Address</th>
-            <th>Browser</th>
-            <th>Location</th>
-          </tr>
-        </thead>
-        <tbody id="loginActivityTable">
-          <tr>
-            <td>2025-07-30 15:45</td>
-            <td>192.168.0.101</td>
-            <td>Chrome</td>
-            <td>New York, USA</td>
-          </tr>
-          <tr>
-            <td>2025-07-29 09:12</td>
-            <td>192.168.0.95</td>
-            <td>Firefox</td>
-            <td>Los Angeles, USA</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <h3 class="mt-4">Pending Prescription Approvals</h3>
-      <p id="pendingApprovalCount" class="fs-5 text-danger">Loading...</p>
     </section>
   </main>
 
