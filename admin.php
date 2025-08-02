@@ -4,6 +4,7 @@ session_start();
 <?php include 'product-management.php'; ?>
 <?php include 'user-management.php'; ?>
 <?php include 'prescription-management.php'; ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -154,19 +155,26 @@ session_start();
       </div>
     </section>
 
+
+
+    
+<?php
+include 'includes/db.php'; // Database connection
+
+// Fetch Users
+$sql = "SELECT * FROM users"; 
+$result = $conn->query($sql);
+
+if ($result === false) {
+    echo "Error fetching users: " . $conn->error;
+}
+
+?>
+
 <!-- User Management Section -->
 <section id="userManagementSection" class="d-none" tabindex="0">
   <h2 class="section-title">User Management</h2>
-  <p>View all registered users here .</p>
-
-  <!-- Search Form
-  <form method="GET" action="admin.php"> 
-   <div class="d-flex">
-      <button type="submit" class="btn btn-secondary mb-3 me-2">Search</button>
-      
-      <button type="button" class="btn btn-danger reset-a mb-3" onclick="window.location.href='admin.php?section=userManagement'">Reset</button>
-    </div>
-  </form> --> 
+  <p>View all registered users here.</p>
 
   <div class="table-responsive">
     <table class="table table-hover align-middle">
@@ -180,23 +188,51 @@ session_start();
         </tr>
       </thead>
       <tbody>
-        <?php while ($row = $result->fetch_assoc()): ?>
+        <?php 
+        // Check if query returned any rows
+        if ($result && $result->num_rows > 0): 
+            while ($row = $result->fetch_assoc()): 
+        ?>
         <tr>
-          <td><?= $row['id'] ?></td>
+          <td><?= htmlspecialchars($row['id']) ?></td>
           <td><?= htmlspecialchars($row['name']) ?></td>
           <td><?= htmlspecialchars($row['email']) ?></td>
           <td><?= htmlspecialchars($row['phone']) ?></td>
           <td><?= htmlspecialchars($row['address']) ?></td>
-          
         </tr>
-        <?php endwhile; ?>
+        <?php 
+            endwhile; 
+        else:
+        ?>
+        <tr>
+          <td colspan="5">No users found.</td>
+        </tr>
+        <?php endif; ?>
       </tbody>
     </table>
   </div>
 </section>
 
 
+<?php
+include 'includes/db.php'; // Database connection
 
+// Fetch Prescription and User Details
+$sql = "
+    SELECT p.id AS prescription_id, p.file_path, p.status, 
+           u.name AS customer_name, u.phone AS customer_phone, 
+           u.address AS customer_address, u.email AS customer_email 
+    FROM `prescriptions_2` p
+    JOIN users u ON p.user_id = u.id
+    ORDER BY p.id DESC
+";
+
+$result = $conn->query($sql);
+
+if ($result === false) {
+    echo "Error in fetching prescriptions: " . $conn->error;
+}
+?>
 
 <!-- Prescription Management Section -->
 <section id="prescriptionManagementSection" class="d-none" tabindex="0">
@@ -217,29 +253,29 @@ session_start();
                 </tr>
             </thead>
             <tbody>
-                <?php
-                $result = $conn->query("SELECT * FROM prescriptions"); // Fetch prescriptions from the DB
-                while ($row = $result->fetch_assoc()):
-                ?>
-                <tr>
-                    <td><?= $row['prescription_id'] ?></td>
-                    <td>
-                        <a href="path/to/prescription-image.jpg" download>Download Prescription File</a>
-                    </td>
-                    <td><?= htmlspecialchars($row['customer_name']) ?></td>
-                    <td><?= htmlspecialchars($row['customer_phone']) ?></td>
-                    <td><?= htmlspecialchars($row['customer_address']) ?></td>
-                    <td><?= htmlspecialchars($row['customer_email']) ?></td>
-                    <td>
-                        <!-- Action Button to mark as Ready to Pick -->
-                        <a href="prescription-management.php?action=readyToPick&id=<?= $row['prescription_id'] ?>" 
-                           class="btn btn-sm btn-success" 
-                           title="Mark as Ready to Pick">
-                           <i class="bi bi-check-circle"></i> Ready to Pick
-                        </a>
-                    </td>
-                </tr>
-                <?php endwhile; ?>
+                <?php if ($result->num_rows > 0): ?>
+                    <?php while ($row = $result->fetch_assoc()): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($row['prescription_id']) ?></td>
+                            <td>
+                                <a href="uploads/prescriptions/<?= htmlspecialchars($row['file_path']) ?>" download>Download Prescription File</a>
+                            </td>
+                            <td><?= htmlspecialchars($row['customer_name']) ?></td>
+                            <td><?= htmlspecialchars($row['customer_phone']) ?></td>
+                            <td><?= htmlspecialchars($row['customer_address']) ?></td>
+                            <td><?= htmlspecialchars($row['customer_email']) ?></td>
+                            <td>
+                                <button class="btn btn-sm btn-success" title="Mark as Ready to Pick">
+                                    <i class="bi bi-check-circle"></i> Ready to Pick
+                                </button>
+                            </td>
+                        </tr>
+                    <?php endwhile; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="7">No prescriptions found.</td>
+                    </tr>
+                <?php endif; ?>
             </tbody>
         </table>
     </div>
@@ -253,10 +289,10 @@ session_start();
 <!-- Product Management UI -->
 <section id="productManagementSection" class="mt-5">
   <h2 class="section-title">Product Management</h2>
-  <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#productModal">Add New Product</button>
+  <button class="btn btn-primary mb-3" style="width:fit-content" data-bs-toggle="modal" data-bs-target="#productModal">Add New Product</button>
 
   <div class="table-responsive">
-    <table class="table table-hover align-middle">
+    <table class="table table-hover ">
       <thead class="table-light">
         <tr>
           <th>ID</th>
@@ -296,7 +332,7 @@ session_start();
           </td>
           <td>
             <!-- Update Button -->
-            <a href="edit-product.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-warning">
+            <a href="edit-product.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-warning ">
   <i class="bi bi-pencil"></i>
 </a>
 
@@ -403,6 +439,54 @@ session_start();
     </section>
 
 
+    <!-- Admin Profile & Security -->
+    <section id="adminProfileSection" class="d-none" tabindex="0">
+      <h2 class="section-title">Admin Profile & Security</h2>
+
+      <form id="changePasswordForm" class="mb-4" aria-label="Change password form">
+        <div class="mb-3">
+          <label for="currentPassword" class="form-label">Current Password</label>
+          <input type="password" class="form-control" id="currentPassword" required />
+        </div>
+        <div class="mb-3">
+          <label for="newPassword" class="form-label">New Password</label>
+          <input type="password" class="form-control" id="newPassword" required />
+        </div>
+        <div class="mb-3">
+          <label for="confirmNewPassword" class="form-label">Confirm New Password</label>
+          <input type="password" class="form-control" id="confirmNewPassword" required />
+        </div>
+        <button type="submit" class="btn btn-primary">Change Password</button>
+      </form>
+
+      <h3>Login Activity</h3>
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th>Date/Time</th>
+            <th>IP Address</th>
+            <th>Browser</th>
+            <th>Location</th>
+          </tr>
+        </thead>
+        <tbody id="loginActivityTable">
+          <tr>
+            <td>2025-07-30 15:45</td>
+            <td>192.168.0.101</td>
+            <td>Chrome</td>
+            <td>New York, USA</td>
+          </tr>
+          <tr>
+            <td>2025-07-29 09:12</td>
+            <td>192.168.0.95</td>
+            <td>Firefox</td>
+            <td>Los Angeles, USA</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3 class="mt-4">Pending Prescription Approvals</h3>
+      <p id="pendingApprovalCount" class="fs-5 text-danger">Loading...</p>
     </section>
   </main>
 

@@ -3,6 +3,7 @@ session_start();
 ?>
 
 <?php include 'upload-prescription.php'; ?>
+<?php include 'my-prescriptions.php'; ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -63,7 +64,6 @@ session_start();
 </section>
 
 
-
 <!-- My Prescriptions Section -->
 <section aria-labelledby="prescriptions-section-title" class="form-section">
   <h2 id="prescriptions-section-title" class="section-title">My Prescriptions</h2>
@@ -75,37 +75,32 @@ session_start();
         <tr>
           <th>Prescription ID</th>
           <th>Prescription File</th>
-          <th>User Name</th>
           <th>Status</th>
         </tr>
       </thead>
       <tbody>
-        <!-- Example data rows (these will be dynamically generated via PHP) -->
-        <tr>
-          <td>1</td>
-          <td>
-            <a href="uploads/prescriptions/example-prescription.jpg" target="_blank" download>
-              View Prescription
-            </a>
-          </td>
-          <td>John Doe</td>
-          <td>Pending</td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td>
-            <a href="uploads/prescriptions/example-prescription2.jpg" target="_blank" download>
-              View Prescription
-            </a>
-          </td>
-          <td>Jane Smith</td>
-          <td>Approved</td>
-        </tr>
-        <!-- More rows will be added dynamically from the backend -->
+        <?php if ($result->num_rows > 0): ?>
+          <?php while ($row = $result->fetch_assoc()): ?>
+            <tr>
+              <td><?= $row['id'] ?></td>
+              <td>
+                <a href="uploads/prescriptions/<?= htmlspecialchars($row['file_path']) ?>" target="_blank" download>
+                  View Prescription
+                </a>
+              </td>
+              <td><?= htmlspecialchars($row['status']) ?></td>
+            </tr>
+          <?php endwhile; ?>
+        <?php else: ?>
+          <tr>
+            <td colspan="3">No prescriptions found.</td>
+          </tr>
+        <?php endif; ?>
       </tbody>
     </table>
   </div>
 </section>
+
 
 
 

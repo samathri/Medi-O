@@ -1,50 +1,66 @@
 <?php
-// Include database connection
+// Include the database connection
 include 'includes/db.php';
 
-// Assuming the user is logged in and we have the user ID in session (replace this with actual session logic)
-session_start();
-$user_id = $_SESSION['user_id']; // You may need to adjust this based on your session logic
+// Start the session to access the logged-in user's ID
+$userId = $_SESSION['user_id']; // Assuming the user ID is stored in session
 
-// Fetch prescriptions uploaded by the logged-in user
-$sql = "SELECT * FROM prescriptions WHERE user_id = ? ORDER BY id DESC";
+// Fetch the user's prescriptions from the "prescriptions_2" table
+$sql = "SELECT * FROM `prescriptions_2` WHERE user_id = ? ORDER BY id DESC";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $user_id);
+$stmt->bind_param("i", $userId);
 $stmt->execute();
-$result = $stmt->get_result();
+$result = $stmt->get_result(); // Get the result of the query
 ?>
 
-<!-- My Prescriptions Section -->
-<section aria-labelledby="prescriptions-section-title" class="form-section">
-  <h2 id="prescriptions-section-title" class="section-title">My Prescriptions</h2>
-  
-  <div class="table-responsive">
-    <table class="table table-hover align-middle">
-      <thead>
-        <tr>
-          <th>Prescription ID</th>
-          <th>Prescription Image</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <?php while ($row = $result->fetch_assoc()): ?>
-        <tr>
-          <td><?= $row['id'] ?></td>
-          <td>
-            <!-- Link to download prescription file -->
-            <a href="<?= htmlspecialchars($row['file_path']) ?>" download>Download Prescription</a>
-          </td>
-          <td><?= htmlspecialchars($row['status']) ?></td>
-        </tr>
-        <?php endwhile; ?>
-      </tbody>
-    </table>
-  </div>
-</section>
 
 <?php
-// Close the database connection
-$stmt->close();
-$conn->close();
+// Handle Prescription Upload (Optional - if you also want to allow prescription upload in this file)
+if (isset($_POST['uploadPrescription'])) {
+    // Get the file details
+    $file = $_FILES['prescriptionFile'];
+    
+    // Define allowed file types and max size
+    $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+    $maxFileSize = 5 * 1024 * 1024; // 5MB
+    
+    // Extract file information
+    $fileName = basename($file['name']);
+    $fileTmpName = $file['tmp_name'];
+    $fileSize = $file['size'];
+    $fileType = $file['type'];
+    
+    // Validate file type
+    if (!in_array($fileType, $allowedTypes)) {
+        echo "Only JPG, JPEG, and PNG files are allowed.";
+        exit;
+    }
+    
+    // Validate file size
+    if ($fileSize > $maxFileSize) {
+        echo "The file is too large. Maximum size is 5MB.";
+        exit;
+    }
+    
+    // Generate a unique name for the file to avoid overwriting
+    $uniqueFileName = uniqid() . '-' . $fileName;
+    $filePath = 'uploads/prescriptions/' . $uniqueFileName;
+    
+    // Move the file to the destination folder
+    if (move_uploaded_file($fileTmpName, $filePath)) {
+        // Insert the file path into the "prescriptions_2" table
+        $status = 'Pending'; // Default status is 'Pending'
+        $sql = "INSERT INTO `prescriptions_2` (user_id, file_path, status) VALUES (?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("iss", $userId, $uniqueFileName, $status);
+        
+        if ($stmt->execute()) {
+            echo "Prescription uploaded successfully!";
+        } else {
+            echo "Error uploading prescription. Please try again.";
+        }
+    } else {
+        echo "There was an error uploading the file. Please try again.";
+    }
+}
 ?>

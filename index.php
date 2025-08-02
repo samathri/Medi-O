@@ -29,10 +29,10 @@ session_start();
 
 
 
-<!-- Header -->
-<?php include("components/header.php"); ?>
+    <!-- Header -->
+    <?php include("components/header.php"); ?>
 
-    
+
 
     <!-- Hero Section -->
     <section class="medi-o-hero hero py-5">
@@ -63,8 +63,8 @@ session_start();
                     placeholder="Search Here....." aria-labelledby="medi-o-search-label-001" />
                 <label id="medi-o-search-label-001" for="medi-o-search-input-001" class="visually-hidden">Search</label>
 
-                <button type="submit" id="medi-o-search-btn-001" class="btn medi-o-search-btn search-btn"
-                    aria-label="Submit search">
+                <button type="submit" id="medi-o-search-btn-001" style="width: fit-content;"
+                    class="btn medi-o-search-btn search-btn" aria-label="Submit search">
                     <i class="bi bi-search"></i>
                 </button>
             </form>
@@ -247,8 +247,8 @@ session_start();
 
 
 
-<!-- Footer -->
-<?php include("components/footer.php"); ?>
+    <!-- Footer -->
+    <?php include("components/footer.php"); ?>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
