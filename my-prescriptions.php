@@ -1,66 +1,62 @@
 <?php
-// Include the database connection
 include 'includes/db.php';
 
-// Start the session to access the logged-in user's ID
-$userId = $_SESSION['user_id']; // Assuming the user ID is stored in session
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    echo "<p class='text-danger'>User not logged in.</p>";
+    exit;
+}
 
-// Fetch the user's prescriptions from the "prescriptions_2" table
+$userId = $_SESSION['user_id'];
+
+// ========== FETCH PRESCRIPTIONS ==========
 $sql = "SELECT * FROM `prescriptions_2` WHERE user_id = ? ORDER BY id DESC";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $userId);
 $stmt->execute();
-$result = $stmt->get_result(); // Get the result of the query
-?>
+$result = $stmt->get_result(); // Result available for later display
 
-
-<?php
-// Handle Prescription Upload (Optional - if you also want to allow prescription upload in this file)
+// ========== HANDLE PRESCRIPTION UPLOAD ==========
 if (isset($_POST['uploadPrescription'])) {
-    // Get the file details
     $file = $_FILES['prescriptionFile'];
-    
-    // Define allowed file types and max size
-    $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+
+    $allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
     $maxFileSize = 5 * 1024 * 1024; // 5MB
-    
-    // Extract file information
+
     $fileName = basename($file['name']);
     $fileTmpName = $file['tmp_name'];
     $fileSize = $file['size'];
     $fileType = $file['type'];
-    
+
     // Validate file type
     if (!in_array($fileType, $allowedTypes)) {
-        echo "Only JPG, JPEG, and PNG files are allowed.";
+        echo "<div class='alert alert-danger'>Only JPG, JPEG, PNG, and PDF files are allowed.</div>";
         exit;
     }
-    
+
     // Validate file size
     if ($fileSize > $maxFileSize) {
-        echo "The file is too large. Maximum size is 5MB.";
+        echo "<div class='alert alert-danger'>The file is too large. Maximum size is 5MB.</div>";
         exit;
     }
-    
-    // Generate a unique name for the file to avoid overwriting
+
     $uniqueFileName = uniqid() . '-' . $fileName;
     $filePath = 'uploads/prescriptions/' . $uniqueFileName;
-    
-    // Move the file to the destination folder
+
     if (move_uploaded_file($fileTmpName, $filePath)) {
-        // Insert the file path into the "prescriptions_2" table
-        $status = 'Pending'; // Default status is 'Pending'
-        $sql = "INSERT INTO `prescriptions_2` (user_id, file_path, status) VALUES (?, ?, ?)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("iss", $userId, $uniqueFileName, $status);
-        
-        if ($stmt->execute()) {
-            echo "Prescription uploaded successfully!";
+        $status = 'Pending';
+
+        $insertSql = "INSERT INTO `prescriptions_2` (user_id, file_path, status) VALUES (?, ?, ?)";
+        $insertStmt = $conn->prepare($insertSql);
+        $insertStmt->bind_param("iss", $userId, $uniqueFileName, $status);
+
+        if ($insertStmt->execute()) {
+            echo "<div class='alert alert-success'>Prescription uploaded successfully!</div>";
         } else {
-            echo "Error uploading prescription. Please try again.";
+            echo "<div class='alert alert-danger'>Database error. Please try again.</div>";
         }
     } else {
-        echo "There was an error uploading the file. Please try again.";
+        echo "<div class='alert alert-danger'>Error uploading file. Please try again.</div>";
     }
 }
 ?>
