@@ -103,11 +103,13 @@ $starsHTML = str_repeat("★ ", $filledStars) . ($halfStar ? "☆ " : "") . str_
 
                         <!-- Buttons -->
                         <div class="d-flex justify-content-start  ">
-                            <form action="add-to-cart.php"  method="POST">
+                            <form method="POST" action="add-to-cart.php">
                                 <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
-                                <input type="number" name="quantity" value="1" min="1" /> <br>
+                                <input type="number" name="quantity" value="1" min="1" required  /> <br>
                                 <button type="submit" class="add-to"   style="width: fit-content;">Add to Cart</button>
                             </form>
+
+
                                     
                             <form action="buy-now.php" method="POST" class="buy-now">
                                 <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
