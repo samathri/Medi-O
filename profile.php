@@ -59,7 +59,7 @@ session_start();
         <input type="hidden" name="user_id" value="<?= $_SESSION['user_id']; ?>" />
 
         <!-- Submit button -->
-        <button type="submit" name="upload_prescription" class="btn btn-primary">Upload Prescription</button>
+        <button type="submit" name="upload_prescription" style="width: fit-content;" class="btn btn-primary">Upload Prescription</button>
     </form>
 </section>
 
@@ -130,7 +130,7 @@ session_start();
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary mt-3">Save Changes</button>
+                <button type="submit" style="width: fit-content;" class="btn btn-primary mt-3">Save Changes</button>
             </form>
 
             <!-- Change Password -->
@@ -151,7 +151,7 @@ session_start();
                         <input type="password" class="form-control" id="confirmPassword" required />
                     </div>
                 </div>
-                <button type="submit" class="btn btn-outline-primary mt-3">Update Password</button>
+                <button type="submit" style="width: fit-content;" class="btn btn-outline-primary mt-3">Update Password</button>
             </form>
         </section>
 

@@ -152,61 +152,49 @@ session_start();
             <!-- Swiper -->
             <div class="swiper mySwiper">
                 <div class="swiper-wrapper">
-                    <!-- Product Card 1 -->
-                    <div class="swiper-slide">
-                        <div class="medi-o-product-card text-center">
-                            <img src="images/Isocal-600x600.png" class="bs-img img-fluid mb-3" alt="Ortho Shield">
-                            <h6 class="medi-o-product-title">ISOCAL POWDER 425g</h6>
-                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
-                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
-                        </div>
-                    </div>
+                    <?php
+include 'includes/db.php'; // Adjust the path if needed
+?>
 
-                    <!-- Product Card 2 -->
-                    <div class="swiper-slide">
-                        <div class="medi-o-product-card text-center">
-                            <img src="images/Siddhalepa-Balm-50g 1.png" class="bs-img img-fluid mb-3"
-                                alt="Siddhalepa Balm">
-                            <h6 class="medi-o-product-title">SIDDHALEPA BALM 50G</h6>
-                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
-                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
-                        </div>
-                    </div>
+    <?php
+    // Fetch best-selling items from the database
+    $sql = "SELECT * FROM best_selling_items ORDER BY created_at DESC";
+    $result = $conn->query($sql);
 
-                    <!-- Product Card 3 -->
-                    <div class="swiper-slide">
-                        <div class="medi-o-product-card text-center">
-                            <img src="images/ACNE-AID 1.png" class="bs-img img-fluid mb-3" alt="Acne-Aid Bar">
-                            <h6 class="medi-o-product-title">ACNE-AID BAR 100g</h6>
-                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
-                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
-                        </div>
-                    </div>
+    if ($result && $result->num_rows > 0):
+        while ($row = $result->fetch_assoc()):
+            $images = explode(',', $row['image_paths']);
+            $firstImage = htmlspecialchars($images[0]);
+            $title = htmlspecialchars($row['item_name']);
+            $price = number_format($row['price'], 2);
+            $rating = floatval($row['rating']);
 
-                    <!-- Product Card 4 -->
-                    <div class="swiper-slide">
-                        <div class="medi-o-product-card text-center">
-                            <img src="images/aknicarelotion 1.png" class="bs-img img-fluid mb-3"
-                                alt="Aknicare Cleanser">
-                            <h6 class="medi-o-product-title">AKNICARE CLEANSER 200ml</h6>
-                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
-                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
-                        </div>
-                    </div>
+            // Star rendering
+            $filledStars = floor($rating);
+            $halfStar = ($rating - $filledStars) >= 0.5;
+            $emptyStars = 5 - $filledStars - ($halfStar ? 1 : 0);
+            ob_start();
+            for ($i = 0; $i < $filledStars; $i++) echo '★ ';
+            if ($halfStar) echo '☆ ';
+            for ($i = 0; $i < $emptyStars; $i++) echo '☆ ';
+            $starsHtml = trim(ob_get_clean());
+    ?>
+        <div class="swiper-slide">
+            <div class="medi-o-product-card text-center">
+                <img src="<?= $firstImage ?>" class="bs-img img-fluid mb-3" alt="<?= $title ?>">
+                <h6 class="medi-o-product-title"><?= $title ?></h6>
+                <p class="medi-o-product-price mb-1">Rs. <?= $price ?></p>
+                <div class="text-warning"><?= $starsHtml ?></div>
+            </div>
+        </div>
+    <?php
+        endwhile;
+    else:
+        echo "<div class='swiper-slide'>No best-selling items found.</div>";
+    endif;
+    ?>
+</div>
 
-                    <!-- Product Card 4 -->
-                    <div class="swiper-slide">
-                        <div class="medi-o-product-card text-center">
-                            <img src="images/aknicarelotion 1.png" class="bs-img img-fluid mb-3"
-                                alt="Aknicare Cleanser">
-                            <h6 class="medi-o-product-title">AKNICARE CLEANSER 200ml</h6>
-                            <p class="medi-o-product-price mb-1">Rs. 2,910.00</p>
-                            <div class="text-warning">★ ★ ★ ☆ ☆</div>
-                        </div>
-                    </div>
-
-
-                </div>
             </div>
         </div>
     </section>
