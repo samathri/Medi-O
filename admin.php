@@ -475,13 +475,12 @@ $result = $conn->query($sql);
 </section>
 
 
-
 <?php
 include 'includes/db.php'; // Database connection
 
-// Fetch Prescription and User Details
+// Fetch Prescription and User Details, including is_picked_up
 $sql = "
-    SELECT p.id AS prescription_id, p.file_path, p.status, 
+    SELECT p.id AS prescription_id, p.file_path, p.is_ready, p.is_picked_up,
            u.name AS customer_name, u.phone AS customer_phone, 
            u.address AS customer_address, u.email AS customer_email 
     FROM `prescriptions_2` p
@@ -496,8 +495,7 @@ if ($result === false) {
 }
 ?>
 
-<!-- Prescription Management Section -->
-<section id="prescriptionManagementSection" class="d-none" tabindex="0">
+<section id="prescriptionManagementSection" class="container mt-5">
     <h2 class="section-title">Prescription Management</h2>
     
     <!-- Table for displaying prescriptions -->
@@ -506,42 +504,92 @@ if ($result === false) {
             <thead>
                 <tr>
                     <th>Prescription ID</th>
-                    <th>Prescription Image</th>
+                    <th>Prescription File</th>
                     <th>Customer Name</th>
-                    <th>Customer Phone</th>
-                    <th>Customer Address</th>
-                    <th>Customer Email</th>
-                    <th>Action</th>
+                    <th>Phone</th>
+                    <th>Address</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Picked Up</th> <!-- New Column -->
                 </tr>
             </thead>
             <tbody>
                 <?php if ($result->num_rows > 0): ?>
                     <?php while ($row = $result->fetch_assoc()): ?>
-                        <tr>
+                        <tr id="prescription-row-<?php echo $row['prescription_id']; ?>">
                             <td><?= htmlspecialchars($row['prescription_id']) ?></td>
                             <td>
-                                <a href="uploads/prescriptions/<?= htmlspecialchars($row['file_path']) ?>" download>Download Prescription File</a>
+                                <a href="uploads/prescriptions/<?= htmlspecialchars($row['file_path']) ?>" download>Download</a>
                             </td>
                             <td><?= htmlspecialchars($row['customer_name']) ?></td>
                             <td><?= htmlspecialchars($row['customer_phone']) ?></td>
                             <td><?= htmlspecialchars($row['customer_address']) ?></td>
                             <td><?= htmlspecialchars($row['customer_email']) ?></td>
                             <td>
-                                <button class="btn btn-sm btn-success" title="Mark as Ready to Pick">
-                                    <i class="bi bi-check-circle"></i> Ready to Pick
-                                </button>
+                                <?php if ((int)$row['is_ready'] === 0): ?>
+                                    <button class="btn btn-sm btn-success ready-to-pick-btn" data-prescription-id="<?= $row['prescription_id']; ?>" title="Mark as Ready to Pick">
+                                        <i class="bi bi-check-circle"></i> Ready to Pick
+                                    </button>
+                                <?php else: ?>
+                                    <span class="badge bg-success">Ready to Pick</span>
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <?php if ((int)$row['is_picked_up'] === 1): ?>
+                                    <span class="badge bg-info">Picked Up</span>
+                                <?php else: ?>
+                                    <span class="badge bg-secondary">Not Picked</span>
+                                <?php endif; ?>
                             </td>
                         </tr>
                     <?php endwhile; ?>
                 <?php else: ?>
                     <tr>
-                        <td colspan="7">No prescriptions found.</td>
+                        <td colspan="8">No prescriptions found.</td>
                     </tr>
                 <?php endif; ?>
             </tbody>
         </table>
     </div>
 </section>
+
+<!-- jQuery (for AJAX) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    $('.ready-to-pick-btn').click(function() {
+        var prescriptionId = $(this).data('prescription-id');
+
+        $.ajax({
+            url: 'update_prescription_status.php',
+            method: 'POST',
+            data: {
+                prescription_id: prescriptionId
+            },
+            success: function(response) {
+                try {
+                    var data = JSON.parse(response);
+                    if (data.status === 'success') {
+                        $('#prescription-row-' + prescriptionId).find('.ready-to-pick-btn')
+                            .replaceWith('<span class="badge bg-success">Ready to Pick</span>');
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                } catch (e) {
+                    console.error('Invalid JSON response', response);
+                    alert('Unexpected server response.');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX error:', status, error);
+                alert('Failed to update status.');
+            }
+        });
+    });
+});
+</script>
+
 
 
 

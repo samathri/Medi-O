@@ -64,10 +64,11 @@ session_start();
 </section>
 
 
+
 <!-- My Prescriptions Section -->
 <section aria-labelledby="prescriptions-section-title" class="form-section">
   <h2 id="prescriptions-section-title" class="section-title">My Prescriptions</h2>
-  
+
   <!-- Table for displaying prescriptions -->
   <div class="table-responsive">
     <table class="table table-hover align-middle">
@@ -88,7 +89,13 @@ session_start();
                   View Prescription
                 </a>
               </td>
-              <td><?= htmlspecialchars($row['status']) ?></td>
+              <td>
+                <?php if ((int)$row['is_ready'] === 1): ?>
+                  <span class="badge bg-success">Ready to Pick</span>
+                <?php else: ?>
+                  <span class="badge bg-warning text-dark">Pending</span>
+                <?php endif; ?>
+              </td>
             </tr>
           <?php endwhile; ?>
         <?php else: ?>
@@ -100,6 +107,8 @@ session_start();
     </table>
   </div>
 </section>
+
+
 
 
 

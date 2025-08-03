@@ -848,3 +848,5 @@ function deleteProduct(id) {
 
 // Initial rendering on page load
 renderProducts();
+
+

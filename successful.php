@@ -71,7 +71,6 @@ session_start();
                 <!-- CTA Buttons -->
                 <div class="d-flex justify-content-center gap-4">
                     <a href="index.php" class="btn btn-primary">Return to Homepage</a>
-                    <a href="order-details.php" class="btn btn-outline-secondary">View Order Details</a>
                 </div>
             </div>
         </div>
