@@ -45,8 +45,9 @@ session_start();
                         <p class="medi-o-hero-desc hero__desc">Skip the queues and manage your prescriptions online.
                             Medi-O lets you order medicines, upload prescriptions, and receive trusted care from
                             home.</p>
-                        <button class="btn btn-primary medi-o-btn-primary hero__btn">Upload Your
-                            Prescription</button>
+                        <a href="login.php">
+  <button class="btn btn-primary medi-o-btn-primary hero__btn">Upload Your Prescription</button>
+</a>
                     </div>
                 </div>
                 <!-- Image could go here if needed -->
