@@ -1,138 +1,89 @@
 <?php
-session_start();
-include 'includes/db.php';
+require_once __DIR__ . '/config.php';
+
+if (is_logged_in()) {
+    redirect(role_home(current_user()));
+}
 
 $error = '';
-$success = '';
-
-if (isset($_SESSION['user_id']) && isset($_SESSION['user_role'])) {
-    switch ($_SESSION['user_role']) {
-        case 'admin':
-            header("Location: admin.php");
-            break;
-        case 'pharmacist':
-            header("Location: pharmacist.php");
-            break;
-        case 'customer':
-        default:
-            header("Location: profile.php");
-            break;
-    }
-    exit;
-}
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = trim($_POST['email'] ?? '');
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    csrf_check();
+    $identifier = trim($_POST['identifier'] ?? '');
     $password = $_POST['password'] ?? '';
 
-    if (empty($email) || empty($password)) {
-        $error = "Please enter both email and password.";
-    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $error = "Invalid email format.";
+    if ($identifier === '' || $password === '') {
+        $error = 'Please enter your email/phone and password.';
     } else {
-        $stmt = $conn->prepare("SELECT id, name, password, role FROM users WHERE email = ?");
-        $stmt->bind_param("s", $email);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        if ($result && $result->num_rows == 1) {
-            $user = $result->fetch_assoc();
-
-            if (password_verify($password, $user['password'])) {
-                $_SESSION['user_id'] = $user['id'];
-                $_SESSION['user_name'] = $user['name'];
-                $_SESSION['user_role'] = $user['role'];
-
-                switch ($user['role']) {
-                    case 'admin':
-                        header("Location: admin.php");
-                        break;
-                    case 'pharmacist':
-                        header("Location: pharmacist.php");
-                        break;
-                    case 'customer':
-                    default:
-                        header("Location: profile.php");
-                        break;
-                }
-                exit;
-            } else {
-                $error = "Incorrect password.";
-            }
+        // Accept either an email address or a Sri Lankan mobile number
+        if (filter_var($identifier, FILTER_VALIDATE_EMAIL)) {
+            $user = q_one('SELECT * FROM users WHERE email = ?', [strtolower($identifier)]);
         } else {
-            $error = "No account found with that email.";
+            $phone = normalize_phone($identifier);
+            $user = $phone ? q_one('SELECT * FROM users WHERE phone = ?', [$phone]) : null;
         }
-        $stmt->close();
+
+        if ($user && $user['password_hash'] && password_verify($password, $user['password_hash'])) {
+            login_user($user);
+            flash('success', 'Welcome back, ' . $user['name'] . '!');
+            $after = $_SESSION['after_login'] ?? '';
+            unset($_SESSION['after_login']);
+            redirect($after !== '' ? $after : role_home($user));
+        }
+        $error = $user && !$user['password_hash']
+            ? 'This account uses Google Sign-In. Please use the Google button below.'
+            : 'Incorrect email/phone or password.';
     }
 }
 
-$conn->close();
+$pageTitle = 'Log in';
+include __DIR__ . '/components/header.php';
 ?>
-
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Medi-O</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="css/styles.css" />
-</head>
-
-<body>
-
-
-<!-- Header -->
-<?php include("components/header.php"); ?>
-
-    
-
-    <div class="container d-flex justify-content-center align-items-center signin-view vh-100">
-        <div class="login-form p-4 border rounded">
-            <h3 class="text-center mb-4">Login to Your Account</h3>
-
-            <?php if ($error): ?>
-                <div class="alert alert-danger"><?php echo htmlspecialchars($error); ?></div>
-            <?php endif; ?>
-
-            <form method="POST" action="login.php">
-                <div class="mb-3">
-                    <label for="loginEmail" class="form-label">Email</label>
-                    <input type="email" class="form-control" name="email" id="loginEmail" required>
-                </div>
-                <div class="mb-3">
-                    <label for="loginPassword" class="form-label">Password</label>
-                    <input type="password" class="form-control" name="password" id="loginPassword" required>
-                </div>
-                <button type="submit" class="btn btn-primary w-100">Login</button>
-            </form>
-
-            <div class="text-center mt-3">
-                <a href="forgot-password.php">Forgot Password?</a>
-            </div>
-            <div class="text-center mt-3">
-                <p>Don't have an account? <a href="signup.php">Sign Up</a></p>
-            </div>
-        </div>
+<div class="container py-5">
+  <div class="mo-card mo-auth-card p-4 p-md-5" data-reveal>
+    <div class="text-center mb-4">
+      <span class="mo-logo mb-3" style="width:56px;height:56px;font-size:1.6rem"><i class="bi bi-capsule"></i></span>
+      <h1 class="h3 fw-bold mt-3">Welcome back</h1>
+      <p class="text-muted">Log in with your email or mobile number</p>
     </div>
 
+    <?php if ($error): ?>
+      <div class="alert alert-danger py-2"><i class="bi bi-exclamation-triangle me-2"></i><?= e($error) ?></div>
+    <?php endif; ?>
 
+    <form method="post" novalidate>
+      <?= csrf_field() ?>
+      <div class="mb-3">
+        <label class="form-label fw-semibold">Email or mobile number</label>
+        <input type="text" name="identifier" class="form-control form-control-lg" required
+               placeholder="you@email.com or 07X XXX XXXX" value="<?= e($_POST['identifier'] ?? '') ?>" autofocus>
+      </div>
+      <div class="mb-2">
+        <label class="form-label fw-semibold">Password</label>
+        <div class="position-relative">
+          <input type="password" name="password" id="loginPw" class="form-control form-control-lg" required placeholder="••••••••">
+          <button type="button" class="btn position-absolute end-0 top-50 translate-middle-y me-1" data-toggle-password="#loginPw"><i class="bi bi-eye"></i></button>
+        </div>
+      </div>
+      <div class="d-flex justify-content-end mb-3">
+        <a href="<?= url('forgot-password.php') ?>" class="small text-decoration-none">Forgot password?</a>
+      </div>
+      <button class="btn mo-btn w-100 btn-lg">Log in <i class="bi bi-arrow-right ms-1"></i></button>
+    </form>
 
-<!-- Footer -->
-<?php include("components/footer.php"); ?>
+    <?php if (GOOGLE_CLIENT_ID !== ''): ?>
+      <div class="mo-divider my-4">or continue with</div>
+      <div id="g_id_onload"
+           data-client_id="<?= e(GOOGLE_CLIENT_ID) ?>"
+           data-login_uri="<?= url('auth/google.php') ?>"
+           data-auto_prompt="false"></div>
+      <div class="g_id_signin d-flex justify-content-center" data-type="standard" data-size="large"
+           data-theme="outline" data-text="continue_with" data-shape="pill" data-width="320"></div>
+      <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <?php endif; ?>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Swiper JS -->
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="js/script.js"></script>
-
-
-
-</body>
-
-</html>
+    <p class="text-center mt-4 mb-0 text-muted">New to Medi-O?
+      <a href="<?= url('signup.php') ?>" class="fw-semibold text-decoration-none">Create an account</a>
+    </p>
+  </div>
+</div>
+<?php include __DIR__ . '/components/footer.php'; ?>

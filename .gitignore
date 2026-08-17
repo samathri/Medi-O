@@ -1,0 +1,7 @@
+config.local.php
+logs/
+uploads/prescriptions/*
+!uploads/prescriptions/.htaccess
+uploads/chat/*
+*.zip
+medi-o (1).sql

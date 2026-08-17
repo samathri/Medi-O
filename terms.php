@@ -1,129 +1,43 @@
 <?php
-session_start();
+require_once __DIR__ . '/config.php';
+$pageTitle = 'Terms of service';
+include __DIR__ . '/components/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
+<div class="container py-4 py-md-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="page-head pt-2"><h1 class="h2">Terms of service</h1>
+        <p class="text-muted">Last updated: <?= date('j F Y') ?></p></div>
+      <div class="mo-card p-4 p-md-5">
+        <h2 class="h5 fw-bold">1. Using Medi-O</h2>
+        <p class="text-secondary">Medi-O is an online ordering and prescription-management service operated by
+          <?= e(setting('pharmacy_name')) ?>. By creating an account you confirm the information you provide is
+          accurate and that you are legally allowed to purchase the medicines you order.</p>
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Medi-O</title>
+        <h2 class="h5 fw-bold mt-4">2. Prescription medicines</h2>
+        <p class="text-secondary">Prescription-only medicines are dispensed strictly after a licensed
+          pharmacist verifies a valid prescription. We may reject prescriptions that are unclear, expired,
+          or altered. Uploading forged prescriptions is illegal and will be reported.</p>
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+        <h2 class="h5 fw-bold mt-4">3. Orders, payment & pickup</h2>
+        <p class="text-secondary">Prices are shown in Sri Lankan Rupees. Online payments are processed by
+          PayHere. Orders marked "ready" should be collected within 7 days. Your QR card and order QRs act
+          as your claim ticket — keep them private.</p>
 
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+        <h2 class="h5 fw-bold mt-4">4. Reminders are not medical advice</h2>
+        <p class="text-secondary">The medication tracker and WhatsApp reminders are convenience tools, not a
+          substitute for professional medical advice. Always follow your doctor's instructions. Contact your
+          doctor immediately in case of adverse reactions.</p>
 
-    <!-- Google Font: Poppins -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+        <h2 class="h5 fw-bold mt-4">5. Account & termination</h2>
+        <p class="text-secondary">You are responsible for keeping your login credentials safe. We may suspend
+          accounts that abuse the service, attempt fraud, or harass our staff.</p>
 
-    <!-- Swiper CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/styles.css" />
-</head>
-
-<body>
-
-
-<!-- Header -->
-<?php include("components/header.php"); ?>
-
-    <!-- Terms and Conditions Section -->
-    <section class="terms-policy-section py-5">
-        <div class="container">
-            <div class="text-center">
-                <h1 class="terms-policy-title mb-4">Terms and Conditions</h1>
-                <p class="terms-policy-description">
-                    By accessing and using Medi-O, you agree to the following terms and conditions. Please read them
-                    carefully before using the website or placing any orders.
-                </p>
-            </div>
-
-            <!-- Policy Content -->
-            <div class="terms-policy-content">
-                <h3 class="terms-policy-subtitle">1. Acceptance of Terms</h3>
-                <p>By registering an account, uploading prescriptions, or placing an order, you confirm that you accept
-                    these terms and agree to follow them.</p>
-
-                <h3 class="terms-policy-subtitle">2. Eligibility</h3>
-                <p>You must be at least 18 years old to use Medi-O or have parental/guardian supervision. Certain
-                    medications may require a valid prescription before they can be processed.</p>
-
-                <h3 class="terms-policy-subtitle">3. Orders and Prescriptions</h3>
-                <ul class="terms-policy-list">
-                    <li>Orders containing prescription-required medicine must include a valid prescription.</li>
-                    <li>All prescriptions are subject to pharmacist review and approval.</li>
-                    <li>We reserve the right to cancel any order if the prescription is invalid or incomplete.</li>
-                </ul>
-
-                <h3 class="terms-policy-subtitle">4. Account Responsibility</h3>
-                <ul class="terms-policy-list">
-                    <li>Users are responsible for maintaining the confidentiality of their login credentials.</li>
-                    <li>Medi-O is not liable for unauthorized access resulting from user negligence.</li>
-                </ul>
-
-                <h3 class="terms-policy-subtitle">5. Payments</h3>
-                <ul class="terms-policy-list">
-                    <li>All transactions must be completed using approved, secure payment methods.</li>
-                    <li>Orders are confirmed only after payment is successfully processed.</li>
-                </ul>
-
-                <h3 class="terms-policy-subtitle">6. Delivery</h3>
-                <ul class="terms-policy-list">
-                    <li>We aim to deliver orders within the specified timeframe; however, delays may occur due to
-                        unforeseen circumstances.</li>
-                    <li>Medi-O is not responsible for delays caused by courier services or external factors.</li>
-                </ul>
-
-                <h3 class="terms-policy-subtitle">7. Product Availability</h3>
-                <ul class="terms-policy-list">
-                    <li>Product availability may vary. If an item is out of stock, you’ll be notified and offered an
-                        alternative or refund.</li>
-                    <li>Prices and product details may change without notice.</li>
-                </ul>
-
-                <h3 class="terms-policy-subtitle">8. Medical Disclaimer</h3>
-                <ul class="terms-policy-list">
-                    <li>All content provided on the site is for informational purposes only.</li>
-                    <li>Always follow your doctor’s advice and consult a licensed professional before taking any
-                        medication.</li>
-                </ul>
-
-                <h3 class="terms-policy-subtitle">9. Prohibited Use</h3>
-                <p>Misuse of the platform (fraudulent prescriptions, false identity, abusive language) may result in
-                    account suspension or legal action.</p>
-
-                <h3 class="terms-policy-subtitle">10. Changes to Terms</h3>
-                <p>Medi-O reserves the right to update these terms at any time. Updated terms will be posted on this
-                    page with the updated effective date.</p>
-            </div>
-        </div>
-    </section>
-
-
-
-
-
-
-
-
-
-
-<!-- Footer -->
-<?php include("components/footer.php"); ?>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Swiper JS -->
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="js/script.js"></script>
-
-
-
-</body>
-
-</html>
+        <h2 class="h5 fw-bold mt-4">6. Liability</h2>
+        <p class="text-secondary mb-0">We take utmost care in dispensing medicines. Our liability is limited
+          to the value of the order concerned, to the extent permitted by law.</p>
+      </div>
+    </div>
+  </div>
+</div>
+<?php include __DIR__ . '/components/footer.php'; ?>

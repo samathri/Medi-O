@@ -1,236 +1,176 @@
 <?php
-session_start();
-?>
+require_once __DIR__ . '/config.php';
+$u = require_login();
 
-<?php include 'upload-prescription.php'; ?>
-<?php include 'my-prescriptions.php'; ?>
+$tab = $_GET['tab'] ?? 'overview';
 
-<!DOCTYPE html>
-<html lang="en">
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    csrf_check();
+    $action = $_POST['action'] ?? '';
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Medi-O</title>
+    if ($action === 'details') {
+        $name = trim($_POST['name'] ?? '');
+        $phoneRaw = trim($_POST['phone'] ?? '');
+        $address = trim($_POST['address'] ?? '');
+        $optIn = isset($_POST['whatsapp_opt_in']) ? 1 : 0;
+        $phone = $phoneRaw !== '' ? normalize_phone($phoneRaw) : null;
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
-
-    <!-- Google Font: Poppins -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
-
-    <!-- Swiper CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/styles.css" />
-</head>
-
-<body>
-
-
-
-<!-- Header -->
-<?php include("components/header.php"); ?>
-
-    
-
-
-
-    <main class="container my-5 c-profile">
-
-
-<!-- Upload Prescription Form -->
-<section aria-labelledby="upload-prescription-section-title" class="form-section">
-    <h2 id="upload-prescription-section-title" class="section-title">Upload Prescription</h2>
-  
-    <!-- Prescription upload form -->
-    <form action="upload-prescription.php" method="POST" enctype="multipart/form-data">
-        <!-- Prescription file upload -->
-        <div class="mb-3">
-            <label for="prescription-file" class="form-label">Prescription File</label>
-            <input type="file" id="prescription-file" name="prescription-file" accept="image/*,application/pdf" class="form-control" required />
-        </div>
-
-        <!-- Hidden field for user ID (or you can get it from the session) -->
-        <input type="hidden" name="user_id" value="<?= $_SESSION['user_id']; ?>" />
-
-        <!-- Submit button -->
-        <button type="submit" name="upload_prescription" style="width: fit-content;" class="btn btn-primary">Upload Prescription</button>
-    </form>
-</section>
-
-
-
-<!-- My Prescriptions Section -->
-<section aria-labelledby="prescriptions-section-title" class="form-section">
-  <h2 id="prescriptions-section-title" class="section-title">My Prescriptions</h2>
-
-  <!-- Table for displaying prescriptions -->
-  <div class="table-responsive">
-    <table class="table table-hover align-middle">
-      <thead class="table-light">
-        <tr>
-          <th>Prescription ID</th>
-          <th>Prescription File</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody>
-        <?php if ($result->num_rows > 0): ?>
-          <?php while ($row = $result->fetch_assoc()): ?>
-            <tr>
-              <td><?= $row['id'] ?></td>
-              <td>
-                <a href="uploads/prescriptions/<?= htmlspecialchars($row['file_path']) ?>" target="_blank" download>
-                  View Prescription
-                </a>
-              </td>
-              <td>
-                <?php if ((int)$row['is_ready'] === 1): ?>
-                  <span class="badge bg-success">Ready to Pick</span>
-                <?php else: ?>
-                  <span class="badge bg-warning text-dark">Pending</span>
-                <?php endif; ?>
-              </td>
-            </tr>
-          <?php endwhile; ?>
-        <?php else: ?>
-          <tr>
-            <td colspan="3">No prescriptions found.</td>
-          </tr>
-        <?php endif; ?>
-      </tbody>
-    </table>
-  </div>
-</section>
-
-
-
-
-
-
-
-
-        <!-- Account Section -->
-        <section aria-labelledby="account-section-title" class="form-section">
-            <h2 id="account-section-title" class="section-title">Account Details</h2>
-            <form id="profileForm" novalidate>
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <label for="name" class="form-label">Full Name</label>
-                        <input type="text" class="form-control" id="name" placeholder="John Doe" required />
-                    </div>
-                    <div class="col-md-6">
-                        <label for="email" class="form-label">Email Address</label>
-                        <input type="email" class="form-control" id="email" placeholder="john@example.com" required />
-                    </div>
-                    <div class="col-md-6">
-                        <label for="phone" class="form-label">Phone Number</label>
-                        <input type="tel" class="form-control" id="phone" placeholder="+94 77 123 4567" required />
-                    </div>
-                    <div class="col-md-6">
-                        <label for="address" class="form-label">Address</label>
-                        <input type="text" class="form-control" id="address" placeholder="123 Street, City, Country"
-                            required />
-                    </div>
-                </div>
-
-                <button type="submit" style="width: fit-content;" class="btn btn-primary mt-3">Save Changes</button>
-            </form>
-
-            <!-- Change Password -->
-            <hr class="my-4" />
-            <h3 class="section-title">Change Password</h3>
-            <form id="passwordForm" novalidate>
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <label for="oldPassword" class="form-label">Old Password</label>
-                        <input type="password" class="form-control" id="oldPassword" required />
-                    </div>
-                    <div class="col-md-4">
-                        <label for="newPassword" class="form-label">New Password</label>
-                        <input type="password" class="form-control" id="newPassword" required />
-                    </div>
-                    <div class="col-md-4">
-                        <label for="confirmPassword" class="form-label">Confirm New Password</label>
-                        <input type="password" class="form-control" id="confirmPassword" required />
-                    </div>
-                </div>
-                <button type="submit" style="width: fit-content;" class="btn btn-outline-primary mt-3">Update Password</button>
-            </form>
-        </section>
-
-    </main>
-
-
-
-
-
-
-
-<!-- Footer -->
-<?php include("components/footer.php"); ?>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Swiper JS -->
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="js/script.js"></script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const steps = document.querySelectorAll('.progress-step');
-
-            // Suppose currentStatus can be 'pending', 'order-processing', or 'ready-to-collect'
-            // Map each status to index 0,1,2
-            const currentStatus = 'order-processing'; // Example
-
-            const statusMap = {
-                'pending': 0,
-                'order-processing': 1,
-                'ready-to-collect': 2
-            };
-
-            const currentIndex = statusMap[currentStatus];
-
-            steps.forEach((step, index) => {
-                if (index <= currentIndex) {
-                    step.classList.add('completed');
-                } else {
-                    step.classList.remove('completed');
-                }
-            });
-        });
-
-        document.addEventListener("DOMContentLoaded", function () {
-  // Example to show QR code and prescription details once the prescription is approved
-  const prescriptions = document.querySelectorAll('.prescription-item');
-
-  prescriptions.forEach(item => {
-    const status = item.querySelector('.status-pending'); // Change this to get actual status dynamically
-    const qrCode = item.querySelector('.qr-code');
-    const details = item.querySelector('.prescription-details');
-    const approveButton = item.querySelector('.approve-button');
-
-    if (status && status.textContent.trim() === 'Approved') {
-      qrCode.style.display = 'block';
-      details.style.display = 'block';
-      approveButton.style.display = 'none';  // Hide approve button if already approved
-    } else if (status && status.textContent.trim() === 'Reviewed') {
-      approveButton.style.display = 'block';  // Show approve button if prescription is reviewed
+        if ($name === '') {
+            flash('error', 'Name cannot be empty.');
+        } elseif ($phoneRaw !== '' && !$phone) {
+            flash('error', 'That mobile number does not look valid (e.g. 0771234567).');
+        } elseif ($phone && q_one('SELECT id FROM users WHERE phone = ? AND id <> ?', [$phone, $u['id']])) {
+            flash('error', 'That mobile number is already used by another account.');
+        } else {
+            q('UPDATE users SET name=?, phone=?, address=?, whatsapp_opt_in=? WHERE id=?',
+                [$name, $phone, $address, $optIn, $u['id']]);
+            flash('success', 'Profile updated.');
+        }
+        redirect('profile.php?tab=details');
     }
-  });
-});
 
+    if ($action === 'password') {
+        $current = $_POST['current'] ?? '';
+        $new = $_POST['new'] ?? '';
+        $confirm = $_POST['confirm'] ?? '';
+        if ($u['password_hash'] && !password_verify($current, $u['password_hash'])) {
+            flash('error', 'Current password is incorrect.');
+        } elseif (strlen($new) < 8) {
+            flash('error', 'New password must be at least 8 characters.');
+        } elseif ($new !== $confirm) {
+            flash('error', 'New passwords do not match.');
+        } else {
+            q('UPDATE users SET password_hash=? WHERE id=?', [password_hash($new, PASSWORD_BCRYPT), $u['id']]);
+            flash('success', 'Password changed successfully.');
+        }
+        redirect('profile.php?tab=security');
+    }
+}
 
-    </script>
+$stats = [
+    'orders' => (int)q_val('SELECT COUNT(*) FROM orders WHERE user_id=?', [$u['id']]),
+    'prescriptions' => (int)q_val('SELECT COUNT(*) FROM prescriptions WHERE user_id=?', [$u['id']]),
+    'medications' => (int)q_val('SELECT COUNT(*) FROM medications WHERE user_id=? AND active=1', [$u['id']]),
+];
+$recentOrders = q_all('SELECT * FROM orders WHERE user_id=? ORDER BY id DESC LIMIT 5', [$u['id']]);
 
+$pageTitle = 'My profile';
+include __DIR__ . '/components/header.php';
+?>
+<div class="container py-4 py-md-5">
+  <div class="row g-4">
+    <div class="col-lg-4">
+      <div class="mo-card p-4 text-center" data-reveal>
+        <div class="mo-avatar-btn mx-auto mb-3" style="width:84px;height:84px;font-size:2rem">
+          <?php if (!empty($u['avatar'])): ?>
+            <img src="<?= e($u['avatar']) ?>" alt="" referrerpolicy="no-referrer">
+          <?php else: ?>
+            <span><?= e(strtoupper(mb_substr($u['name'], 0, 1))) ?></span>
+          <?php endif; ?>
+        </div>
+        <h2 class="h5 fw-bold mb-1"><?= e($u['name']) ?></h2>
+        <div class="text-muted small"><?= e($u['email'] ?? '') ?></div>
+        <?php if ($u['phone']): ?><div class="text-muted small"><i class="bi bi-whatsapp text-success me-1"></i><?= e(pretty_phone($u['phone'])) ?></div><?php endif; ?>
+        <?php if ($u['google_id']): ?><span class="badge bg-light text-dark border mt-2"><i class="bi bi-google me-1"></i>Linked with Google</span><?php endif; ?>
+        <hr>
+        <div class="row text-center">
+          <div class="col-4"><div class="fw-bold fs-5"><?= $stats['orders'] ?></div><div class="small text-muted">Orders</div></div>
+          <div class="col-4"><div class="fw-bold fs-5"><?= $stats['prescriptions'] ?></div><div class="small text-muted">Rx</div></div>
+          <div class="col-4"><div class="fw-bold fs-5"><?= $stats['medications'] ?></div><div class="small text-muted">Meds</div></div>
+        </div>
+        <a href="<?= url('my-qr.php') ?>" class="btn mo-btn w-100 mt-3"><i class="bi bi-qr-code me-2"></i>My QR Card</a>
+      </div>
+    </div>
 
-</body>
+    <div class="col-lg-8">
+      <div class="mo-card p-4" data-reveal>
+        <ul class="nav nav-pills gap-2 mb-4">
+          <?php foreach (['overview' => 'Overview', 'details' => 'Account details', 'security' => 'Security'] as $k => $label): ?>
+            <li class="nav-item"><a class="nav-link <?= $tab === $k ? 'active' : '' ?>" href="<?= url('profile.php?tab=' . $k) ?>"><?= $label ?></a></li>
+          <?php endforeach; ?>
+        </ul>
 
-</html>
+        <?php if ($tab === 'overview'): ?>
+          <h3 class="h6 fw-bold text-uppercase text-muted mb-3">Recent orders</h3>
+          <?php if (!$recentOrders): ?>
+            <div class="mo-empty"><i class="bi bi-box-seam"></i>No orders yet — <a href="<?= url('shop.php') ?>">browse the shop</a></div>
+          <?php else: ?>
+            <div class="table-responsive">
+              <table class="table mo-table table-hover align-middle">
+                <thead><tr><th>Order</th><th>Date</th><th>Total</th><th>Status</th><th></th></tr></thead>
+                <tbody>
+                <?php foreach ($recentOrders as $o): ?>
+                  <tr>
+                    <td class="fw-semibold">#<?= e($o['order_no']) ?></td>
+                    <td><?= date('j M Y', strtotime($o['created_at'])) ?></td>
+                    <td><?= money((float)$o['total']) ?></td>
+                    <td><span class="mo-status mo-status-<?= e($o['status']) ?>"><?= ucfirst(e($o['status'])) ?></span></td>
+                    <td><a class="btn btn-sm mo-btn-soft" href="<?= url('order.php?id=' . $o['id']) ?>">View</a></td>
+                  </tr>
+                <?php endforeach; ?>
+                </tbody>
+              </table>
+            </div>
+            <a href="<?= url('orders.php') ?>" class="small text-decoration-none">All orders <i class="bi bi-arrow-right"></i></a>
+          <?php endif; ?>
+
+        <?php elseif ($tab === 'details'): ?>
+          <form method="post">
+            <?= csrf_field() ?>
+            <input type="hidden" name="action" value="details">
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Full name</label>
+              <input type="text" name="name" class="form-control" value="<?= e($u['name']) ?>" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Email</label>
+              <input type="email" class="form-control" value="<?= e($u['email'] ?? '') ?>" disabled>
+              <div class="form-text">Email cannot be changed (it identifies your account).</div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Mobile number</label>
+              <input type="tel" name="phone" class="form-control" value="<?= e(pretty_phone($u['phone'])) ?>" placeholder="07X XXX XXXX">
+              <div class="form-text">Used for phone login and WhatsApp medicine reminders.</div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Delivery address</label>
+              <textarea name="address" class="form-control" rows="2" placeholder="Street, city"><?= e($u['address'] ?? '') ?></textarea>
+            </div>
+            <div class="form-check form-switch mb-4">
+              <input class="form-check-input" type="checkbox" id="waOptIn" name="whatsapp_opt_in" <?= $u['whatsapp_opt_in'] ? 'checked' : '' ?>>
+              <label class="form-check-label" for="waOptIn">
+                <i class="bi bi-whatsapp text-success me-1"></i>Send me medicine reminders &amp; order updates on WhatsApp
+              </label>
+            </div>
+            <button class="btn mo-btn">Save changes</button>
+          </form>
+
+        <?php else: ?>
+          <form method="post" class="mo-auth-card ms-0">
+            <?= csrf_field() ?>
+            <input type="hidden" name="action" value="password">
+            <?php if ($u['password_hash']): ?>
+              <div class="mb-3">
+                <label class="form-label fw-semibold">Current password</label>
+                <input type="password" name="current" class="form-control" required>
+              </div>
+            <?php else: ?>
+              <div class="alert alert-info py-2 small">You signed up with Google — set a password below to
+                also enable email/phone login.</div>
+            <?php endif; ?>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">New password</label>
+              <input type="password" name="new" class="form-control" minlength="8" required>
+            </div>
+            <div class="mb-4">
+              <label class="form-label fw-semibold">Confirm new password</label>
+              <input type="password" name="confirm" class="form-control" required>
+            </div>
+            <button class="btn mo-btn">Change password</button>
+          </form>
+        <?php endif; ?>
+      </div>
+    </div>
+  </div>
+</div>
+<?php include __DIR__ . '/components/footer.php'; ?>

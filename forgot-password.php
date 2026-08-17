@@ -1,73 +1,61 @@
 <?php
-session_start();
+require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/includes/mailer.php';
+
+$done = false;
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    csrf_check();
+    $email = strtolower(trim($_POST['email'] ?? ''));
+    if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $user = q_one('SELECT * FROM users WHERE email = ?', [$email]);
+        if ($user) {
+            $token = bin2hex(random_bytes(32));
+            q('UPDATE users SET reset_token = ?, reset_expires = DATE_ADD(NOW(), INTERVAL 1 HOUR) WHERE id = ?',
+                [hash('sha256', $token), $user['id']]);
+            send_mail($email, 'Reset your Medi-O password', mail_template(
+                'Password reset request',
+                '<p>We received a request to reset your password. This link is valid for 1 hour.
+                 If you didn\'t request this, you can safely ignore this email.</p>',
+                'Reset my password', url('reset-password.php?token=' . $token)
+            ));
+        }
+    }
+    $done = true; // same response whether or not the account exists
+}
+
+$pageTitle = 'Forgot password';
+include __DIR__ . '/components/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Medi-O</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="css/styles.css" />
-</head>
-
-<body>
-
-
-<!-- Header -->
-<?php include("components/header.php"); ?>
-
-    
-
-<!-- Forgot Password Form -->
-  <div class="container d-flex justify-content-center align-items-center vh-100">
-    <div class="forgot-password-form p-4 border rounded shadow-sm w-100" style="max-width: 500px;">
-      <h3 class="text-center mb-3">Forgot Your Password?</h3>
-      <p class="text-center text-muted mb-4">Enter your email address to receive a password reset link.</p>
-
-      <!-- Alerts -->
-      <?php if (isset($_SESSION['forgot_success'])): ?>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-          <?= $_SESSION['forgot_success']; unset($_SESSION['forgot_success']); ?>
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-      <?php elseif (isset($_SESSION['forgot_error'])): ?>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-          <?= $_SESSION['forgot_error']; unset($_SESSION['forgot_error']); ?>
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-      <?php endif; ?>
-
-      <form action="process-forgot-password.php" method="POST" novalidate>
-        <div class="mb-3">
-          <label for="forgotEmail" class="form-label">Email Address</label>
-          <input type="email" name="email" id="forgotEmail" class="form-control" placeholder="Enter your email" required>
-        </div>
-
-        <button type="submit" class="btn btn-primary w-100">Send Reset Link</button>
-      </form>
-
-      <div class="text-center mt-3">
-        <p class="mb-0">Remember your password? <a href="login.php">Login here</a></p>
+<div class="container py-5">
+  <div class="mo-card mo-auth-card p-4 p-md-5" data-reveal>
+    <?php if ($done): ?>
+      <div class="text-center">
+        <i class="bi bi-envelope-check text-success" style="font-size:3rem"></i>
+        <h1 class="h4 fw-bold mt-3">Check your inbox</h1>
+        <p class="text-muted">If an account exists for that email, we've sent a password reset link.
+           It expires in 1 hour.</p>
+        <?php if (SMTP_USER === ''): ?>
+          <div class="alert alert-info small text-start"><i class="bi bi-info-circle me-1"></i>
+            Demo mode: email sending is not configured, so the reset link was written to
+            <code>logs/mail.log</code> instead.</div>
+        <?php endif; ?>
+        <a class="btn mo-btn mt-2" href="<?= url('login.php') ?>">Back to login</a>
       </div>
-    </div>
+    <?php else: ?>
+      <div class="text-center mb-4">
+        <h1 class="h3 fw-bold">Forgot your password?</h1>
+        <p class="text-muted">Enter your account email and we'll send you a reset link.</p>
+      </div>
+      <form method="post" novalidate>
+        <?= csrf_field() ?>
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Email</label>
+          <input type="email" name="email" class="form-control form-control-lg" required placeholder="you@email.com" autofocus>
+        </div>
+        <button class="btn mo-btn w-100 btn-lg">Send reset link</button>
+      </form>
+      <p class="text-center mt-4 mb-0"><a href="<?= url('login.php') ?>" class="text-decoration-none"><i class="bi bi-arrow-left me-1"></i>Back to login</a></p>
+    <?php endif; ?>
   </div>
-
-<!-- Footer -->
-<?php include("components/footer.php"); ?>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Swiper JS -->
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="js/script.js"></script>
-
-
-
-</body>
-
-</html>
+</div>
+<?php include __DIR__ . '/components/footer.php'; ?>

@@ -1,130 +1,59 @@
 <?php
-session_start();
+require_once __DIR__ . '/config.php';
+$pageTitle = 'About us';
+include __DIR__ . '/components/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
+<section class="mo-hero">
+  <div class="container text-center py-3">
+    <span class="mo-eyebrow">About Medi-O</span>
+    <h1 class="display-5 fw-bold mt-3">Healthcare without the <span class="text-gradient">waiting line</span></h1>
+    <p class="lead text-secondary mx-auto mt-3" style="max-width:640px">Medi-O was born from a simple
+      observation: nobody should stand in a queue for 30 minutes to buy their monthly medicines.</p>
+  </div>
+</section>
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Medi-O</title>
-
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
-
-    <!-- Google Font: Poppins -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
-
-    <!-- Swiper CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="css/styles.css" />
-</head>
-
-<body>
-
-
-<!-- Header -->
-<?php include("components/header.php"); ?>
-
-    
-
-
-
-    <!-- Hero Section -->
-    <section class="medi-o-hero about-hero py-5">
-    </section>
-
-
-
-
-
-    <!-- About Us Section -->
-    <section class="who-we-are py-5">
-        <div class="container">
-            <div class="row text-center">
-                <h2 class="who-we-are-title mb-4">WHO WE ARE</h2>
-                <p class="who-we-are-desc mb-4">
-                    Medi-O was developed to transform traditional pharmacy services into a secure, digital experience —
-                    allowing users to order medications, upload prescriptions, and receive verified treatments from the
-                    comfort of their homes.
-                    <br><br>
-                    With a focus on reliability, convenience, and innovation, Medi-O introduces features like
-                    QR-code-based prescription verification, automated medicine reminders, and a streamlined order
-                    process. Built with care and powered by technology, Medi-O is committed to becoming a trusted name
-                    in digital healthcare — offering a smarter way to manage your medication needs.
-                </p>
+<section class="container py-5">
+  <div class="row g-4 align-items-center">
+    <div class="col-lg-6" data-reveal>
+      <img src="<?= url('assets/img/About-hero.jpg') ?>" class="img-fluid rounded-4 shadow" alt="Our pharmacy"
+           onerror="this.src='<?= url('assets/img/hero.jpg') ?>'">
+    </div>
+    <div class="col-lg-6" data-reveal>
+      <h2 class="mo-section-title">Our story</h2>
+      <p class="text-secondary">Watching elderly parents and busy families wait in long pharmacy queues —
+        sometimes just to hand over the same monthly prescription — we decided there had to be a better way.
+        Medi-O connects you with our licensed pharmacy digitally: order online, get your prescriptions
+        verified by a real pharmacist, and collect your medicines with one QR scan.</p>
+      <div class="row g-3 mt-2">
+        <?php foreach ([
+            ['bi-patch-check', 'Licensed pharmacists', 'Every prescription is reviewed by a professional.'],
+            ['bi-qr-code-scan', 'QR-based pickup', 'Verified, secure, and takes seconds at the counter.'],
+            ['bi-whatsapp', 'WhatsApp care', 'Reminders and updates right where you already chat.'],
+            ['bi-shield-lock', 'Private & secure', 'Your medical data is encrypted and access-controlled.'],
+        ] as [$icon, $title, $text]): ?>
+          <div class="col-sm-6">
+            <div class="d-flex gap-3">
+              <span class="mo-step-icon flex-shrink-0" style="width:44px;height:44px;font-size:1.1rem"><i class="bi <?= $icon ?>"></i></span>
+              <div>
+                <div class="fw-bold"><?= $title ?></div>
+                <div class="small text-secondary"><?= $text ?></div>
+              </div>
             </div>
+          </div>
+        <?php endforeach; ?>
+      </div>
+    </div>
+  </div>
+</section>
 
-            <!-- Range of Products Section -->
-            <div class="row my-5 align-items-center justify-content-center">
-                <!-- Image on the left and Text on the right -->
-                <div class="col-md-5 d-flex justify-content-center">
-                    <img src="images/products.png" alt="Products Icon" class="icon-img mb-3">
-                </div>
-                <div class="col-md-7 text-md-start text-center">
-                    <h4 class="section-title">Range of Products</h4>
-                    <p class="section-desc">
-                        We ensure ourselves on offering an extensive range of carefully selected products to meet the
-                        everyday health and wellness needs of our customers.
-                        From essential prescription medicines and over-the-counter drugs to premium skincare and
-                        cosmetic items, our catalogue covers both pharmaceutical and cosmetic categories.
-                    </p>
-                </div>
-            </div>
-
-            <!-- Customer Care Section --><!-- Customer Care Section -->
-            <div class="row my-5 align-items-center justify-content-center">
-                <!-- Image on top for mobile view, left for desktop view -->
-                <div class="col-12 col-md-5 d-flex justify-content-center order-1 order-md-2">
-                    <img src="images/customer.png" alt="Customer Care Icon" class="icon-img mb-3">
-                </div>
-
-                <!-- Text on the bottom for mobile view, left for desktop view -->
-                <div class="col-12 col-md-7 text-center text-md-start order-2 order-md-1">
-                    <h4 class="section-title">Customer Care</h4>
-                    <p class="section-desc">
-                        Our team of professionally trained pharmacists is committed to delivering outstanding customer
-                        service with care and precision. Whether you're seeking advice on your medication, assistance
-                        with your prescription, or support with your order, we ensure every interaction is handled with
-                        the highest level of professionalism, compassion, and trust. Your health and satisfaction are
-                        our top priorities.
-                    </p>
-                </div>
-            </div>
-
-
-
-        </div>
-    </section>
-
-
-
-
-
-
-
-
-
-
-
-
-    <!-- Footer Section -->
-<?php include("components/footer.php"); ?>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Swiper JS -->
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="js/script.js"></script>
-
-
-
-</body>
-
-</html>
+<section class="py-5" style="background:#fff">
+  <div class="container text-center py-3" data-reveal>
+    <h2 class="mo-section-title mb-4">Visit our pharmacy</h2>
+    <div class="row g-3 justify-content-center">
+      <div class="col-md-4"><div class="mo-step h-100"><i class="bi bi-geo-alt fs-3" style="color:var(--mo-primary)"></i><div class="fw-semibold mt-2"><?= e(setting('pharmacy_address')) ?></div></div></div>
+      <div class="col-md-4"><div class="mo-step h-100"><i class="bi bi-clock fs-3" style="color:var(--mo-primary)"></i><div class="fw-semibold mt-2"><?= e(setting('pharmacy_hours')) ?></div></div></div>
+      <div class="col-md-4"><div class="mo-step h-100"><i class="bi bi-telephone fs-3" style="color:var(--mo-primary)"></i><div class="fw-semibold mt-2"><?= e(setting('pharmacy_phone')) ?></div></div></div>
+    </div>
+  </div>
+</section>
+<?php include __DIR__ . '/components/footer.php'; ?>

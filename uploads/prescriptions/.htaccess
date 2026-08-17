@@ -1,0 +1,3 @@
+# Prescriptions are private medical documents — never served directly.
+# They are streamed through file.php which checks the viewer's permissions.
+Require all denied

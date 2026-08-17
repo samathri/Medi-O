@@ -1,0 +1,75 @@
+<?php
+/**
+ * Medi-O — global configuration.
+ * Secrets live in config.local.php (never committed). Copy
+ * config.local.example.php to config.local.php and fill in what you have;
+ * every integration degrades gracefully when left blank.
+ */
+
+date_default_timezone_set('Asia/Colombo');
+
+$defaults = [
+    'DB_HOST' => '127.0.0.1',
+    'DB_NAME' => 'medio',
+    'DB_USER' => 'root',
+    'DB_PASS' => '',
+
+    // Gmail SMTP (App Password) — leave blank to log emails instead of sending
+    'SMTP_HOST' => 'smtp.gmail.com',
+    'SMTP_PORT' => 587,
+    'SMTP_USER' => '',
+    'SMTP_PASS' => '',
+    'MAIL_FROM' => 'no-reply@medi-o.local',
+    'MAIL_FROM_NAME' => 'Medi-O Pharmacy',
+
+    // Google Sign-In (https://console.cloud.google.com → OAuth client ID, type Web)
+    'GOOGLE_CLIENT_ID' => '',
+
+    // PayHere sandbox (free: https://sandbox.payhere.lk) — blank = built-in demo gateway
+    'PAYHERE_MERCHANT_ID' => '',
+    'PAYHERE_MERCHANT_SECRET' => '',
+    'PAYHERE_SANDBOX' => true,
+
+    // Meta WhatsApp Cloud API (free tier: https://developers.facebook.com)
+    // blank = messages are stored in the outbox as "logged" (demo mode)
+    'WHATSAPP_TOKEN' => '',
+    'WHATSAPP_PHONE_ID' => '',
+
+    'APP_DEBUG' => true,
+];
+
+$local = [];
+if (is_file(__DIR__ . '/config.local.php')) {
+    $local = require __DIR__ . '/config.local.php';
+}
+foreach ($defaults as $k => $v) {
+    if (!defined($k)) {
+        define($k, $local[$k] ?? $v);
+    }
+}
+
+// Auto-detect base URL so the app works from any folder (e.g. /medio/)
+$scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+$host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$base   = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/')), '/');
+// Normalise when running from /api, /auth, /staff, /admin subfolders
+foreach (['/api', '/auth', '/staff', '/admin', '/cron'] as $sub) {
+    if (str_ends_with($base, $sub)) {
+        $base = substr($base, 0, -strlen($sub));
+    }
+}
+define('BASE_URL', PHP_SAPI === 'cli' ? 'http://localhost/medio' : $scheme . '://' . $host . $base);
+define('ROOT_PATH', __DIR__);
+
+if (APP_DEBUG) {
+    error_reporting(E_ALL);
+    ini_set('display_errors', '1');
+} else {
+    error_reporting(E_ALL & ~E_DEPRECATED);
+    ini_set('display_errors', '0');
+}
+
+require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/includes/db.php';
+require_once __DIR__ . '/includes/helpers.php';
+require_once __DIR__ . '/includes/auth.php';

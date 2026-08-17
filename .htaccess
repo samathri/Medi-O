@@ -1,0 +1,9 @@
+Options -Indexes
+
+# Never serve secrets or logs
+<FilesMatch "^(config\.local\.php|composer\.(json|lock))$">
+  Require all denied
+</FilesMatch>
+RedirectMatch 404 ^/.*/logs/
+RedirectMatch 404 ^/.*/database/
+RedirectMatch 404 ^/.*/vendor/

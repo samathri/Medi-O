@@ -1,182 +1,158 @@
-<!-- Header -->
-<header class="medi-o-header-container">
-    <nav class="medi-o-navbar navbar navbar-expand-lg">
-        <div class="container-fluid medi-o-container-fluid">
+<?php
+/** Shared page header. Set $pageTitle before including. */
+require_once __DIR__ . '/../config.php';
+$u = current_user();
+$cartCount = $u ? (int)q_val('SELECT COALESCE(SUM(quantity),0) FROM cart_items WHERE user_id=?', [$u['id']]) : 0;
+$notifCount = $u ? (int)q_val('SELECT COUNT(*) FROM notifications WHERE user_id=? AND is_read=0', [$u['id']]) : 0;
+$chatUnread = 0;
+if ($u && $u['role'] === 'customer') {
+    $chatUnread = (int)q_val('SELECT COALESCE(user_unread,0) FROM chat_conversations WHERE user_id=?', [$u['id']]);
+}
+$active = basename($_SERVER['SCRIPT_NAME']);
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><?= e($pageTitle ?? 'Medi-O') ?> · Medi-O Pharmacy</title>
+<link rel="icon" href="<?= url('assets/img/medi-o-logo.svg') ?>">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="<?= url('assets/css/app.css') ?>?v=<?= filemtime(__DIR__ . '/../assets/css/app.css') ?>" rel="stylesheet">
+<script>window.MEDIO = {base: <?= json_encode(BASE_URL) ?>, csrf: <?= json_encode(csrf_token()) ?>, loggedIn: <?= $u ? 'true' : 'false' ?>};</script>
+</head>
+<body>
+<a class="visually-hidden-focusable" href="#main">Skip to content</a>
 
-            <!-- Logo (left) -->
-            <a class="medi-o-navbar-brand navbar-brand" href="index.php">
-                <img src="images/medi-o-logo.svg" alt="Medi-O Logo" class="medi-o-logo logo-h" />
-            </a>
+<nav class="navbar navbar-expand-lg mo-navbar sticky-top">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center gap-2" href="<?= url('index.php') ?>">
+      <span class="mo-logo"><i class="bi bi-capsule"></i></span>
+      <span class="fw-bold fs-4">Medi<span class="text-gradient">-O</span></span>
+    </a>
 
-            <!-- Hamburger button (right) -->
-            <button class="medi-o-navbar-toggler navbar-toggler" style="width: fit-content;" type="button" data-bs-toggle="collapse"
-                data-bs-target="#medi-o-navbarMenu" aria-controls="medi-o-navbarMenu" aria-expanded="false"
-                aria-label="Toggle navigation">
-                <span class="medi-o-navbar-toggler-icon navbar-toggler-icon"></span>
-            </button>
+    <div class="d-flex align-items-center gap-1 order-lg-3">
+      <button class="mo-iconbtn d-none d-sm-inline-flex" type="button" data-bs-toggle="modal" data-bs-target="#searchModal" aria-label="Search">
+        <i class="bi bi-search"></i>
+      </button>
 
-            <!-- Navigation Menu -->
-            <div class="medi-o-navbar-collapse collapse navbar-collapse" id="medi-o-navbarMenu">
-                <div class="w-100 d-lg-flex flex-lg-column align-items-lg-end medi-o-navbar-collapse-inner">
+      <a class="mo-iconbtn position-relative" href="<?= url('cart.php') ?>" aria-label="Cart">
+        <i class="bi bi-bag"></i>
+        <span class="mo-badge" id="cartBadge" <?= $cartCount ? '' : 'hidden' ?>><?= $cartCount ?></span>
+      </a>
 
-                    <!-- Nav Links -->
-                    <ul class="medi-o-navbar-nav navbar-nav flex-lg-row mb-2 gap-3 mb-lg-0">
-                        <li class="medi-o-nav-item nav-item"><a class="medi-o-nav-link nav-link" href="index.php">Home</a></li>
-                        <li class="medi-o-nav-item nav-item"><a class="medi-o-nav-link nav-link" href="shop.php">Shop</a></li>
-                        <li class="medi-o-nav-item nav-item"><a class="medi-o-nav-link nav-link" href="about.php">About Us</a></li>
-                        <li class="medi-o-nav-item nav-item"><a class="medi-o-nav-link nav-link" href="contact.php">Contact Us</a></li>
-                    </ul>
-
-                    <!-- Desktop Icons -->
-                    <div class="medi-o-nav-icons nav-icons d-none d-lg-flex gap-5">
-                        <a href="#" class="medi-o-nav-icon-link" id="openSearchDesktop"><i class="bi bi-search"></i></a>
-                        <a href="cart.php" class="medi-o-nav-icon-link"><i class="bi bi-cart"></i></a>
-
-                        <?php if (isset($_SESSION['user_id']) && isset($_SESSION['user_name'])): ?>
-                            <div class="dropdown">
-                                <a class="medi-o-nav-icon-link dropdown-toggle text-decoration-none" href="#"
-                                    id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-person me-1"></i><?php echo htmlspecialchars(mb_strimwidth($_SESSION['user_name'], 0, 10, '..')); ?>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                    <li><a class="dropdown-item" href="profile.php">Profile</a></li>
-                                    <li><a class="dropdown-item text-danger" href="logout.php">Logout</a></li>
-                                </ul>
-                            </div>
-                        <?php else: ?>
-                            <a href="login.php" class="medi-o-nav-icon-link"><i class="bi bi-person"></i></a>
-                        <?php endif; ?>
-                    </div>
-
-                    <!-- Mobile Icons -->
-                    <div class="medi-o-nav-icons-mobile nav-icons d-lg-none mt-3">
-                        <a href="#" class="medi-o-nav-icon-link nav-m" id="openSearchMobile"><i class="bi bi-search"></i></a>
-                        <a href="cart.php" class="medi-o-nav-icon-link nav-m"><i class="bi bi-cart"></i></a>
-
-                        <?php if (isset($_SESSION['user_id']) && isset($_SESSION['user_name'])): ?>
-                            <div class="dropdown">
-                                <a class="medi-o-nav-icon-link dropdown-toggle text-decoration-none nav-m" href="#"
-                                    id="userDropdownMobile" role="button" data-bs-toggle="dropdown"
-                                    aria-expanded="false">
-                                    <i class="bi bi-person me-1"></i><?php echo htmlspecialchars(mb_strimwidth($_SESSION['user_name'], 0, 10, '..')); ?>
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdownMobile">
-                                    <li><a class="dropdown-item nav-m" href="profile.php">Profile</a></li>
-                                    <li><a class="dropdown-item text-danger nav-m" href="logout.php">Logout</a></li>
-                                </ul>
-                            </div>
-                        <?php else: ?>
-                            <a href="login.php" class="medi-o-nav-icon-link nav-m"><i class="bi bi-person"></i></a>
-                        <?php endif; ?>
-                    </div>
-
-                </div>
+      <?php if ($u): ?>
+        <div class="dropdown">
+          <button class="mo-iconbtn position-relative" data-bs-toggle="dropdown" aria-label="Notifications">
+            <i class="bi bi-bell"></i>
+            <span class="mo-badge" id="notifBadge" <?= $notifCount ? '' : 'hidden' ?>><?= $notifCount ?></span>
+          </button>
+          <div class="dropdown-menu dropdown-menu-end mo-dropdown p-0" style="width:330px">
+            <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
+              <strong>Notifications</strong>
+              <button class="btn btn-sm btn-link text-decoration-none p-0" id="markAllRead">Mark all read</button>
             </div>
-
-            <!-- Search Popup Overlay -->
-            <div class="medi-o-search-overlay d-none" id="searchOverlay" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="searchLabel">
-                <div class="medi-o-search-popup" role="document" id="searchPopup">
-
-                    <form
-                        class="medi-o-search-form-popup position-relative"
-                        role="search"
-                        aria-label="Popup site search"
-                        method="GET"
-                        action="shop.php"
-                    >
-                        <input
-                            type="search"
-                            id="medi-o-search-input-popup"
-                            name="search"
-                            class="form-control medi-o-search-input-popup"
-                            placeholder="Search Here....."
-                            aria-labelledby="searchLabel"
-                            autocomplete="off"
-                        />
-                        <label id="searchLabel" class="visually-hidden" for="medi-o-search-input-popup">Search</label>
-
-                        <button
-                            type="submit"
-                            style="width: fit-content;"
-                            class="btn medi-o-search-btn-popup"
-                            aria-label="Submit popup search"
-                        >
-                            <i class="bi bi-search"></i>
-                        </button>
-                    </form>
-
-                </div>
-            </div>
-
+            <div id="notifList" class="mo-notif-list"><div class="text-center text-muted py-4 small">Loading…</div></div>
+          </div>
         </div>
-    </nav>
-</header>
 
-<!-- Add this JS at the bottom of your page or in your js/script.js -->
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const searchOverlay = document.getElementById('searchOverlay');
-        const searchPopup = document.getElementById('searchPopup');
-        const openSearchDesktop = document.getElementById('openSearchDesktop');
-        const openSearchMobile = document.getElementById('openSearchMobile');
+        <div class="dropdown">
+          <button class="mo-avatar-btn" data-bs-toggle="dropdown" aria-label="Account">
+            <?php if (!empty($u['avatar'])): ?>
+              <img src="<?= e($u['avatar']) ?>" alt="" referrerpolicy="no-referrer">
+            <?php else: ?>
+              <span><?= e(strtoupper(mb_substr($u['name'], 0, 1))) ?></span>
+            <?php endif; ?>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end mo-dropdown">
+            <li class="px-3 py-2 border-bottom">
+              <div class="fw-semibold"><?= e($u['name']) ?></div>
+              <div class="small text-muted"><?= e($u['email'] ?: pretty_phone($u['phone'])) ?></div>
+            </li>
+            <?php if (is_staff()): ?>
+              <li><a class="dropdown-item" href="<?= url(is_admin() ? 'admin/index.php' : 'staff/index.php') ?>"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a></li>
+            <?php endif; ?>
+            <li><a class="dropdown-item" href="<?= url('profile.php') ?>"><i class="bi bi-person me-2"></i>My Profile</a></li>
+            <li><a class="dropdown-item" href="<?= url('my-qr.php') ?>"><i class="bi bi-qr-code me-2"></i>My QR Card</a></li>
+            <li><a class="dropdown-item" href="<?= url('orders.php') ?>"><i class="bi bi-box-seam me-2"></i>My Orders</a></li>
+            <li><a class="dropdown-item" href="<?= url('prescriptions.php') ?>"><i class="bi bi-file-medical me-2"></i>Prescriptions</a></li>
+            <li><a class="dropdown-item" href="<?= url('medications.php') ?>"><i class="bi bi-alarm me-2"></i>Medication Tracker</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="<?= url('logout.php') ?>"><i class="bi bi-box-arrow-right me-2"></i>Log out</a></li>
+          </ul>
+        </div>
+      <?php else: ?>
+        <a class="btn mo-btn-outline d-none d-sm-inline-flex ms-1" href="<?= url('login.php') ?>">Log in</a>
+        <a class="btn mo-btn ms-1" href="<?= url('signup.php') ?>">Sign up</a>
+      <?php endif; ?>
 
-        function openSearch() {
-            searchOverlay.classList.remove('d-none');
-            document.getElementById('medi-o-search-input-popup').focus();
-        }
+      <button class="navbar-toggler mo-iconbtn ms-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav" aria-label="Menu">
+        <i class="bi bi-list fs-4"></i>
+      </button>
+    </div>
 
-        function closeSearch() {
-            searchOverlay.classList.add('d-none');
-            document.getElementById('medi-o-search-input-popup').value = '';
-        }
+    <div class="collapse navbar-collapse order-lg-2 justify-content-center d-none d-lg-flex">
+      <ul class="navbar-nav mo-nav gap-lg-1">
+        <li><a class="nav-link <?= $active === 'index.php' ? 'active' : '' ?>" href="<?= url('index.php') ?>">Home</a></li>
+        <li><a class="nav-link <?= $active === 'shop.php' ? 'active' : '' ?>" href="<?= url('shop.php') ?>">Shop</a></li>
+        <li><a class="nav-link <?= $active === 'prescriptions.php' ? 'active' : '' ?>" href="<?= url('prescriptions.php') ?>">Prescriptions</a></li>
+        <li><a class="nav-link <?= $active === 'medications.php' ? 'active' : '' ?>" href="<?= url('medications.php') ?>">Tracker</a></li>
+        <li><a class="nav-link position-relative <?= $active === 'chat.php' ? 'active' : '' ?>" href="<?= url('chat.php') ?>">Chat
+          <?php if ($chatUnread): ?><span class="mo-badge mo-badge-inline"><?= $chatUnread ?></span><?php endif; ?>
+        </a></li>
+        <li><a class="nav-link <?= $active === 'contact.php' ? 'active' : '' ?>" href="<?= url('contact.php') ?>">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
 
-        openSearchDesktop?.addEventListener('click', e => {
-            e.preventDefault();
-            openSearch();
-        });
+<!-- Mobile menu -->
+<div class="offcanvas offcanvas-end mo-offcanvas" tabindex="-1" id="mobileNav">
+  <div class="offcanvas-header">
+    <span class="fw-bold fs-5">Menu</span>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+  </div>
+  <div class="offcanvas-body pt-0">
+    <div class="list-group list-group-flush mo-mobile-nav">
+      <a class="list-group-item" href="<?= url('index.php') ?>"><i class="bi bi-house me-2"></i>Home</a>
+      <a class="list-group-item" href="<?= url('shop.php') ?>"><i class="bi bi-shop me-2"></i>Shop</a>
+      <a class="list-group-item" href="<?= url('prescriptions.php') ?>"><i class="bi bi-file-medical me-2"></i>Prescriptions</a>
+      <a class="list-group-item" href="<?= url('medications.php') ?>"><i class="bi bi-alarm me-2"></i>Medication Tracker</a>
+      <a class="list-group-item" href="<?= url('chat.php') ?>"><i class="bi bi-chat-dots me-2"></i>Chat with Pharmacy</a>
+      <a class="list-group-item" href="<?= url('my-qr.php') ?>"><i class="bi bi-qr-code me-2"></i>My QR Card</a>
+      <a class="list-group-item" href="<?= url('orders.php') ?>"><i class="bi bi-box-seam me-2"></i>My Orders</a>
+      <a class="list-group-item" href="<?= url('contact.php') ?>"><i class="bi bi-envelope me-2"></i>Contact</a>
+      <?php if (!$u): ?>
+        <div class="d-grid gap-2 mt-3">
+          <a class="btn mo-btn" href="<?= url('login.php') ?>">Log in</a>
+          <a class="btn mo-btn-outline" href="<?= url('signup.php') ?>">Create account</a>
+        </div>
+      <?php endif; ?>
+    </div>
+  </div>
+</div>
 
-        openSearchMobile?.addEventListener('click', e => {
-            e.preventDefault();
-            openSearch();
-        });
+<!-- Search modal -->
+<div class="modal fade" id="searchModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content mo-card">
+      <div class="modal-body p-4">
+        <div class="mo-search-box">
+          <i class="bi bi-search"></i>
+          <input type="search" id="liveSearch" class="form-control form-control-lg border-0 shadow-none"
+                 placeholder="Search medicines, vitamins, personal care…" autocomplete="off">
+        </div>
+        <div id="searchResults" class="mt-3"></div>
+      </div>
+    </div>
+  </div>
+</div>
 
-        searchOverlay.addEventListener('click', e => {
-            if (!searchPopup.contains(e.target)) {
-                closeSearch();
-            }
-        });
+<div class="mo-toasts" id="toasts"></div>
+<?php foreach (flash_pull() as $f): ?>
+<script>document.addEventListener('DOMContentLoaded',()=>MedioToast(<?= json_encode($f['message']) ?>, <?= json_encode($f['type']) ?>));</script>
+<?php endforeach; ?>
 
-        document.addEventListener('keydown', e => {
-            if (e.key === 'Escape' && !searchOverlay.classList.contains('d-none')) {
-                closeSearch();
-            }
-        });
-
-        // Optional: close popup on form submit (before page redirects)
-        const searchForm = document.querySelector('.medi-o-search-form-popup');
-        searchForm.addEventListener('submit', () => {
-            closeSearch();
-        });
-    });
-</script>
-
-<!-- Add minimal CSS if needed -->
-<style>
-    .medi-o-search-overlay {
-        position: fixed;
-        inset: 0;
-        background-color: rgba(0,0,0,0.5);
-        z-index: 1050;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .medi-o-search-popup {
-        background: #fff;
-        padding: 1.5rem;
-        border-radius: 6px;
-        max-width: 400px;
-        width: 90%;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-    }
-</style>
+<main id="main">

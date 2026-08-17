@@ -1,157 +1,226 @@
 <?php
-session_start();
-// Assuming cart stored as $_SESSION['cart']
-// Each item: ['product_id', 'name', 'price', 'quantity']
+require_once __DIR__ . '/config.php';
+$u = require_login();
 
-$cart = $_SESSION['cart'] ?? [];
+$items = q_all('SELECT ci.id, ci.quantity, p.id AS product_id, p.name, p.price, p.stock, p.requires_prescription
+                FROM cart_items ci JOIN products p ON p.id = ci.product_id
+                WHERE ci.user_id = ? ORDER BY ci.id', [$u['id']]);
+if (!$items) {
+    flash('info', 'Your cart is empty.');
+    redirect('shop.php');
+}
 
-$subtotal = 0;
-$shipping = 150.00;  // fixed for example
+$subtotal = array_sum(array_map(fn($i) => $i['price'] * $i['quantity'], $items));
+$needsRx = (bool)array_filter($items, fn($i) => $i['requires_prescription']);
+$myPrescriptions = q_all("SELECT * FROM prescriptions WHERE user_id=? AND status IN ('pending','approved')
+                          ORDER BY id DESC LIMIT 10", [$u['id']]);
 
+$error = '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    csrf_check();
+    $delivery = ($_POST['delivery'] ?? 'pickup') === 'delivery' ? 'delivery' : 'pickup';
+    $payment = ($_POST['payment'] ?? 'cash') === 'payhere' ? 'payhere' : 'cash';
+    $address = trim($_POST['address'] ?? '');
+    $note = trim($_POST['note'] ?? '');
+    $rxId = (int)($_POST['prescription_id'] ?? 0);
+
+    $shipping = $delivery === 'delivery'
+        ? ($subtotal >= (float)setting('free_shipping_over', '5000') ? 0 : (float)setting('shipping_fee', '250'))
+        : 0;
+
+    if ($delivery === 'delivery' && $address === '') {
+        $error = 'Please enter a delivery address.';
+    } elseif ($needsRx && !$rxId) {
+        $error = 'Your cart contains prescription medicines — please select or upload a prescription first.';
+    } else {
+        if ($rxId && !q_one('SELECT id FROM prescriptions WHERE id=? AND user_id=?', [$rxId, $u['id']])) {
+            $rxId = 0;
+        }
+        // Stock re-check
+        foreach ($items as $i) {
+            if ($i['quantity'] > $i['stock']) {
+                $error = e($i['name']) . ' has only ' . $i['stock'] . ' left in stock. Please adjust your cart.';
+                break;
+            }
+        }
+
+        if ($error === '') {
+            $pdo = db();
+            $pdo->beginTransaction();
+            try {
+                $orderNo = new_order_no();
+                q('INSERT INTO orders (order_no, user_id, prescription_id, subtotal, shipping_fee, total,
+                    payment_method, payment_status, status, delivery_method, address, note, qr_token)
+                   VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)', [
+                    $orderNo, $u['id'], $rxId ?: null, $subtotal, $shipping, $subtotal + $shipping,
+                    $payment, 'pending', 'placed', $delivery,
+                    $delivery === 'delivery' ? $address : null, $note ?: null, new_token(),
+                ]);
+                $orderId = (int)$pdo->lastInsertId();
+
+                foreach ($items as $i) {
+                    q('INSERT INTO order_items (order_id, product_id, product_name, price, quantity) VALUES (?,?,?,?,?)',
+                        [$orderId, $i['product_id'], $i['name'], $i['price'], $i['quantity']]);
+                    q('UPDATE products SET stock = stock - ? WHERE id = ?', [$i['quantity'], $i['product_id']]);
+                }
+                q('DELETE FROM cart_items WHERE user_id = ?', [$u['id']]);
+                $pdo->commit();
+            } catch (Throwable $ex) {
+                $pdo->rollBack();
+                throw $ex;
+            }
+
+            if ($payment === 'payhere') {
+                redirect('payment.php?order=' . $orderId);
+            }
+
+            // Cash on pickup/delivery — order goes straight to the pharmacy queue
+            notify((int)$u['id'], 'order', 'Order #' . $orderNo . ' placed',
+                'We\'ll notify you when it\'s ready for ' . $delivery . '.', url('order.php?id=' . $orderId));
+            flash('success', 'Order placed! Pay when you ' . ($delivery === 'pickup' ? 'collect it.' : 'receive it.'));
+            redirect('order-success.php?id=' . $orderId);
+        }
+    }
+}
+
+$pageTitle = 'Checkout';
+include __DIR__ . '/components/header.php';
 ?>
-<!DOCTYPE html>
-<html lang="en">
+<div class="container py-4 py-md-5">
+  <div class="page-head pt-0"><h1 class="h2">Checkout</h1></div>
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Medi-O</title>
+  <?php if ($error): ?>
+    <div class="alert alert-danger"><i class="bi bi-exclamation-triangle me-2"></i><?= $error ?></div>
+  <?php endif; ?>
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-    <link rel="stylesheet" href="css/styles.css" />
-</head>
-
-<body>
-<?php include("components/header.php"); ?>
-
-<section class="checkout-page py-5">
-    <div class="container">
-        <h2 class="checkout-title text-center mb-4">Checkout</h2>
-        <form id="billingForm" action="place-order.php" method="POST">
-            <div class="row">
-
-                <!-- Billing Information (left col) -->
-                <div class="col-lg-7">
-                    <!-- Your billing form here (same as before) -->
-                </div>
-
-                <!-- Order Summary (right col) -->
-                <div class="col-lg-5">
-                    <div class="order-summary p-4 border rounded">
-                        <h4 class="order-summary-title mb-3">Order Summary</h4>
-
-                        <ul class="list-group mb-3">
-                            <?php if (empty($cart)): ?>
-                                <li class="list-group-item">Your cart is empty.</li>
-                            <?php else: ?>
-                                <?php foreach ($cart as $item): 
-                                    $line_total = $item['price'] * $item['quantity'];
-                                    $subtotal += $line_total;
-                                ?>
-                                <li class="list-group-item d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <strong><?= htmlspecialchars($item['name']) ?></strong>
-                                        <br>
-                                        Qty: <?= intval($item['quantity']) ?>
-                                    </div>
-                                    <span>Rs. <?= number_format($line_total, 2) ?></span>
-                                </li>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </ul>
-
-                        <div class="d-flex justify-content-between mb-3">
-                            <p class="mb-0">Subtotal:</p>
-                            <p class="mb-0">Rs. <?= number_format($subtotal, 2) ?></p>
-                        </div>
-                        <div class="d-flex justify-content-between mb-3">
-                            <p class="mb-0">Shipping:</p>
-                            <p class="mb-0">Rs. <?= number_format($shipping, 2) ?></p>
-                        </div>
-                        <div class="d-flex justify-content-between mb-4 fw-bold">
-                            <p class="mb-0">Total:</p>
-                            <p class="mb-0">Rs. <?= number_format($subtotal + $shipping, 2) ?></p>
-                        </div>
-
-                        <!-- Payment and buttons (same as before) -->
-                        <h5 class="payment-method-title">Payment Method</h5>
-                        <div class="mb-3">
-                            <select class="form-select" id="paymentMethod" name="payment_method" onchange="showPaymentDetails()" required>
-                                <option value="">Choose Payment Method</option>
-                                <option value="creditCard">Credit/Debit Card</option>
-                                <option value="paypal">PayPal</option>
-                            </select>
-                        </div>
-
-                        <div id="creditCardDetails" class="payment-details d-none">
-                            <h6 class="mb-3">Credit/Debit Card Details</h6>
-                            <!-- card inputs -->
-                        </div>
-
-                        <div id="paypalDetails" class="payment-details d-none">
-                            <h6 class="mb-3">PayPal Details</h6>
-                            <p>You'll be redirected to PayPal to complete the payment.</p>
-                        </div>
-
-                        <div class="d-flex justify-content-between mt-4">
-                            <button class="btn btn-outline-secondary w-48" type="button" onclick="cancelOrder()">Cancel</button>
-                            <button class="btn btn-primary w-48" type="submit">Place Order</button>
-                        </div>
-
-                    </div>
-                </div>
-
+  <form method="post">
+    <?= csrf_field() ?>
+    <div class="row g-4">
+      <div class="col-lg-8">
+        <!-- Delivery method -->
+        <div class="mo-card p-4 mb-4" data-reveal>
+          <h2 class="h5 fw-bold mb-3"><span class="badge rounded-pill text-bg-dark me-2">1</span>How do you want it?</h2>
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <input type="radio" class="btn-check" name="delivery" id="dPickup" value="pickup" checked>
+              <label class="mo-card p-3 w-100 h-100 d-block" for="dPickup" style="cursor:pointer">
+                <i class="bi bi-qr-code-scan fs-3" style="color:var(--mo-primary)"></i>
+                <div class="fw-bold mt-1">Pickup at pharmacy <span class="badge text-bg-success ms-1">FREE</span></div>
+                <div class="small text-muted">Collect with your QR card — no queue.</div>
+              </label>
             </div>
-        </form>
+            <div class="col-sm-6">
+              <input type="radio" class="btn-check" name="delivery" id="dDelivery" value="delivery">
+              <label class="mo-card p-3 w-100 h-100 d-block" for="dDelivery" style="cursor:pointer">
+                <i class="bi bi-truck fs-3" style="color:var(--mo-primary)"></i>
+                <div class="fw-bold mt-1">Home delivery</div>
+                <div class="small text-muted"><?= money((float)setting('shipping_fee', '250')) ?> — free over <?= money((float)setting('free_shipping_over', '5000')) ?></div>
+              </label>
+            </div>
+          </div>
+          <div id="addressBox" class="mt-3 d-none">
+            <label class="form-label fw-semibold">Delivery address</label>
+            <textarea name="address" class="form-control" rows="2" placeholder="Street, city"><?= e($u['address'] ?? '') ?></textarea>
+          </div>
+        </div>
+
+        <?php if ($needsRx): ?>
+        <!-- Prescription -->
+        <div class="mo-card p-4 mb-4" data-reveal>
+          <h2 class="h5 fw-bold mb-1"><span class="badge rounded-pill text-bg-dark me-2">2</span>Prescription</h2>
+          <p class="small text-muted">Your cart contains prescription medicines. Attach a prescription so our
+            pharmacist can verify it.</p>
+          <?php if ($myPrescriptions): ?>
+            <div class="d-flex flex-column gap-2">
+              <?php foreach ($myPrescriptions as $rx): ?>
+                <label class="mo-card p-3 d-flex align-items-center gap-3" style="cursor:pointer">
+                  <input type="radio" class="form-check-input m-0" name="prescription_id" value="<?= $rx['id'] ?>">
+                  <i class="bi bi-file-medical fs-4" style="color:var(--mo-primary)"></i>
+                  <div class="flex-grow-1">
+                    <div class="fw-semibold small"><?= e($rx['original_name']) ?></div>
+                    <div class="small text-muted">Uploaded <?= time_ago($rx['created_at']) ?></div>
+                  </div>
+                  <span class="mo-status mo-status-<?= e($rx['status']) ?>"><?= ucfirst(e($rx['status'])) ?></span>
+                </label>
+              <?php endforeach; ?>
+            </div>
+          <?php else: ?>
+            <div class="alert alert-warning small mb-0">You have no prescriptions on file —
+              <a href="<?= url('prescriptions.php') ?>" target="_blank">upload one now</a>, then refresh this page.</div>
+          <?php endif; ?>
+        </div>
+        <?php endif; ?>
+
+        <!-- Payment -->
+        <div class="mo-card p-4" data-reveal>
+          <h2 class="h5 fw-bold mb-3"><span class="badge rounded-pill text-bg-dark me-2"><?= $needsRx ? 3 : 2 ?></span>Payment</h2>
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <input type="radio" class="btn-check" name="payment" id="pCard" value="payhere" checked>
+              <label class="mo-card p-3 w-100 h-100 d-block" for="pCard" style="cursor:pointer">
+                <i class="bi bi-credit-card fs-3" style="color:var(--mo-primary)"></i>
+                <div class="fw-bold mt-1">Pay online</div>
+                <div class="small text-muted">Card via PayHere <?= payhere_configured_badge() ?></div>
+              </label>
+            </div>
+            <div class="col-sm-6">
+              <input type="radio" class="btn-check" name="payment" id="pCash" value="cash">
+              <label class="mo-card p-3 w-100 h-100 d-block" for="pCash" style="cursor:pointer">
+                <i class="bi bi-cash-coin fs-3" style="color:var(--mo-primary)"></i>
+                <div class="fw-bold mt-1">Cash</div>
+                <div class="small text-muted">Pay when you collect / receive</div>
+              </label>
+            </div>
+          </div>
+          <div class="mt-3">
+            <label class="form-label fw-semibold">Note for the pharmacy <span class="text-muted fw-normal">(optional)</span></label>
+            <textarea name="note" class="form-control" rows="2" placeholder="Anything we should know?"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="col-lg-4" data-reveal>
+        <div class="mo-card p-4 position-sticky" style="top:90px">
+          <h2 class="h5 fw-bold mb-3">Your order</h2>
+          <?php foreach ($items as $i): ?>
+            <div class="d-flex justify-content-between small mb-2">
+              <span class="text-truncate me-2"><?= e($i['name']) ?> × <?= (int)$i['quantity'] ?></span>
+              <span class="fw-semibold text-nowrap"><?= money($i['price'] * $i['quantity']) ?></span>
+            </div>
+          <?php endforeach; ?>
+          <hr>
+          <div class="d-flex justify-content-between mb-1"><span class="text-muted">Subtotal</span><span class="fw-semibold"><?= money($subtotal) ?></span></div>
+          <div class="d-flex justify-content-between mb-1"><span class="text-muted">Delivery</span><span id="shipLine">FREE (pickup)</span></div>
+          <div class="d-flex justify-content-between fs-5 fw-bold mt-2"><span>Total</span><span id="grandTotal"><?= money($subtotal) ?></span></div>
+          <button class="btn mo-btn w-100 btn-lg mt-3"><i class="bi bi-lock me-2"></i>Place order</button>
+          <div class="text-center small text-muted mt-2"><i class="bi bi-shield-check me-1"></i>Secure checkout</div>
+        </div>
+      </div>
     </div>
-</section>
-
-<?php include("components/footer.php"); ?>
-
-<script>
-function cancelOrder() {
-    window.location.href = "cart.php"; // redirect to cart or homepage
-}
-function showPaymentDetails() {
-    const paymentMethod = document.getElementById("paymentMethod").value;
-    document.getElementById("creditCardDetails").classList.add("d-none");
-    document.getElementById("paypalDetails").classList.add("d-none");
-
-    if (paymentMethod === "creditCard") {
-        document.getElementById("creditCardDetails").classList.remove("d-none");
-    } else if (paymentMethod === "paypal") {
-        document.getElementById("paypalDetails").classList.remove("d-none");
-    }
-}
-</script>
-
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="js/script.js"></script>
+  </form>
+</div>
 
 <script>
-function cancelOrder() {
-    window.location.href = "cart.php"; // or wherever you want to send them
-}
-
-function showPaymentDetails() {
-    const paymentMethod = document.getElementById("paymentMethod").value;
-    document.getElementById("creditCardDetails").classList.add("d-none");
-    document.getElementById("paypalDetails").classList.add("d-none");
-
-    if (paymentMethod === "creditCard") {
-        document.getElementById("creditCardDetails").classList.remove("d-none");
-    } else if (paymentMethod === "paypal") {
-        document.getElementById("paypalDetails").classList.remove("d-none");
-    }
-}
+const SUBTOTAL = <?= json_encode($subtotal) ?>;
+const FEE = <?= json_encode((float)setting('shipping_fee', '250')) ?>;
+const FREE_OVER = <?= json_encode((float)setting('free_shipping_over', '5000')) ?>;
+const fmt = v => 'Rs. ' + v.toLocaleString(undefined, {minimumFractionDigits: 2});
+document.querySelectorAll('[name="delivery"]').forEach(r => r.addEventListener('change', () => {
+  const delivery = document.querySelector('[name="delivery"]:checked').value === 'delivery';
+  document.getElementById('addressBox').classList.toggle('d-none', !delivery);
+  const ship = delivery ? (SUBTOTAL >= FREE_OVER ? 0 : FEE) : 0;
+  document.getElementById('shipLine').textContent = delivery ? (ship ? fmt(ship) : 'FREE') : 'FREE (pickup)';
+  document.getElementById('grandTotal').textContent = fmt(SUBTOTAL + ship);
+}));
 </script>
+<?php
+include __DIR__ . '/components/footer.php';
 
-</body>
-</html>
+function payhere_configured_badge(): string
+{
+    require_once __DIR__ . '/includes/payhere.php';
+    return payhere_configured()
+        ? (PAYHERE_SANDBOX ? '<span class="badge text-bg-warning">Sandbox</span>' : '')
+        : '<span class="badge text-bg-secondary">Demo mode</span>';
+}
