@@ -76,4 +76,5 @@ foreach ($due as $d) {
 q("UPDATE medication_logs SET status='skipped'
    WHERE status IN ('scheduled','sent') AND scheduled_for < CURDATE()");
 
-echo date('Y-m-d H:i:s') . " — reminders sent: $sent (whatsapp " . (wa_configured() ? 'LIVE' : 'demo/logged') . ")\n";
+[$waOk, $waMsg] = wa_health();
+echo date('Y-m-d H:i:s') . " — reminders sent: $sent (whatsapp: " . ($waOk ? 'LIVE' : $waMsg) . ")\n";

@@ -76,24 +76,18 @@ foreach (q_all('SELECT status, COUNT(*) AS c FROM prescriptions GROUP BY status'
           <?php if ($rx['review_note']): ?><div class="small text-muted mb-2">Note: <?= e($rx['review_note']) ?></div><?php endif; ?>
 
           <div class="mt-auto">
-            <a class="btn btn-sm mo-btn-soft w-100 mb-2" href="<?= url('file.php?rx=' . $rx['id']) ?>" target="_blank">
-              <i class="bi bi-eye me-1"></i>View prescription file</a>
-
+            <?php $itemCount = (int)q_val('SELECT COUNT(*) FROM prescription_items WHERE prescription_id=?', [$rx['id']]); ?>
             <?php if (in_array($rx['status'], ['pending', 'approved'], true)): ?>
-              <form method="post">
-                <?= csrf_field() ?>
-                <input type="hidden" name="rx_id" value="<?= $rx['id'] ?>">
-                <input type="hidden" name="back_filter" value="<?= e($filter) ?>">
-                <input name="note" class="form-control form-control-sm mb-2" placeholder="Note to customer (optional)">
-                <div class="d-flex gap-1">
-                  <?php if ($rx['status'] === 'pending'): ?>
-                    <button name="action" value="approved" class="btn btn-sm mo-btn flex-fill"><i class="bi bi-check-lg me-1"></i>Approve</button>
-                    <button name="action" value="rejected" class="btn btn-sm btn-outline-danger flex-fill">Reject</button>
-                  <?php else: ?>
-                    <button name="action" value="ready" class="btn btn-sm mo-btn flex-fill"><i class="bi bi-bag-check me-1"></i>Mark ready for pickup</button>
-                  <?php endif; ?>
-                </div>
-              </form>
+              <a class="btn btn-sm mo-btn w-100" href="<?= url('staff/prescription-review.php?id=' . $rx['id']) ?>">
+                <i class="bi bi-stars me-1"></i><?= $rx['status'] === 'pending' ? 'Review & build plan' : 'Open plan' ?>
+                <?= $itemCount ? '(' . $itemCount . ' items)' : '' ?></a>
+            <?php else: ?>
+              <div class="d-flex gap-1">
+                <a class="btn btn-sm mo-btn-soft flex-fill" href="<?= url('file.php?rx=' . $rx['id']) ?>" target="_blank">
+                  <i class="bi bi-eye me-1"></i>File</a>
+                <a class="btn btn-sm mo-btn-soft flex-fill" href="<?= url('staff/prescription-review.php?id=' . $rx['id']) ?>">
+                  <i class="bi bi-clipboard-pulse me-1"></i>Plan<?= $itemCount ? ' (' . $itemCount . ')' : '' ?></a>
+              </div>
             <?php endif; ?>
           </div>
         </div>

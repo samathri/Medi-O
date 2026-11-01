@@ -1,6 +1,6 @@
 <?php
 /**
- * Medi-O — global configuration.
+ * Medi-O â€” global configuration.
  * Secrets live in config.local.php (never committed). Copy
  * config.local.example.php to config.local.php and fill in what you have;
  * every integration degrades gracefully when left blank.
@@ -14,7 +14,7 @@ $defaults = [
     'DB_USER' => 'root',
     'DB_PASS' => '',
 
-    // Gmail SMTP (App Password) — leave blank to log emails instead of sending
+    // Gmail SMTP (App Password) â€” leave blank to log emails instead of sending
     'SMTP_HOST' => 'smtp.gmail.com',
     'SMTP_PORT' => 587,
     'SMTP_USER' => '',
@@ -22,10 +22,10 @@ $defaults = [
     'MAIL_FROM' => 'no-reply@medi-o.local',
     'MAIL_FROM_NAME' => 'Medi-O Pharmacy',
 
-    // Google Sign-In (https://console.cloud.google.com → OAuth client ID, type Web)
+    // Google Sign-In (https://console.cloud.google.com â†’ OAuth client ID, type Web)
     'GOOGLE_CLIENT_ID' => '',
 
-    // PayHere sandbox (free: https://sandbox.payhere.lk) — blank = built-in demo gateway
+    // PayHere sandbox (free: https://sandbox.payhere.lk) â€” blank = built-in demo gateway
     'PAYHERE_MERCHANT_ID' => '',
     'PAYHERE_MERCHANT_SECRET' => '',
     'PAYHERE_SANDBOX' => true,
@@ -34,6 +34,15 @@ $defaults = [
     // blank = messages are stored in the outbox as "logged" (demo mode)
     'WHATSAPP_TOKEN' => '',
     'WHATSAPP_PHONE_ID' => '',
+    // Google Gemini API key (free: https://aistudio.google.com/apikey)
+    // Powers the AI prescription reader. Blank = pharmacist enters items manually.
+    'GEMINI_API_KEY' => '',
+    'GEMINI_MODEL' => 'gemini-flash-latest',
+
+    // Name of an approved "Authentication" message template (e.g. 'medio_otp').
+    // When set, verification codes are sent as templates â€” instant delivery,
+    // no need for the customer to message first.
+    'WHATSAPP_OTP_TEMPLATE' => '',
 
     'APP_DEBUG' => true,
 ];
@@ -44,7 +53,8 @@ if (is_file(__DIR__ . '/config.local.php')) {
 }
 foreach ($defaults as $k => $v) {
     if (!defined($k)) {
-        define($k, $local[$k] ?? $v);
+        $val = $local[$k] ?? $v;
+        define($k, $val === '' ? $v : $val); // blank local values fall back to defaults
     }
 }
 

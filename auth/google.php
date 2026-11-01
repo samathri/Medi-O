@@ -47,14 +47,16 @@ $user = q_one('SELECT * FROM users WHERE google_id = ?', [$googleId]);
 if (!$user && $email !== '') {
     $user = q_one('SELECT * FROM users WHERE email = ?', [$email]);
     if ($user) {
-        q('UPDATE users SET google_id = ?, avatar = COALESCE(avatar, ?) WHERE id = ?', [$googleId, $avatar, $user['id']]);
+        // Google has already verified this email address
+        q('UPDATE users SET google_id = ?, avatar = COALESCE(avatar, ?), email_verified = 1 WHERE id = ?',
+            [$googleId, $avatar, $user['id']]);
         $user = q_one('SELECT * FROM users WHERE id = ?', [$user['id']]);
     }
 }
 
 // 3) Brand-new account
 if (!$user) {
-    q('INSERT INTO users (name, email, google_id, avatar, qr_token) VALUES (?,?,?,?,?)',
+    q('INSERT INTO users (name, email, google_id, avatar, qr_token, email_verified) VALUES (?,?,?,?,?,1)',
         [$name, $email ?: null, $googleId, $avatar, new_token()]);
     $user = q_one('SELECT * FROM users WHERE id = ?', [db()->lastInsertId()]);
     notify((int)$user['id'], 'welcome', 'Welcome to Medi-O!', 'Add your mobile number in Profile to get WhatsApp reminders.', url('profile.php'));

@@ -103,6 +103,36 @@ include __DIR__ . '/components/header.php';
                 </div>
               <?php endif; ?>
 
+              <?php // Pharmacist-verified medication plan (shown once reviewed)
+              $planItems = in_array($rx['status'], ['approved', 'ready', 'collected'], true)
+                  ? q_all('SELECT * FROM prescription_items WHERE prescription_id=? ORDER BY id', [$rx['id']]) : [];
+              if ($planItems): ?>
+                <div class="mt-3 border rounded-3 overflow-hidden">
+                  <div class="px-3 py-2 small fw-bold" style="background:var(--mo-primary-soft);color:var(--mo-primary-dark)">
+                    <i class="bi bi-clipboard-pulse me-1"></i>Your medication plan
+                    <span class="fw-normal">— verified by our pharmacist</span>
+                  </div>
+                  <div class="table-responsive">
+                    <table class="table table-sm mb-0 mo-table align-middle">
+                      <thead><tr><th>Medicine</th><th>Dosage</th><th>When</th><th>Days</th><th></th></tr></thead>
+                      <tbody>
+                        <?php foreach ($planItems as $it): ?>
+                          <tr>
+                            <td class="small fw-semibold"><?= e($it['medicine_name']) ?>
+                              <?php if ($it['instructions']): ?><div class="text-muted fw-normal"><?= e($it['instructions']) ?></div><?php endif; ?>
+                            </td>
+                            <td class="small"><?= e($it['dosage'] ?? '—') ?></td>
+                            <td class="small"><?= $it['times'] ? e(implode(', ', array_map(fn($t) => date('g:i a', strtotime($t)), explode(',', $it['times'])))) : '—' ?></td>
+                            <td class="small"><?= $it['duration_days'] ? (int)$it['duration_days'] : '—' ?></td>
+                            <td><span class="mo-status <?= $it['in_stock'] ? 'mo-status-ready' : 'mo-status-pending' ?>"><?= $it['in_stock'] ? 'In stock' : 'To order' ?></span></td>
+                          </tr>
+                        <?php endforeach; ?>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              <?php endif; ?>
+
               <div class="d-flex flex-wrap gap-2 mt-3">
                 <a class="btn btn-sm mo-btn-soft" href="<?= url('file.php?rx=' . $rx['id']) ?>" target="_blank"><i class="bi bi-eye me-1"></i>View file</a>
                 <button class="btn btn-sm mo-btn-soft" data-bs-toggle="collapse" data-bs-target="#qr<?= $rx['id'] ?>"><i class="bi bi-qr-code me-1"></i>Verification QR</button>

@@ -40,6 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         login_user($user);
 
         require_once __DIR__ . '/includes/mailer.php';
+        require_once __DIR__ . '/includes/otp.php';
         send_mail($user['email'], 'Welcome to Medi-O 🎉', mail_template(
             'Welcome to Medi-O, ' . $user['name'] . '!',
             '<p>Your account is ready. You can now order medicines, upload prescriptions, chat with our
@@ -48,8 +49,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ));
         notify((int)$user['id'], 'welcome', 'Welcome to Medi-O!', 'Explore the shop or upload your first prescription.', url('shop.php'));
 
-        flash('success', 'Account created — welcome to Medi-O!');
-        redirect('profile.php');
+        // Kick off email (and phone) verification straight away
+        [, $demoEmail] = otp_send_email($user);
+        $_SESSION['demo_code_email'] = $demoEmail;
+        if ($user['phone']) {
+            [, $demoPhone] = otp_send_phone($user);
+            $_SESSION['demo_code_phone'] = $demoPhone;
+        }
+
+        flash('success', 'Account created! Now let\'s verify your contact details.');
+        redirect('verify-account.php');
     }
 }
 

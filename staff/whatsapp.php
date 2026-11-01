@@ -35,8 +35,9 @@ $outbox = q_all('SELECT w.*, u.name AS customer FROM whatsapp_outbox w
 ?>
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
   <h1 class="h3 fw-bold mb-0">WhatsApp messaging</h1>
-  <span class="mo-status <?= wa_configured() ? 'mo-status-sent' : 'mo-status-logged' ?>">
-    <?= wa_configured() ? 'Cloud API connected' : 'Demo mode — messages are logged' ?></span>
+  <?php [$waOk, $waMsg] = wa_health(); ?>
+  <span class="mo-status <?= $waOk ? 'mo-status-sent' : (wa_configured() ? 'mo-status-failed' : 'mo-status-logged') ?>">
+    <?= e($waOk ? $waMsg : (wa_configured() ? '⚠ ' . $waMsg : 'Demo mode — messages are logged')) ?></span>
 </div>
 
 <?php if (!wa_configured()): ?>

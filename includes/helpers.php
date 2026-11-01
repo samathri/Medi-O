@@ -18,7 +18,17 @@ function url(string $path = ''): string
 
 function redirect(string $path): never
 {
-    header('Location: ' . (preg_match('#^https?://#', $path) ? $path : url($path)));
+    if (preg_match('#^https?://#', $path)) {
+        $target = $path;
+    } elseif (str_starts_with($path, '/')) {
+        // Absolute path (e.g. a stored REQUEST_URI) — already includes the app folder
+        $origin = parse_url(BASE_URL, PHP_URL_SCHEME) . '://' . parse_url(BASE_URL, PHP_URL_HOST);
+        if (($port = parse_url(BASE_URL, PHP_URL_PORT))) $origin .= ':' . $port;
+        $target = $origin . $path;
+    } else {
+        $target = url($path);
+    }
+    header('Location: ' . $target);
     exit;
 }
 

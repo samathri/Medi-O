@@ -2,6 +2,12 @@
 require_once __DIR__ . '/config.php';
 $u = require_login();
 
+// Ordering requires a verified contact channel (email or phone)
+if (!$u['email_verified'] && !$u['phone_verified']) {
+    flash('info', 'Please verify your email or mobile number before placing an order.');
+    redirect('verify-account.php');
+}
+
 $items = q_all('SELECT ci.id, ci.quantity, p.id AS product_id, p.name, p.price, p.stock, p.requires_prescription
                 FROM cart_items ci JOIN products p ON p.id = ci.product_id
                 WHERE ci.user_id = ? ORDER BY ci.id', [$u['id']]);

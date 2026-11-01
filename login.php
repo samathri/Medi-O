@@ -25,6 +25,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($user && $user['password_hash'] && password_verify($password, $user['password_hash'])) {
             login_user($user);
             flash('success', 'Welcome back, ' . $user['name'] . '!');
+            if (!$user['email_verified'] && !$user['phone_verified'] && $user['role'] === 'customer') {
+                flash('info', 'Your account isn\'t verified yet — verify to place orders.');
+                unset($_SESSION['after_login']);
+                redirect('verify-account.php');
+            }
             $after = $_SESSION['after_login'] ?? '';
             unset($_SESSION['after_login']);
             redirect($after !== '' ? $after : role_home($user));

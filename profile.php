@@ -22,8 +22,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif ($phone && q_one('SELECT id FROM users WHERE phone = ? AND id <> ?', [$phone, $u['id']])) {
             flash('error', 'That mobile number is already used by another account.');
         } else {
-            q('UPDATE users SET name=?, phone=?, address=?, whatsapp_opt_in=? WHERE id=?',
-                [$name, $phone, $address, $optIn, $u['id']]);
+            // A changed number must be verified again
+            $phoneVerified = ($phone === $u['phone']) ? (int)$u['phone_verified'] : 0;
+            q('UPDATE users SET name=?, phone=?, address=?, whatsapp_opt_in=?, phone_verified=? WHERE id=?',
+                [$name, $phone, $address, $optIn, $phoneVerified, $u['id']]);
+            if ($phone && !$phoneVerified) {
+                flash('info', 'Profile updated — please verify your new mobile number.');
+                redirect('verify-account.php');
+            }
             flash('success', 'Profile updated.');
         }
         redirect('profile.php?tab=details');
@@ -69,8 +75,20 @@ include __DIR__ . '/components/header.php';
           <?php endif; ?>
         </div>
         <h2 class="h5 fw-bold mb-1"><?= e($u['name']) ?></h2>
-        <div class="text-muted small"><?= e($u['email'] ?? '') ?></div>
-        <?php if ($u['phone']): ?><div class="text-muted small"><i class="bi bi-whatsapp text-success me-1"></i><?= e(pretty_phone($u['phone'])) ?></div><?php endif; ?>
+        <div class="text-muted small"><?= e($u['email'] ?? '') ?>
+          <?php if ($u['email']): ?>
+            <?= $u['email_verified']
+                ? '<i class="bi bi-patch-check-fill text-success" title="Email verified"></i>'
+                : '<a href="' . url('verify-account.php') . '" class="badge text-bg-warning text-decoration-none">Verify</a>' ?>
+          <?php endif; ?>
+        </div>
+        <?php if ($u['phone']): ?>
+          <div class="text-muted small"><i class="bi bi-whatsapp text-success me-1"></i><?= e(pretty_phone($u['phone'])) ?>
+            <?= $u['phone_verified']
+                ? '<i class="bi bi-patch-check-fill text-success" title="Number verified"></i>'
+                : '<a href="' . url('verify-account.php') . '" class="badge text-bg-warning text-decoration-none">Verify</a>' ?>
+          </div>
+        <?php endif; ?>
         <?php if ($u['google_id']): ?><span class="badge bg-light text-dark border mt-2"><i class="bi bi-google me-1"></i>Linked with Google</span><?php endif; ?>
         <hr>
         <div class="row text-center">

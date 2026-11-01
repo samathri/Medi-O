@@ -12,7 +12,7 @@ USE `medio`;
 
 SET FOREIGN_KEY_CHECKS = 0;
 
-DROP TABLE IF EXISTS whatsapp_outbox, notifications, collections, medication_logs,
+DROP TABLE IF EXISTS prescription_items, verification_codes, whatsapp_outbox, notifications, collections, medication_logs,
   medication_times, medications, chat_messages, chat_conversations, payments,
   order_items, orders, prescriptions, cart_items, products, categories,
   contact_messages, settings, users;
@@ -35,6 +35,8 @@ CREATE TABLE users (
   role          ENUM('customer','pharmacist','admin') NOT NULL DEFAULT 'customer',
   qr_token      CHAR(40)      NOT NULL,
   whatsapp_opt_in TINYINT(1)  NOT NULL DEFAULT 1,
+  email_verified TINYINT(1)   NOT NULL DEFAULT 0,
+  phone_verified TINYINT(1)   NOT NULL DEFAULT 0,
   reset_token   VARCHAR(64)   NULL,
   reset_expires DATETIME      NULL,
   created_at    TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -95,6 +97,8 @@ CREATE TABLE prescriptions (
   status        ENUM('pending','approved','rejected','ready','collected') NOT NULL DEFAULT 'pending',
   pharmacist_id INT UNSIGNED NULL,
   review_note   TEXT NULL,
+  ai_summary    TEXT NULL,
+  ai_analyzed_at DATETIME NULL,
   verify_token  CHAR(40) NOT NULL,
   created_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   reviewed_at   DATETIME NULL,
@@ -102,6 +106,22 @@ CREATE TABLE prescriptions (
   KEY idx_prescriptions_status (status),
   CONSTRAINT fk_rx_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   CONSTRAINT fk_rx_pharmacist FOREIGN KEY (pharmacist_id) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB;
+
+-- Medicines extracted from a prescription (AI-drafted, pharmacist-corrected)
+CREATE TABLE prescription_items (
+  id              INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  prescription_id INT UNSIGNED NOT NULL,
+  product_id      INT UNSIGNED NULL,
+  medicine_name   VARCHAR(255) NOT NULL,
+  dosage          VARCHAR(120) NULL,
+  times           VARCHAR(255) NULL,
+  duration_days   INT NULL,
+  instructions    VARCHAR(255) NULL,
+  in_stock        TINYINT(1) NOT NULL DEFAULT 0,
+  created_at      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_pi_rx FOREIGN KEY (prescription_id) REFERENCES prescriptions(id) ON DELETE CASCADE,
+  CONSTRAINT fk_pi_product FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
 CREATE TABLE orders (
@@ -274,6 +294,19 @@ CREATE TABLE contact_messages (
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
+-- One-time codes for email/phone verification and phone-based password reset
+CREATE TABLE verification_codes (
+  id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  user_id    INT UNSIGNED NOT NULL,
+  channel    ENUM('email','phone','reset') NOT NULL,
+  code_hash  CHAR(64) NOT NULL,
+  attempts   INT NOT NULL DEFAULT 0,
+  expires_at DATETIME NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY uq_vc_user_channel (user_id, channel),
+  CONSTRAINT fk_vc_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
 CREATE TABLE settings (
   name  VARCHAR(60) PRIMARY KEY,
   value TEXT NULL
@@ -287,10 +320,10 @@ CREATE TABLE settings (
 --   admin@medi-o.lk      / Admin@123
 --   pharmacist@medi-o.lk / Pharma@123
 --   demo@medi-o.lk       / Demo@123   (phone login: 0771234567)
-INSERT INTO users (name, email, phone, password_hash, role, qr_token) VALUES
-('Medi-O Admin', 'admin@medi-o.lk', '94770000001', '$2y$10$.ZDjd/No9H0QlBZxgftQA.KnCg2eZcHRDisI3C3L1GKQQ3591lIY2', 'admin', 'c473a0656ff3e06b11e8cedfc146c35a289d2e94'),
-('Nimal Perera (Pharmacist)', 'pharmacist@medi-o.lk', '94770000002', '$2y$10$9yBsSFAO3WK3LuAyZkJP5.twa65.SdhuoUOm/F3rW2hcQoRvU/h1.', 'pharmacist', 'cdb5cdf2e6fbc7569cd1a7b9936ba7c5b153028b'),
-('Demo Customer', 'demo@medi-o.lk', '94771234567', '$2y$10$MbGYRpHVhYXjeS25fmYkU.gQOO4M7d1R02vPMn6DE4TscSMQUwtDC', 'customer', 'eb0da471511e6e4585228472510790084ca2f5af');
+INSERT INTO users (name, email, phone, password_hash, role, qr_token, email_verified, phone_verified) VALUES
+('Medi-O Admin', 'admin@medi-o.lk', '94770000001', '$2y$10$.ZDjd/No9H0QlBZxgftQA.KnCg2eZcHRDisI3C3L1GKQQ3591lIY2', 'admin', 'c473a0656ff3e06b11e8cedfc146c35a289d2e94', 1, 1),
+('Nimal Perera (Pharmacist)', 'pharmacist@medi-o.lk', '94770000002', '$2y$10$9yBsSFAO3WK3LuAyZkJP5.twa65.SdhuoUOm/F3rW2hcQoRvU/h1.', 'pharmacist', 'cdb5cdf2e6fbc7569cd1a7b9936ba7c5b153028b', 1, 1),
+('Demo Customer', 'demo@medi-o.lk', '94771234567', '$2y$10$MbGYRpHVhYXjeS25fmYkU.gQOO4M7d1R02vPMn6DE4TscSMQUwtDC', 'customer', 'eb0da471511e6e4585228472510790084ca2f5af', 1, 1);
 
 INSERT INTO categories (name, icon) VALUES
 ('Medicines', 'bi-capsule-pill'),
