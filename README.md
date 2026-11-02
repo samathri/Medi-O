@@ -107,3 +107,42 @@ medio/
 ├─ database/medio.sql           ← full database (schema + seed + products)
 └─ assets/                      ← css/app.css, js/app.js, images
 ```
+
+## QA fixes and automatic reminders
+
+Checkout now validates prescription ownership/status and reserves stock atomically.
+Order cancellation restores inventory once. Payment callbacks validate merchant,
+currency and amount, and serialize retries to prevent duplicate payment records.
+Demo payments are disabled when merchant credentials are present or sandbox mode
+is off. Password-reset links are preserved in plain-text/demo emails. QR scanning
+routes prescription, customer and order codes correctly, with manual entry and
+camera startup/timeout feedback.
+
+For Windows/XAMPP, set `APP_URL` in your gitignored `config.local.php` to your
+actual application URL (including the port and folder). Then run:
+
+```powershell
+.\cron\install-reminder-task.ps1
+```
+
+This creates the `Medi-O medicine reminders` Windows task, repeating every five
+minutes while the installing user is logged in. PHP is expected at
+`C:\xampp\php\php.exe`; adjust `cron/run-reminders.ps1` for a different installation.
+The configured database must be running. Task output is appended to
+`logs/reminder-task.log`. Disable the task in Windows Task Scheduler to stop it.
+Scheduled and manual dispatch share a lock to prevent overlapping runs.
+
+If a fresh checkout reports missing QR classes despite Composer saying that
+packages are installed, restore the locked dependency files with:
+
+```shell
+composer reinstall endroid/qr-code bacon/bacon-qr-code dasprid/enum --prefer-dist
+composer dump-autoload
+```
+
+Validation on 2 November 2026: 162 automated local checks passed, all 68 application
+PHP files passed syntax checks, prescription QR routing and camera timeout feedback
+were checked in the browser, and a real scheduled run processed a synthetic due
+medication. Seven automatic runs were observed approximately 300 seconds apart.
+Live PayHere, Google, SMTP, WhatsApp and Gemini services still require credentials
+and live integration testing. Physical camera decoding remains unverified.

@@ -45,6 +45,8 @@ $defaults = [
     'WHATSAPP_OTP_TEMPLATE' => '',
 
     'APP_DEBUG' => true,
+    // Public app URL used by CLI reminder links; set for non-default folders/ports.
+    'APP_URL' => 'http://localhost/medio',
 ];
 
 $local = [];
@@ -68,7 +70,7 @@ foreach (['/api', '/auth', '/staff', '/admin', '/cron'] as $sub) {
         $base = substr($base, 0, -strlen($sub));
     }
 }
-define('BASE_URL', PHP_SAPI === 'cli' ? 'http://localhost/medio' : $scheme . '://' . $host . $base);
+define('BASE_URL', PHP_SAPI === 'cli' ? rtrim(APP_URL, '/') : $scheme . '://' . $host . $base);
 define('ROOT_PATH', __DIR__);
 
 if (APP_DEBUG) {

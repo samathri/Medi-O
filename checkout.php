@@ -36,12 +36,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($delivery === 'delivery' && $address === '') {
         $error = 'Please enter a delivery address.';
-    } elseif ($needsRx && !$rxId) {
+    } elseif (($needsRx || $rxId) && !q_one("SELECT id FROM prescriptions WHERE id=? AND user_id=? AND status IN ('pending','approved')", [$rxId, $u['id']])) {
         $error = 'Your cart contains prescription medicines — please select or upload a prescription first.';
     } else {
-        if ($rxId && !q_one('SELECT id FROM prescriptions WHERE id=? AND user_id=?', [$rxId, $u['id']])) {
-            $rxId = 0;
-        }
+
         // Stock re-check
         foreach ($items as $i) {
             if ($i['quantity'] > $i['stock']) {
@@ -54,6 +52,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $pdo = db();
             $pdo->beginTransaction();
             try {
+                // Serialize checkout for this customer and reject a changed/consumed cart.
+                q_one('SELECT id FROM users WHERE id=? FOR UPDATE', [$u['id']]);
+                $lockedCart = q_all('SELECT id, product_id, quantity FROM cart_items WHERE user_id=? ORDER BY id FOR UPDATE', [$u['id']]);
+                $expectedCart = array_map(fn($i) => array_intersect_key($i, array_flip(['id', 'product_id', 'quantity'])), $items);
+                if ($lockedCart != $expectedCart) {
+                    throw new DomainException('Your cart changed. Please reload checkout and try again.');
+                }
+                if (($needsRx || $rxId) && !q_one("SELECT id FROM prescriptions WHERE id=? AND user_id=? AND status IN ('pending','approved') FOR UPDATE", [$rxId, $u['id']])) {
+                    throw new DomainException('Please select a valid pending or approved prescription.');
+                }
+                // Conditional updates reserve inventory atomically; rollback restores all reservations.
+                $stockItems = $items;
+                usort($stockItems, fn($a, $b) => $a['product_id'] <=> $b['product_id']);
+                foreach ($stockItems as $i) {
+                    $reserved = q('UPDATE products SET stock=stock-? WHERE id=? AND stock>=? AND is_active=1 AND price=? AND requires_prescription=?',
+                        [$i['quantity'], $i['product_id'], $i['quantity'], $i['price'], $i['requires_prescription']]);
+                    if ($reserved->rowCount() !== 1) {
+                        throw new DomainException('A product changed or has insufficient stock. Please refresh your cart.');
+                    }
+                }
                 $orderNo = new_order_no();
                 q('INSERT INTO orders (order_no, user_id, prescription_id, subtotal, shipping_fee, total,
                     payment_method, payment_status, status, delivery_method, address, note, qr_token)
@@ -67,12 +85,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 foreach ($items as $i) {
                     q('INSERT INTO order_items (order_id, product_id, product_name, price, quantity) VALUES (?,?,?,?,?)',
                         [$orderId, $i['product_id'], $i['name'], $i['price'], $i['quantity']]);
-                    q('UPDATE products SET stock = stock - ? WHERE id = ?', [$i['quantity'], $i['product_id']]);
+
                 }
                 q('DELETE FROM cart_items WHERE user_id = ?', [$u['id']]);
                 $pdo->commit();
             } catch (Throwable $ex) {
                 $pdo->rollBack();
+                if ($ex instanceof DomainException) {
+                    flash('error', $ex->getMessage());
+                    redirect('cart.php');
+                }
                 throw $ex;
             }
 

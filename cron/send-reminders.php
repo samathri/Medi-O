@@ -27,6 +27,15 @@ if (PHP_SAPI !== 'cli') {
     header('Content-Type: text/plain');
 }
 
+$dispatchLock = 'medio-reminders-' . substr(hash('sha256', DB_NAME), 0, 40);
+if ((int)q_val('SELECT GET_LOCK(?, 0)', [$dispatchLock]) !== 1) {
+    echo "Another reminder dispatch is already running.\n";
+    exit;
+}
+register_shutdown_function(function () use ($dispatchLock) {
+    q_val('SELECT RELEASE_LOCK(?)', [$dispatchLock]);
+});
+
 // 1) Materialise today's dose log rows for all active medications
 foreach (q_all('SELECT t.id AS time_id, t.medication_id, t.time_of_day FROM medication_times t
                 JOIN medications m ON m.id = t.medication_id

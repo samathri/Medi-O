@@ -6,6 +6,8 @@
  */
 return [
     // 'DB_PASS' => '',
+    // URL used in links created by scheduled/CLI reminder runs.
+    // 'APP_URL' => 'http://localhost/MEDI-O',
 
     // Gmail: Google Account → Security → 2-Step Verification → App passwords
     // 'SMTP_USER' => 'yourgmail@gmail.com',

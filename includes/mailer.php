@@ -4,6 +4,15 @@
 
 use PHPMailer\PHPMailer\PHPMailer;
 
+/** Preserve action links in both demo logs and plain-text email. */
+function mail_plain_text(string $html): string
+{
+    $withLinks = preg_replace_callback('~<a\b[^>]*href\s*=\s*(["\'])(.*?)\1[^>]*>(.*?)</a>~is',
+        fn($m) => strip_tags($m[3]) . ' (' . $m[2] . ')', $html);
+    $text = preg_replace('~<(?:br\s*/?|/p|/div|/h[1-6])>~i', "\n", $withLinks);
+    return trim(html_entity_decode(strip_tags($text), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+}
+
 function send_mail(string $to, string $subject, string $html): bool
 {
     if (SMTP_USER === '' || SMTP_PASS === '') {
@@ -11,7 +20,7 @@ function send_mail(string $to, string $subject, string $html): bool
         if (!is_dir($dir)) mkdir($dir, 0775, true);
         file_put_contents(
             $dir . '/mail.log',
-            sprintf("[%s] TO:%s | %s\n%s\n%s\n", date('Y-m-d H:i:s'), $to, $subject, strip_tags($html), str_repeat('-', 60)),
+            sprintf("[%s] TO:%s | %s\n%s\n%s\n", date('Y-m-d H:i:s'), $to, $subject, mail_plain_text($html), str_repeat('-', 60)),
             FILE_APPEND
         );
         return true; // demo mode
@@ -31,7 +40,7 @@ function send_mail(string $to, string $subject, string $html): bool
         $mail->isHTML(true);
         $mail->Subject = $subject;
         $mail->Body = $html;
-        $mail->AltBody = strip_tags($html);
+        $mail->AltBody = mail_plain_text($html);
         return $mail->send();
     } catch (Throwable $e) {
         error_log('Mail error: ' . $e->getMessage());

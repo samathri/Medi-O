@@ -9,6 +9,8 @@ require_once __DIR__ . '/../components/staff-header.php';
 <div class="row g-4">
   <div class="col-lg-6">
     <div class="mo-card p-4">
+      <p id="scannerStatus" class="small text-muted" role="status" aria-live="polite">Start the camera or enter a QR code manually.</p>
+      <button id="startScanner" type="button" class="btn mo-btn mb-3">Start camera</button>
       <div id="reader" class="rounded-3 overflow-hidden" style="max-width:480px;margin:auto"></div>
       <div class="text-center small text-muted mt-3"><i class="bi bi-camera me-1"></i>Point the camera at a
         customer's QR card, order QR, or prescription QR.</div>
@@ -17,7 +19,7 @@ require_once __DIR__ . '/../components/staff-header.php';
   <div class="col-lg-6">
     <div class="mo-card p-4">
       <h2 class="h6 fw-bold text-uppercase text-muted mb-3">No camera? Enter code manually</h2>
-      <form onsubmit="handleScan(this.code.value); return false;" class="d-flex gap-2">
+      <form id="manualQrForm" class="d-flex gap-2">
         <input class="form-control" name="code" placeholder="Paste scanned URL or token…">
         <button class="btn mo-btn">Open</button>
       </form>
@@ -33,33 +35,6 @@ require_once __DIR__ . '/../components/staff-header.php';
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-<script>
-let lastScan = 0;
-function handleScan(text) {
-  const now = Date.now();
-  if (now - lastScan < 2500) return; // debounce duplicate reads
-  lastScan = now;
-  text = (text || '').trim();
-  try {
-    // Full URL from one of our QRs → follow it directly
-    const u = new URL(text);
-    if (u.searchParams.get('t')) {
-      location.href = `${window.MEDIO.base}/staff/verify.php?t=${encodeURIComponent(u.searchParams.get('t'))}`;
-      return;
-    }
-  } catch { /* not a URL — treat as raw token */ }
-  if (text) location.href = `${window.MEDIO.base}/staff/verify.php?t=${encodeURIComponent(text)}`;
-}
-const scanner = new Html5Qrcode('reader');
-Html5Qrcode.getCameras().then(cams => {
-  if (!cams.length) throw new Error('no cam');
-  const back = cams.find(c => /back|rear|environment/i.test(c.label)) || cams[0];
-  scanner.start(back.id, {fps: 10, qrbox: {width: 240, height: 240}}, handleScan);
-}).catch(() => {
-  document.getElementById('reader').innerHTML =
-    '<div class="alert alert-warning small m-0"><i class="bi bi-camera-video-off me-1"></i>' +
-    'Camera not available. Use the manual entry box instead.</div>';
-});
-</script>
+<script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js" defer></script>
+<script src="<?= url('assets/js/qr-scanner.js') ?>" defer></script>
 <?php require_once __DIR__ . '/../components/staff-footer.php'; ?>

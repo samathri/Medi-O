@@ -2,7 +2,14 @@
 /** Shared helpers: escaping, CSRF, flash messages, formatting, notifications. */
 
 if (session_status() === PHP_SESSION_NONE && PHP_SAPI !== 'cli') {
-    session_set_cookie_params(['httponly' => true, 'samesite' => 'Lax']);
+    // Isolate this installation from other PHP apps sharing localhost cookies.
+    session_name('MEDIOSESSID' . substr(hash('sha256', ROOT_PATH . BASE_URL), 0, 12));
+    ini_set('session.use_strict_mode', '1');
+    session_set_cookie_params([
+        'path' => (parse_url(BASE_URL, PHP_URL_PATH) ?: '') . '/',
+        'secure' => str_starts_with(BASE_URL, 'https://'),
+        'httponly' => true, 'samesite' => 'Lax',
+    ]);
     session_start();
 }
 
@@ -50,7 +57,7 @@ function csrf_check(): void
 {
     $sent = $_POST['csrf'] ?? $_SERVER['HTTP_X_CSRF'] ?? '';
     if (!hash_equals(csrf_token(), $sent)) {
-        http_response_code(419);
+        http_response_code(403);
         exit('Invalid or expired form token. Please go back and try again.');
     }
 }

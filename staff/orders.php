@@ -1,6 +1,8 @@
 <?php
 $pageTitle = 'Orders';
-require_once __DIR__ . '/../components/staff-header.php';
+require_once __DIR__ . '/../config.php';
+$staff = require_staff();
+require_once dirname(__DIR__) . '/includes/order-status.php';
 require_once dirname(__DIR__) . '/includes/whatsapp.php';
 require_once dirname(__DIR__) . '/includes/mailer.php';
 
@@ -12,20 +14,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $allowed = ['processing', 'ready', 'collected', 'completed', 'cancelled'];
 
     if ($order && in_array($newStatus, $allowed, true)) {
-        q('UPDATE orders SET status=?, payment_status=IF(?="collected" AND payment_method="cash","paid",payment_status) WHERE id=?',
-            [$newStatus, $newStatus, $order['id']]);
-
-        if ($newStatus === 'cancelled') {
-            // Return reserved stock
-            foreach (q_all('SELECT product_id, quantity FROM order_items WHERE order_id=? AND product_id IS NOT NULL', [$order['id']]) as $it) {
-                q('UPDATE products SET stock = stock + ? WHERE id = ?', [$it['quantity'], $it['product_id']]);
-            }
+        if (!transition_order((int)$order['id'], $newStatus, (int)$staff['id'])) {
+            flash('info', 'Order unchanged: that transition is already applied or is not allowed.');
+            redirect('staff/orders.php');
         }
-        if ($newStatus === 'collected') {
-            q('INSERT INTO collections (user_id, staff_id, order_id, note) VALUES (?,?,?,?)',
-                [$order['user_id'], $staff['id'], $order['id'], 'Marked collected from orders board']);
-        }
-
         $texts = [
             'processing' => 'Your order is being prepared.',
             'ready' => $order['delivery_method'] === 'pickup'
@@ -47,6 +39,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     redirect('staff/orders.php' . (isset($_POST['back_filter']) ? '?f=' . urlencode($_POST['back_filter']) : ''));
 }
+
+require_once __DIR__ . '/../components/staff-header.php';
 
 $filter = $_GET['f'] ?? 'open';
 $map = [

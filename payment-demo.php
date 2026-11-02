@@ -5,6 +5,11 @@
  * real gateway, but no money moves and no card data is real or stored.
  */
 require_once __DIR__ . '/config.php';
+// Fail closed if any real gateway configuration is present.
+if (!PAYHERE_SANDBOX || PAYHERE_MERCHANT_ID !== '' || PAYHERE_MERCHANT_SECRET !== '') {
+    http_response_code(403);
+    exit('Demo payments are disabled.');
+}
 $u = require_login();
 
 $orderId = (int)($_GET['order'] ?? $_POST['order'] ?? 0);
@@ -13,27 +18,49 @@ if (!$order) {
     flash('error', 'Order not found.');
     redirect('orders.php');
 }
+if ($order['payment_method'] !== 'payhere' || in_array($order['status'], ['cancelled', 'collected', 'completed'], true)) {
+    http_response_code(409);
+    exit('This order is not eligible for demo payment.');
+}
 if ($order['payment_status'] === 'paid') {
     redirect('order-success.php?id=' . $order['id']);
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_check();
-    $outcome = $_POST['outcome'] ?? 'success';
-
-    if ($outcome === 'success') {
-        q("UPDATE orders SET payment_status='paid', status='processing' WHERE id=?", [$order['id']]);
-        q('INSERT INTO payments (order_id, method, amount, status, gateway_ref) VALUES (?,?,?,?,?)',
-            [$order['id'], 'demo-gateway', $order['total'], 'paid', 'DEMO-' . strtoupper(bin2hex(random_bytes(4)))]);
-        notify((int)$u['id'], 'payment', 'Payment received for #' . $order['order_no'],
-            money((float)$order['total']) . ' paid successfully.', url('order.php?id=' . $order['id']));
-        redirect('order-success.php?id=' . $order['id']);
+    $outcome = $_POST['outcome'] ?? '';
+    if (!in_array($outcome, ['success', 'fail'], true)) {
+        http_response_code(400);
+        exit('Invalid payment outcome.');
     }
-
-    q('INSERT INTO payments (order_id, method, amount, status) VALUES (?,?,?,?)',
-        [$order['id'], 'demo-gateway', $order['total'], 'failed']);
+    $pdo = db();
+    $pdo->beginTransaction();
+    try {
+        $locked = q_one('SELECT * FROM orders WHERE id=? AND user_id=? FOR UPDATE', [$orderId, $u['id']]);
+        if (!$locked || $locked['payment_status'] === 'paid' || $locked['payment_method'] !== 'payhere'
+            || !in_array($locked['status'], ['placed','processing','ready'], true)) {
+            $pdo->rollBack();
+            http_response_code(409);
+            exit('This order cannot accept another payment.');
+        }
+        if ($outcome === 'success') {
+            q("UPDATE orders SET payment_status='paid', status=IF(status='placed','processing',status) WHERE id=?", [$orderId]);
+        }
+        q('INSERT INTO payments (order_id, method, amount, status, gateway_ref) VALUES (?,?,?,?,?)',
+            [$orderId, 'demo-gateway', $locked['total'], $outcome === 'success' ? 'paid' : 'failed',
+             $outcome === 'success' ? 'DEMO-' . strtoupper(bin2hex(random_bytes(4))) : null]);
+        $pdo->commit();
+    } catch (Throwable $ex) {
+        if ($pdo->inTransaction()) $pdo->rollBack();
+        throw $ex;
+    }
+    if ($outcome === 'success') {
+        notify((int)$u['id'], 'payment', 'Payment received for #' . $order['order_no'],
+            money((float)$order['total']) . ' paid successfully.', url('order.php?id=' . $orderId));
+        redirect('order-success.php?id=' . $orderId);
+    }
     flash('error', 'Payment failed (demo). You can retry from your order page.');
-    redirect('order.php?id=' . $order['id']);
+    redirect('order.php?id=' . $orderId);
 }
 
 $pageTitle = 'Demo payment';

@@ -6,7 +6,9 @@
  * Handles the "mark collected" actions with a full audit trail.
  */
 $pageTitle = 'QR verification';
-require_once __DIR__ . '/../components/staff-header.php';
+require_once __DIR__ . '/../config.php';
+$staff = require_staff();
+require_once dirname(__DIR__) . '/includes/order-status.php';
 require_once dirname(__DIR__) . '/includes/whatsapp.php';
 
 $raw = trim($_GET['t'] ?? $_POST['t'] ?? '');
@@ -18,6 +20,9 @@ if (preg_match('/^([uo]):([a-f0-9]{40})$/', $raw, $m)) {
     // Bare token — try user first, then order
     if (q_one('SELECT id FROM users WHERE qr_token=?', [$raw])) $kind = 'u';
     elseif (q_one('SELECT id FROM orders WHERE qr_token=?', [$raw])) $kind = 'o';
+    if (!$kind && q_one('SELECT id FROM prescriptions WHERE verify_token=?', [$raw])) {
+        redirect('verify-prescription.php?t=' . urlencode($raw));
+    }
     $token = $raw;
 }
 
@@ -29,10 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($action === 'collect_order') {
         $order = q_one('SELECT o.*, u.name AS customer, u.phone, u.whatsapp_opt_in, u.id AS uid
                         FROM orders o JOIN users u ON u.id=o.user_id WHERE o.id=?', [(int)$_POST['order_id']]);
-        if ($order && in_array($order['status'], ['placed', 'processing', 'ready'], true)) {
-            q("UPDATE orders SET status='collected', payment_status=IF(payment_method='cash','paid',payment_status) WHERE id=?", [$order['id']]);
-            q('INSERT INTO collections (user_id, staff_id, order_id, note) VALUES (?,?,?,?)',
-                [$order['uid'], $staff['id'], $order['id'], 'Order collected via QR']);
+        if ($order && transition_order((int)$order['id'], 'collected', (int)$staff['id'])) {
             notify((int)$order['uid'], 'order', 'Order #' . $order['order_no'] . ' collected',
                 'Thanks for shopping with Medi-O. Get well soon!', url('order.php?id=' . $order['id']));
             if ($order['phone'] && $order['whatsapp_opt_in']) {
@@ -66,6 +68,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         redirect('staff/verify.php?t=' . urlencode($raw));
     }
 }
+
+require_once __DIR__ . '/../components/staff-header.php';
 
 /* ---------- Lookups ---------- */
 $customer = null;

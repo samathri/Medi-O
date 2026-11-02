@@ -167,7 +167,7 @@ fileInput.addEventListener('change', showFile);
 function showFile() {
   const f = fileInput.files[0];
   if (!f) return;
-  label.innerHTML = `<i class="bi bi-check-circle text-success me-1"></i>${f.name} <span class="small text-muted">(${(f.size/1024/1024).toFixed(1)} MB)</span>`;
+  label.textContent = `${f.name} (${(f.size/1024/1024).toFixed(1)} MB)`;
   if (f.type.startsWith('image/')) {
     preview.src = URL.createObjectURL(f);
     preview.classList.remove('d-none');
