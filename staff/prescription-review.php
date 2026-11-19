@@ -3,11 +3,10 @@ $pageTitle = 'Review prescription';
 $active = 'prescriptions.php';
 require_once __DIR__ . '/../components/staff-header.php';
 require_once dirname(__DIR__) . '/includes/ai.php';
-require_once dirname(__DIR__) . '/includes/whatsapp.php';
 require_once dirname(__DIR__) . '/includes/mailer.php';
 
 $rxId = (int)($_GET['id'] ?? $_POST['rx_id'] ?? 0);
-$rx = q_one('SELECT p.*, u.name AS customer, u.email, u.phone, u.whatsapp_opt_in, u.id AS uid
+$rx = q_one('SELECT p.*, u.name AS customer, u.email, u.phone, u.id AS uid
              FROM prescriptions p JOIN users u ON u.id = p.user_id WHERE p.id = ?', [$rxId]);
 if (!$rx) {
     flash('error', 'Prescription not found.');
@@ -94,9 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'rejected' => ['Prescription needs attention ❌', $note ?: 'We could not verify this prescription. Please contact us or upload a clearer copy.'],
         ];
         [$title, $body] = $messages[$action];
-        notify((int)$rx['uid'], 'prescription', $title, $body, url('prescriptions.php'));
-        if ($rx['email']) send_mail($rx['email'], $title, mail_template($title, '<p>' . e($body) . '</p>', 'View my prescriptions', url('prescriptions.php')));
-        if ($rx['phone'] && $rx['whatsapp_opt_in']) wa_send((int)$rx['uid'], $rx['phone'], "Medi-O: {$title}\n{$body}");
+        alert_user((int)$rx['uid'], 'prescription', $title, $body, url('prescriptions.php'), 'View my prescriptions');
 
         flash('success', 'Prescription marked ' . $action . ($scheduled ? " — {$scheduled} medication reminder plan(s) created for the customer." : '') . ' Customer notified.');
         redirect('staff/prescriptions.php');
@@ -118,6 +115,7 @@ $isImage = preg_match('/\.(jpe?g|png|webp)$/i', $rx['file_path']);
 <div class="row g-4">
   <!-- Left: the document -->
   <div class="col-lg-5">
+   <div class="rx-sticky">
     <div class="mo-card p-3 mb-3">
       <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
         <div>
@@ -139,7 +137,7 @@ $isImage = preg_match('/\.(jpe?g|png|webp)$/i', $rx['file_path']);
     <div class="mo-card p-3">
       <div class="d-flex justify-content-between align-items-center mb-2">
         <h2 class="h6 fw-bold text-uppercase text-muted mb-0"><i class="bi bi-stars me-1" style="color:var(--mo-accent)"></i>AI assistant</h2>
-        <form method="post">
+        <form method="post" id="aiForm">
           <?= csrf_field() ?>
           <input type="hidden" name="rx_id" value="<?= $rxId ?>">
           <button name="action" value="analyze" class="btn btn-sm mo-btn" <?= ai_configured() ? '' : 'disabled' ?>
@@ -161,6 +159,7 @@ $isImage = preg_match('/\.(jpe?g|png|webp)$/i', $rx['file_path']);
           matches it to stock, and drafts the schedule for you to verify.</div>
       <?php endif; ?>
     </div>
+   </div>
   </div>
 
   <!-- Right: the medication plan -->
@@ -224,7 +223,16 @@ $isImage = preg_match('/\.(jpe?g|png|webp)$/i', $rx['file_path']);
         <button type="button" class="btn btn-sm mo-btn-soft mt-3" id="addRow"><i class="bi bi-plus me-1"></i>Add medicine</button>
         <?php if (!$items): ?>
           <div class="mo-empty py-3" id="emptyHint"><i class="bi bi-clipboard-plus"></i>
-            No items yet — run the AI reader or add medicines manually.</div>
+            <div class="mb-3">No medicines added yet.</div>
+            <?php if (ai_configured()): ?>
+              <button form="aiForm" name="action" value="analyze" class="btn mo-btn"
+                      onclick="this.innerHTML='<span class=\'spinner-border spinner-border-sm me-1\'></span>Reading the prescription…'">
+                <i class="bi bi-magic me-1"></i>Read it with AI</button>
+              <div class="small mt-2">or use <b>Add medicine</b> to type them in.</div>
+            <?php else: ?>
+              <div class="small">Use <b>Add medicine</b> to type them in.</div>
+            <?php endif; ?>
+          </div>
         <?php endif; ?>
 
         <hr>
@@ -236,10 +244,10 @@ $isImage = preg_match('/\.(jpe?g|png|webp)$/i', $rx['file_path']);
         <div class="form-check form-switch mb-3">
           <input class="form-check-input" type="checkbox" name="create_schedule" id="schedSwitch" value="1" checked>
           <label class="form-check-label small" for="schedSwitch">
-            <i class="bi bi-alarm me-1"></i>On approval, create WhatsApp reminder schedules from this plan
+            <i class="bi bi-alarm me-1"></i>On approval, create dose reminders (app + email) from this plan
           </label>
         </div>
-        <div class="d-flex flex-wrap gap-2">
+        <div class="d-flex flex-wrap gap-2 rx-actions">
           <button name="action" value="save" class="btn mo-btn-soft"><i class="bi bi-save me-1"></i>Save draft</button>
           <?php if (in_array($rx['status'], ['pending', 'approved'], true)): ?>
             <button name="action" value="approved" class="btn mo-btn"><i class="bi bi-check-lg me-1"></i>Approve plan</button>

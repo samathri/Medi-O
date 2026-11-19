@@ -1,7 +1,6 @@
 <?php
-$pageTitle = 'Medications';
+$pageTitle = 'Dose reminders';
 require_once __DIR__ . '/../components/staff-header.php';
-require_once dirname(__DIR__) . '/includes/whatsapp.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_check();
@@ -26,14 +25,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             foreach ($times as $t) {
                 q('INSERT INTO medication_times (medication_id, time_of_day) VALUES (?,?)', [$medId, $t . ':00']);
             }
-            notify($userId, 'medication', 'New medication plan: ' . $name,
-                'Your pharmacist set up reminders for you.', url('medications.php'));
-            if ($customer['phone'] && $customer['whatsapp_opt_in']) {
-                wa_send($userId, $customer['phone'],
-                    "Medi-O: Your pharmacist set up a medication plan — {$name}" .
-                    ($dosage ? " ({$dosage})" : '') . " for {$days} days. You'll get reminders at " .
-                    implode(', ', array_map(fn($t) => date('g:i a', strtotime($t)), $times)) . ". 💊");
-            }
+            alert_user($userId, 'medication', 'New medication plan: ' . $name,
+                "Your pharmacist set up a medication plan — {$name}" . ($dosage ? " ({$dosage})" : '') . " for {$days} days. You'll get reminders at " .
+                implode(', ', array_map(fn($t) => date('g:i a', strtotime($t)), $times)) . '.', url('medications.php'), 'Open my tracker');
             flash('success', 'Medication plan assigned to ' . $customer['name'] . '.');
         }
         redirect('staff/medications.php');
@@ -41,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $customers = q_all("SELECT id, name, phone FROM users WHERE role='customer' ORDER BY name");
-$plans = q_all("SELECT m.*, u.name AS customer, u.phone, u.whatsapp_opt_in,
+$plans = q_all("SELECT m.*, u.name AS customer, u.phone,
                 GROUP_CONCAT(TIME_FORMAT(t.time_of_day,'%h:%i %p') ORDER BY t.time_of_day SEPARATOR ', ') AS times,
                 (SELECT COUNT(*) FROM medication_logs l WHERE l.medication_id=m.id AND l.status='taken') AS taken,
                 (SELECT COUNT(*) FROM medication_logs l WHERE l.medication_id=m.id AND l.status IN ('taken','skipped','sent')) AS total
@@ -51,9 +45,9 @@ $plans = q_all("SELECT m.*, u.name AS customer, u.phone, u.whatsapp_opt_in,
                 GROUP BY m.id ORDER BY m.id DESC LIMIT 100");
 ?>
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
-  <h1 class="h3 fw-bold mb-0">Medication tracking</h1>
+  <h1 class="h3 fw-bold mb-0">Dose reminders</h1>
   <a class="btn mo-btn-soft" href="<?= url('cron/send-reminders.php') ?>" target="_blank">
-    <i class="bi bi-lightning-charge me-1"></i>Run reminder dispatch now</a>
+    <i class="bi bi-lightning-charge me-1"></i>Send due reminders now</a>
 </div>
 
 <div class="row g-4">
@@ -97,7 +91,7 @@ $plans = q_all("SELECT m.*, u.name AS customer, u.phone, u.whatsapp_opt_in,
           <label class="form-label fw-semibold">Instructions</label>
           <input name="instructions" class="form-control" placeholder="e.g. After meals, full course">
         </div>
-        <button class="btn mo-btn w-100"><i class="bi bi-send me-2"></i>Assign &amp; notify on WhatsApp</button>
+        <button class="btn mo-btn w-100"><i class="bi bi-send me-2"></i>Assign &amp; notify customer</button>
       </form>
     </div>
   </div>
@@ -135,8 +129,8 @@ $plans = q_all("SELECT m.*, u.name AS customer, u.phone, u.whatsapp_opt_in,
                   <td>
                     <?php if ($p['phone']): ?>
                       <a class="btn btn-sm btn-outline-success" target="_blank" rel="noopener"
-                         href="<?= wa_link($p['phone'], "Hi {$p['customer']}, this is Medi-O Pharmacy checking in on your {$p['name']} medication. How are you feeling?") ?>">
-                        <i class="bi bi-whatsapp"></i></a>
+                         href="<?= url('staff/chat.php?user=' . $p['user_id']) ?>" title="Message in chat">
+                        <i class="bi bi-chat-dots"></i></a>
                     <?php endif; ?>
                   </td>
                 </tr>

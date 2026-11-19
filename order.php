@@ -30,7 +30,7 @@ include __DIR__ . '/components/header.php';
   <nav class="small mb-2"><a href="<?= url('orders.php') ?>" class="text-decoration-none"><i class="bi bi-arrow-left me-1"></i>All orders</a></nav>
   <div class="page-head pt-0 d-flex flex-wrap justify-content-between align-items-center gap-2">
     <h1 class="h2 mb-0">Order #<?= e($order['order_no']) ?></h1>
-    <span class="mo-status mo-status-<?= e($order['status']) ?> fs-6"><?= ucfirst(e($order['status'])) ?></span>
+    <span class="mo-status mo-status-<?= e($order['status']) ?> fs-6"><?= e(status_label($order['status'])) ?></span>
   </div>
 
   <div class="row g-4">
@@ -86,8 +86,8 @@ include __DIR__ . '/components/header.php';
         <div class="d-grid gap-2">
           <a class="btn mo-btn-soft" href="<?= url('chat.php') ?>"><i class="bi bi-chat-dots me-2"></i>Chat with pharmacy</a>
           <a class="btn btn-outline-success" target="_blank" rel="noopener"
-             href="https://wa.me/<?= e(setting('pharmacy_whatsapp')) ?>?text=<?= rawurlencode('Hi! I have a question about my order #' . $order['order_no']) ?>">
-            <i class="bi bi-whatsapp me-2"></i>WhatsApp us</a>
+             href="<?= url('chat.php') ?>">
+            <i class="bi bi-chat-dots me-2"></i>Ask about this order</a>
         </div>
       </div>
     </div>

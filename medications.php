@@ -24,8 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             foreach ($times as $t) {
                 q('INSERT INTO medication_times (medication_id, time_of_day) VALUES (?,?)', [$medId, $t . ':00']);
             }
-            flash('success', 'Medication added — we\'ll remind you ' .
-                ($u['phone'] && $u['whatsapp_opt_in'] ? 'on WhatsApp.' : 'by email. Add your mobile number in Profile for WhatsApp reminders.'));
+            flash('success', 'Medication added — we\'ll remind you here in the app and by email.');
         }
         redirect('medications.php');
     }
@@ -77,7 +76,7 @@ include __DIR__ . '/components/header.php';
 <div class="container py-4 py-md-5">
   <div class="page-head pt-0">
     <h1 class="h2">Medication tracker</h1>
-    <p class="text-muted mb-0">Plan your doses and get a WhatsApp nudge when it's time to take your medicine.</p>
+    <p class="text-muted mb-0">Plan your doses and get a reminder in the app and by email when it's time to take your medicine.</p>
   </div>
 
   <div class="row g-4">
@@ -110,7 +109,7 @@ include __DIR__ . '/components/header.php';
                     <?= e($d['name']) ?><?= $d['dosage'] ? ' · ' . e($d['dosage']) : '' ?>
                   </div>
                   <div class="small text-muted"><?= date('g:i a', strtotime($d['scheduled_for'])) ?>
-                    <?php if ($d['status'] === 'sent'): ?> · <i class="bi bi-whatsapp text-success"></i> reminder sent<?php endif; ?>
+                    <?php if ($d['status'] === 'sent'): ?> · <i class="bi bi-bell text-success"></i> reminder sent<?php endif; ?>
                   </div>
                 </div>
                 <?php if (!in_array($d['status'], ['taken', 'skipped'], true)): ?>
@@ -167,11 +166,6 @@ include __DIR__ . '/components/header.php';
     <div class="col-lg-5" data-reveal>
       <div class="mo-card p-4 position-sticky" style="top:90px">
         <h2 class="h5 fw-bold mb-3"><i class="bi bi-plus-circle me-2" style="color:var(--mo-primary)"></i>Add a medicine</h2>
-        <?php if (!$u['phone'] || !$u['whatsapp_opt_in']): ?>
-          <div class="alert alert-warning small py-2"><i class="bi bi-whatsapp me-1"></i>
-            Reminders will go to your email. For WhatsApp reminders,
-            <a href="<?= url('profile.php?tab=details') ?>">add your mobile number</a> and enable WhatsApp updates.</div>
-        <?php endif; ?>
         <form method="post">
           <?= csrf_field() ?>
           <input type="hidden" name="action" value="add">

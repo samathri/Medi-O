@@ -41,9 +41,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($staffMode) {
         q('UPDATE chat_conversations SET last_message_at=NOW(), user_unread=user_unread+1 WHERE id=?', [$conv['id']]);
-        notify((int)$conv['user_id'], 'chat', 'New message from the pharmacy', mb_substr($body, 0, 80), url('chat.php'));
+        // First unread reply → app notification + email; later ones only update the badge (no inbox spam).
+        if ((int)$conv['user_unread'] === 0) {
+            alert_user((int)$conv['user_id'], 'chat', 'The pharmacist replied to you', mb_substr($body, 0, 300), url('chat.php'), 'Open chat');
+        } else {
+            notify((int)$conv['user_id'], 'chat', 'New message from the pharmacy', mb_substr($body, 0, 80), url('chat.php'));
+        }
     } else {
         q('UPDATE chat_conversations SET last_message_at=NOW(), staff_unread=staff_unread+1 WHERE id=?', [$conv['id']]);
+        if ((int)$conv['staff_unread'] === 0) {
+            foreach (q_all("SELECT id FROM users WHERE role IN ('pharmacist','admin')") as $s) {
+                notify((int)$s['id'], 'chat', 'New chat message from ' . $u['name'], mb_substr($body, 0, 80), url('staff/chat.php?c=' . $conv['id']));
+            }
+        }
     }
     json_out(['ok' => true, 'id' => $msgId]);
 }

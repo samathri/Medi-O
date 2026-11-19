@@ -11,11 +11,10 @@
  *   http://localhost/medio/cron/send-reminders.php
  *
  * For every active medication dose whose time has arrived (within the last
- * 30 min) it sends a WhatsApp reminder (Meta Cloud API — or logs it in demo
+ * 30 min) it sends an in-app + email reminder (logs it in demo
  * mode), falls back to email, and records an in-app notification.
  */
 require_once dirname(__DIR__) . '/config.php';
-require_once dirname(__DIR__) . '/includes/whatsapp.php';
 require_once dirname(__DIR__) . '/includes/mailer.php';
 
 if (PHP_SAPI !== 'cli') {
@@ -47,7 +46,7 @@ foreach (q_all('SELECT t.id AS time_id, t.medication_id, t.time_of_day FROM medi
 
 // 2) Send reminders for doses due in the last 30 minutes that are still 'scheduled'
 $due = q_all("SELECT l.id AS log_id, l.scheduled_for, m.name, m.dosage, m.instructions,
-                     u.id AS user_id, u.name AS user_name, u.email, u.phone, u.whatsapp_opt_in
+                     u.id AS user_id, u.name AS user_name, u.email, u.phone
               FROM medication_logs l
               JOIN medications m ON m.id = l.medication_id
               JOIN users u ON u.id = m.user_id
@@ -61,14 +60,11 @@ foreach ($due as $d) {
     $text = "💊 Medi-O reminder: time to take your {$d['name']}"
         . ($d['dosage'] ? " ({$d['dosage']})" : '')
         . ($d['instructions'] ? " — {$d['instructions']}" : '')
-        . ". Scheduled for {$time}. Reply here or open the app to mark it as taken.";
+        . ". Scheduled for {$time}. Open Medi-O to mark it as taken.";
 
-    $channel = null;
-    if ($d['phone'] && $d['whatsapp_opt_in']) {
-        wa_send((int)$d['user_id'], $d['phone'], $text);
-        $channel = wa_configured() ? 'whatsapp' : 'whatsapp(logged)';
-    }
-    if (!$channel && $d['email']) {
+    notify((int)$d['user_id'], 'medication', '💊 Time to take ' . $d['name'], $text, url('medications.php'));
+    $channel = 'app';
+    if ($d['email']) {
         send_mail($d['email'], '💊 Time to take ' . $d['name'], mail_template(
             'Time for your medicine', '<p>' . e($text) . '</p>', 'Open tracker', url('medications.php')));
         $channel = 'email';
@@ -85,5 +81,4 @@ foreach ($due as $d) {
 q("UPDATE medication_logs SET status='skipped'
    WHERE status IN ('scheduled','sent') AND scheduled_for < CURDATE()");
 
-[$waOk, $waMsg] = wa_health();
-echo date('Y-m-d H:i:s') . " — reminders sent: $sent (whatsapp: " . ($waOk ? 'LIVE' : $waMsg) . ")\n";
+echo date('Y-m-d H:i:s') . " — reminders sent: $sent (app + email)\n";

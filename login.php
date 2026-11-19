@@ -5,6 +5,7 @@ if (is_logged_in()) {
     redirect(role_home(current_user()));
 }
 
+remember_intent();
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_check();
@@ -25,14 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($user && $user['password_hash'] && password_verify($password, $user['password_hash'])) {
             login_user($user);
             flash('success', 'Welcome back, ' . $user['name'] . '!');
-            if (!$user['email_verified'] && !$user['phone_verified'] && $user['role'] === 'customer') {
-                flash('info', 'Your account isn\'t verified yet — verify to place orders.');
-                unset($_SESSION['after_login']);
-                redirect('verify-account.php');
-            }
-            $after = $_SESSION['after_login'] ?? '';
-            unset($_SESSION['after_login']);
-            redirect($after !== '' ? $after : role_home($user));
+            redirect(take_after_login(role_home($user)));
+
         }
         $error = $user && !$user['password_hash']
             ? 'This account uses Google Sign-In. Please use the Google button below.'
@@ -49,6 +44,10 @@ include __DIR__ . '/components/header.php';
       <span class="mo-logo mb-3" style="width:56px;height:56px;font-size:1.6rem"><i class="bi bi-capsule"></i></span>
       <h1 class="h3 fw-bold mt-3">Welcome back</h1>
       <p class="text-muted">Log in with your email or mobile number</p>
+      <?php if (!empty($_SESSION['pending_add'])): ?>
+        <div class="alert alert-success small text-start mb-0"><i class="bi bi-cart-check me-1"></i>
+          Log in or <a href="<?= url('signup.php') ?>" class="fw-bold">create a free account</a> — we'll add your item to the cart and bring you right back.</div>
+      <?php endif; ?>
     </div>
 
     <?php if ($error): ?>
@@ -75,7 +74,7 @@ include __DIR__ . '/components/header.php';
       <button class="btn mo-btn w-100 btn-lg">Log in <i class="bi bi-arrow-right ms-1"></i></button>
     </form>
 
-    <?php if (GOOGLE_CLIENT_ID !== ''): ?>
+    <?php if (GOOGLE_CLIENT_ID !== '' && !in_app()): ?>
       <div class="mo-divider my-4">or continue with</div>
       <div id="g_id_onload"
            data-client_id="<?= e(GOOGLE_CLIENT_ID) ?>"

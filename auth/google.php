@@ -59,9 +59,9 @@ if (!$user) {
     q('INSERT INTO users (name, email, google_id, avatar, qr_token, email_verified) VALUES (?,?,?,?,?,1)',
         [$name, $email ?: null, $googleId, $avatar, new_token()]);
     $user = q_one('SELECT * FROM users WHERE id = ?', [db()->lastInsertId()]);
-    notify((int)$user['id'], 'welcome', 'Welcome to Medi-O!', 'Add your mobile number in Profile to get WhatsApp reminders.', url('profile.php'));
+    notify((int)$user['id'], 'welcome', 'Welcome to Medi-O!', 'Explore the shop, upload a prescription, or chat with our pharmacists.', url('profile.php'));
 }
 
 login_user($user);
 flash('success', 'Signed in with Google — welcome, ' . $user['name'] . '!');
-redirect(role_home($user));
+redirect(take_after_login(role_home($user)));

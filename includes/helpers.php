@@ -159,3 +159,34 @@ function pretty_phone(?string $phone): string
     }
     return $phone;
 }
+
+/** Customer-friendly wording for order / prescription statuses. */
+function status_label(string $status): string
+{
+    return [
+        'placed' => 'Order received', 'processing' => 'Being prepared', 'ready' => 'Ready to collect',
+        'collected' => 'Collected', 'completed' => 'Completed', 'cancelled' => 'Cancelled',
+        'pending' => 'Being checked', 'approved' => 'Approved', 'rejected' => 'Not approved',
+        'paid' => 'Paid', 'failed' => 'Payment failed',
+    ][$status] ?? ucfirst($status);
+}
+
+/**
+ * Tell a user something important: on-site notification (web + app) and an email.
+ * This is the only alert channel — no SMS/WhatsApp.
+ */
+function alert_user(int $userId, string $type, string $title, string $body, string $link = '', string $button = 'Open Medi-O'): void
+{
+    notify($userId, $type, $title, $body, $link);
+    $email = q_val('SELECT email FROM users WHERE id=?', [$userId]);
+    if ($email) {
+        require_once __DIR__ . '/mailer.php';
+        send_mail($email, $title, mail_template($title, '<p>' . nl2br(e($body)) . '</p>', $link !== '' ? $button : '', $link));
+    }
+}
+
+/** True inside the Medi-O Android app (its web view adds "MediOApp" to the user agent). */
+function in_app(): bool
+{
+    return str_contains($_SERVER['HTTP_USER_AGENT'] ?? '', 'MediOApp');
+}

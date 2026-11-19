@@ -25,7 +25,7 @@ include __DIR__ . '/components/header.php';
           as your claim ticket — keep them private.</p>
 
         <h2 class="h5 fw-bold mt-4">4. Reminders are not medical advice</h2>
-        <p class="text-secondary">The medication tracker and WhatsApp reminders are convenience tools, not a
+        <p class="text-secondary">The medication tracker and its reminders are convenience tools, not a
           substitute for professional medical advice. Always follow your doctor's instructions. Contact your
           doctor immediately in case of adverse reactions.</p>
 

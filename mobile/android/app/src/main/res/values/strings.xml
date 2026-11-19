@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Medi-O</string>
+    <string name="title_activity_main">Medi-O</string>
+    <string name="package_name">lk.medio.app</string>
+    <string name="custom_url_scheme">lk.medio.app</string>
+</resources>

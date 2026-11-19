@@ -81,21 +81,19 @@ include __DIR__ . '/components/header.php';
         </button>
       </div>
       <div class="collapse d-lg-block" id="filters">
-        <div class="mo-card p-4 mb-3">
-          <h3 class="h6 fw-bold text-uppercase text-muted mb-3">Categories</h3>
-          <div class="d-flex flex-column gap-1">
-            <a href="<?= shop_url(['category' => '']) ?>" class="text-decoration-none <?= $category === '' ? 'fw-bold text-primary' : 'text-body' ?>">All products</a>
+        <div class="mb-4">
+          <div class="mo-filter-title">Aisles</div>
+          <div class="mo-filter-list">
+            <a href="<?= shop_url(['category' => '']) ?>" class="<?= $category === '' ? 'on' : '' ?>"><span>All products</span></a>
             <?php foreach ($categories as $c): ?>
-              <a href="<?= shop_url(['category' => $c['name']]) ?>"
-                 class="text-decoration-none d-flex justify-content-between <?= $category === $c['name'] ? 'fw-bold' : 'text-body' ?>"
-                 <?= $category === $c['name'] ? 'style="color:var(--mo-primary)"' : '' ?>>
+              <a href="<?= shop_url(['category' => $c['name']]) ?>" class="<?= $category === $c['name'] ? 'on' : '' ?>">
                 <span><?= e($c['name']) ?></span><span class="text-muted small"><?= (int)$c['cnt'] ?></span>
               </a>
             <?php endforeach; ?>
           </div>
         </div>
-        <div class="mo-card p-4">
-          <h3 class="h6 fw-bold text-uppercase text-muted mb-3">Max price</h3>
+        <div>
+          <div class="mo-filter-title">Max price</div>
           <form method="get">
             <?php if ($search !== ''): ?><input type="hidden" name="q" value="<?= e($search) ?>"><?php endif; ?>
             <?php if ($category !== ''): ?><input type="hidden" name="category" value="<?= e($category) ?>"><?php endif; ?>
@@ -135,13 +133,25 @@ include __DIR__ . '/components/header.php';
 
         <?php if ($pages > 1): ?>
           <nav class="mt-4">
-            <ul class="pagination justify-content-center flex-wrap">
-              <?php for ($i = 1; $i <= $pages; $i++): ?>
+            <?php
+              $show = array_unique(array_filter([1, $page - 1, $page, $page + 1, $pages], fn($n) => $n >= 1 && $n <= $pages));
+              sort($show);
+            ?>
+            <ul class="pagination justify-content-center align-items-center gap-1">
+              <li class="page-item <?= $page <= 1 ? 'disabled' : '' ?>">
+                <a class="page-link" href="<?= shop_url(['page' => max(1, $page - 1)]) ?>" aria-label="Previous"><i class="bi bi-chevron-left"></i></a>
+              </li>
+              <?php $prev = 0; foreach ($show as $i): ?>
+                <?php if ($i - $prev > 1): ?><li class="page-item disabled"><span class="page-link border-0 bg-transparent">…</span></li><?php endif; ?>
                 <li class="page-item <?= $i === $page ? 'active' : '' ?>">
                   <a class="page-link" href="<?= shop_url(['page' => $i]) ?>"><?= $i ?></a>
                 </li>
-              <?php endfor; ?>
+              <?php $prev = $i; endforeach; ?>
+              <li class="page-item <?= $page >= $pages ? 'disabled' : '' ?>">
+                <a class="page-link" href="<?= shop_url(['page' => min($pages, $page + 1)]) ?>" aria-label="Next"><i class="bi bi-chevron-right"></i></a>
+              </li>
             </ul>
+            <p class="text-center text-muted small mt-2">Page <?= $page ?> of <?= $pages ?></p>
           </nav>
         <?php endif; ?>
       <?php endif; ?>

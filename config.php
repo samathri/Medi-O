@@ -29,20 +29,10 @@ $defaults = [
     'PAYHERE_MERCHANT_ID' => '',
     'PAYHERE_MERCHANT_SECRET' => '',
     'PAYHERE_SANDBOX' => true,
-
-    // Meta WhatsApp Cloud API (free tier: https://developers.facebook.com)
-    // blank = messages are stored in the outbox as "logged" (demo mode)
-    'WHATSAPP_TOKEN' => '',
-    'WHATSAPP_PHONE_ID' => '',
     // Google Gemini API key (free: https://aistudio.google.com/apikey)
     // Powers the AI prescription reader. Blank = pharmacist enters items manually.
     'GEMINI_API_KEY' => '',
     'GEMINI_MODEL' => 'gemini-flash-latest',
-
-    // Name of an approved "Authentication" message template (e.g. 'medio_otp').
-    // When set, verification codes are sent as templates â€” instant delivery,
-    // no need for the customer to message first.
-    'WHATSAPP_OTP_TEMPLATE' => '',
 
     'APP_DEBUG' => true,
     // Public app URL used by CLI reminder links; set for non-default folders/ports.

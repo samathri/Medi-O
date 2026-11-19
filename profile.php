@@ -12,8 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $name = trim($_POST['name'] ?? '');
         $phoneRaw = trim($_POST['phone'] ?? '');
         $address = trim($_POST['address'] ?? '');
-        $optIn = isset($_POST['whatsapp_opt_in']) ? 1 : 0;
-        $phone = $phoneRaw !== '' ? normalize_phone($phoneRaw) : null;
+                $phone = $phoneRaw !== '' ? normalize_phone($phoneRaw) : null;
 
         if ($name === '') {
             flash('error', 'Name cannot be empty.');
@@ -24,12 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             // A changed number must be verified again
             $phoneVerified = ($phone === $u['phone']) ? (int)$u['phone_verified'] : 0;
-            q('UPDATE users SET name=?, phone=?, address=?, whatsapp_opt_in=?, phone_verified=? WHERE id=?',
-                [$name, $phone, $address, $optIn, $phoneVerified, $u['id']]);
-            if ($phone && !$phoneVerified) {
-                flash('info', 'Profile updated — please verify your new mobile number.');
-                redirect('verify-account.php');
-            }
+            q('UPDATE users SET name=?, phone=?, address=?, phone_verified=? WHERE id=?',
+                [$name, $phone, $address, $phoneVerified, $u['id']]);
             flash('success', 'Profile updated.');
         }
         redirect('profile.php?tab=details');
@@ -83,7 +78,7 @@ include __DIR__ . '/components/header.php';
           <?php endif; ?>
         </div>
         <?php if ($u['phone']): ?>
-          <div class="text-muted small"><i class="bi bi-whatsapp text-success me-1"></i><?= e(pretty_phone($u['phone'])) ?>
+          <div class="text-muted small"><i class="bi bi-telephone me-1"></i><?= e(pretty_phone($u['phone'])) ?>
             <?= $u['phone_verified']
                 ? '<i class="bi bi-patch-check-fill text-success" title="Number verified"></i>'
                 : '<a href="' . url('verify-account.php') . '" class="badge text-bg-warning text-decoration-none">Verify</a>' ?>
@@ -122,7 +117,7 @@ include __DIR__ . '/components/header.php';
                     <td class="fw-semibold">#<?= e($o['order_no']) ?></td>
                     <td><?= date('j M Y', strtotime($o['created_at'])) ?></td>
                     <td><?= money((float)$o['total']) ?></td>
-                    <td><span class="mo-status mo-status-<?= e($o['status']) ?>"><?= ucfirst(e($o['status'])) ?></span></td>
+                    <td><span class="mo-status mo-status-<?= e($o['status']) ?>"><?= e(status_label($o['status'])) ?></span></td>
                     <td><a class="btn btn-sm mo-btn-soft" href="<?= url('order.php?id=' . $o['id']) ?>">View</a></td>
                   </tr>
                 <?php endforeach; ?>
@@ -148,18 +143,13 @@ include __DIR__ . '/components/header.php';
             <div class="mb-3">
               <label class="form-label fw-semibold">Mobile number</label>
               <input type="tel" name="phone" class="form-control" value="<?= e(pretty_phone($u['phone'])) ?>" placeholder="07X XXX XXXX">
-              <div class="form-text">Used for phone login and WhatsApp medicine reminders.</div>
+              <div class="form-text">Optional — lets you log in with your mobile number.</div>
             </div>
             <div class="mb-3">
               <label class="form-label fw-semibold">Delivery address</label>
               <textarea name="address" class="form-control" rows="2" placeholder="Street, city"><?= e($u['address'] ?? '') ?></textarea>
             </div>
-            <div class="form-check form-switch mb-4">
-              <input class="form-check-input" type="checkbox" id="waOptIn" name="whatsapp_opt_in" <?= $u['whatsapp_opt_in'] ? 'checked' : '' ?>>
-              <label class="form-check-label" for="waOptIn">
-                <i class="bi bi-whatsapp text-success me-1"></i>Send me medicine reminders &amp; order updates on WhatsApp
-              </label>
-            </div>
+            <div class="mb-2"></div>
             <button class="btn mo-btn">Save changes</button>
           </form>
 

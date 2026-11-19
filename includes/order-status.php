@@ -1,19 +1,25 @@
 <?php
 /** Apply an order transition once, atomically with inventory and collection audit. */
+
+/** Transitions each status may move to ('ready' may step back to 'processing' to undo a mis-click). */
+function order_allowed_transitions(string $status): array
+{
+    return [
+        'placed' => ['processing', 'ready', 'collected', 'completed', 'cancelled'],
+        'processing' => ['ready', 'collected', 'completed', 'cancelled'],
+        'ready' => ['processing', 'collected', 'completed', 'cancelled'],
+        'collected' => ['completed'],
+        'completed' => [], 'cancelled' => [],
+    ][$status] ?? [];
+}
+
 function transition_order(int $orderId, string $next, int $staffId): bool
 {
     $pdo = db();
     $pdo->beginTransaction();
     try {
         $order = q_one('SELECT * FROM orders WHERE id=? FOR UPDATE', [$orderId]);
-        $allowed = [
-            'placed' => ['processing', 'ready', 'collected', 'completed', 'cancelled'],
-            'processing' => ['ready', 'collected', 'completed', 'cancelled'],
-            'ready' => ['collected', 'completed', 'cancelled'],
-            'collected' => ['completed'],
-            'completed' => [], 'cancelled' => [],
-        ];
-        if (!$order || !in_array($next, $allowed[$order['status']] ?? [], true)) {
+        if (!$order || !in_array($next, order_allowed_transitions($order['status']), true)) {
             $pdo->rollBack();
             return false;
         }

@@ -33,7 +33,7 @@ window.medioApi = api;
 /* ---------- Cart ---------- */
 async function addToCart(productId, qty = 1, btn = null) {
   if (!window.MEDIO.loggedIn) {
-    location.href = `${window.MEDIO.base}/login.php`;
+    location.href = `${window.MEDIO.base}/login.php?add=${productId}&next=${encodeURIComponent(location.pathname + location.search)}`;
     return;
   }
   if (btn) { btn.disabled = true; btn.dataset.orig = btn.innerHTML; btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>'; }
@@ -42,11 +42,13 @@ async function addToCart(productId, qty = 1, btn = null) {
     if (r.ok) {
       updateCartBadge(r.count);
       MedioToast(r.message || 'Added to cart', 'success');
-    } else {
-      MedioToast(r.error || 'Could not add to cart', 'error');
+      return true;
     }
+    MedioToast(r.error || 'Could not add to cart', 'error');
+    return false;
   } catch (e) {
     MedioToast(e.message, 'error');
+    return false;
   } finally {
     if (btn) { btn.disabled = false; btn.innerHTML = btn.dataset.orig; }
   }
@@ -66,7 +68,8 @@ document.addEventListener('click', e => {
   if (btn) {
     e.preventDefault();
     const qtyInput = $('#qtyInput');
-    addToCart(+btn.dataset.addToCart, qtyInput ? +qtyInput.value : 1, btn);
+    addToCart(+btn.dataset.addToCart, qtyInput ? +qtyInput.value : 1, btn)
+      .then(ok => { if (ok && btn.hasAttribute('data-buy-now')) location.href = `${window.MEDIO.base}/cart.php`; });
   }
 });
 
@@ -148,13 +151,82 @@ document.addEventListener('click', e => {
   t.querySelector('i').className = input.type === 'password' ? 'bi bi-eye' : 'bi bi-eye-slash';
 });
 
-/* ---------- Reveal-on-scroll ---------- */
-const io = new IntersectionObserver(entries => {
-  entries.forEach(en => { if (en.isIntersecting) { en.target.style.opacity = 1; en.target.style.transform = 'none'; io.unobserve(en.target); } });
-}, { threshold: .12 });
-$$('[data-reveal]').forEach(el => {
-  el.style.opacity = 0;
-  el.style.transform = 'translateY(22px)';
-  el.style.transition = 'all .55s cubic-bezier(.2,.7,.3,1)';
-  io.observe(el);
+/* Content shows immediately (no reveal animation) — faster to read. */
+
+// "/" opens product search
+document.addEventListener('keydown', e => {
+  if (e.key !== '/' || /input|textarea|select/i.test(document.activeElement.tagName)) return;
+  const m = document.getElementById('searchModal');
+  if (m && window.bootstrap) { e.preventDefault(); bootstrap.Modal.getOrCreateInstance(m).show(); }
 });
+
+/* ---------- Live alerts (web + installed app) ---------- */
+if (window.MEDIO.loggedIn) {
+  let lastId = null;
+  const showSystem = n => {
+    if (!('Notification' in window) || Notification.permission !== 'granted' || !document.hidden) return;
+    const note = { body: n.body, icon: `${window.MEDIO.base}/assets/img/app-icon-192.png`, tag: 'medio-' + n.id, data: { link: n.link } };
+    navigator.serviceWorker?.getRegistration().then(reg => reg ? reg.showNotification(n.title, note) : new Notification(n.title, note));
+  };
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const poll = async () => {
+    try {
+      const r = await api(`notifications.php?since=${lastId ?? 2147483647}`);
+      const badge = $('#notifBadge');
+      if (badge) { badge.textContent = r.unread; badge.hidden = r.unread <= 0; }
+      if (lastId !== null) r.items.forEach(n => {
+        MedioToast(`${esc(n.title)}${n.body ? ' — ' + esc(n.body.slice(0, 120)) : ''}`, 'info');
+        showSystem(n);
+      });
+      lastId = r.last;
+    } catch { /* offline — try again next round */ }
+  };
+  poll();
+  setInterval(poll, 20000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) poll(); });
+}
+
+/* ---------- Installable app (PWA) ---------- */
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register(`${window.MEDIO.base}/sw.js`, { scope: `${window.MEDIO.base}/` }).catch(() => {});
+}
+(() => {
+  const inApp = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone || /MediOApp/i.test(navigator.userAgent);
+  const store = (k, v) => { try { return v === undefined ? localStorage.getItem(k) : localStorage.setItem(k, v); } catch { return null; } };
+  const bar = (html, key) => {
+    if (store(key)) return null;
+    const el = document.createElement('div');
+    el.className = 'gx-appbar';
+    el.innerHTML = html + '<button class="gx-appbar-x" aria-label="Dismiss"><i class="bi bi-x-lg"></i></button>';
+    el.querySelector('.gx-appbar-x').onclick = () => { store(key, '1'); el.remove(); };
+    document.body.appendChild(el);
+    return el;
+  };
+
+  // 1) "Install the app" (Android/desktop Chrome & Edge give us an install prompt)
+  let deferred = null;
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault(); deferred = e;
+    if (inApp) return;
+    const el = bar('<i class="bi bi-phone"></i><span><b>Get the Medi-O app</b> — install it on this device in one tap.</span><button class="btn btn-sm mo-btn-yellow" data-install>Install</button>', 'medio-install-dismissed');
+    el?.querySelector('[data-install]').addEventListener('click', async () => {
+      deferred.prompt(); await deferred.userChoice; deferred = null; el.remove();
+    });
+  });
+  $$('[data-install-app]').forEach(b => b.addEventListener('click', () => {
+    if (deferred) { deferred.prompt(); return; }
+    MedioToast(/iPhone|iPad/i.test(navigator.userAgent)
+      ? 'On iPhone: tap the Share button, then “Add to Home Screen”.'
+      : 'Open the browser menu (⋮) and choose “Install app” or “Add to Home screen”.', 'info', 7000);
+  }));
+
+  // 2) "Turn on alerts on this device" (system notifications while the app/site is open in the background)
+  if (window.MEDIO.loggedIn && 'Notification' in window && Notification.permission === 'default') {
+    const el = bar('<i class="bi bi-bell"></i><span><b>Turn on alerts</b> for order updates, chat replies and dose reminders on this device.</span><button class="btn btn-sm mo-btn-yellow" data-alerts>Turn on</button>', 'medio-alerts-dismissed');
+    el?.querySelector('[data-alerts]').addEventListener('click', async () => {
+      const p = await Notification.requestPermission();
+      el.remove(); store('medio-alerts-dismissed', '1');
+      MedioToast(p === 'granted' ? 'Alerts are on for this device.' : 'Alerts stay off — you\'ll still get emails.', p === 'granted' ? 'success' : 'info');
+    });
+  }
+})();

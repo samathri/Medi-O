@@ -10,7 +10,7 @@ include __DIR__ . '/components/header.php';
   <div class="row justify-content-center">
     <div class="col-lg-8">
       <div class="mo-card overflow-hidden" data-reveal>
-        <div class="d-flex align-items-center gap-3 p-3 border-bottom" style="background:linear-gradient(135deg,#28506e,#4a7fa5);color:#fff">
+        <div class="d-flex align-items-center gap-3 p-3 border-bottom" style="background:var(--green);color:#fff">
           <span class="mo-logo" style="background:rgba(255,255,255,.2);box-shadow:none"><i class="bi bi-chat-dots"></i></span>
           <div>
             <div class="fw-bold">Medi-O Pharmacy team</div>
@@ -34,9 +34,7 @@ include __DIR__ . '/components/header.php';
           </div>
         </div>
       </div>
-      <div class="text-center small text-muted mt-3">
-        Prefer WhatsApp? <a href="https://wa.me/<?= e(setting('pharmacy_whatsapp')) ?>" target="_blank" rel="noopener" class="text-decoration-none">
-        <i class="bi bi-whatsapp text-success"></i> Message us directly</a>
+      <div class="text-center small text-muted mt-3"> You'll also get an email when we reply.
       </div>
     </div>
   </div>

@@ -1,0 +1,9 @@
+node_modules/
+android/app/build/
+android/build/
+android/.gradle/
+android/local.properties
+*.apk
+!Medi-O.apk
+.gradle-home/
+build.log

@@ -5,6 +5,7 @@ if (is_logged_in()) {
     redirect(role_home(current_user()));
 }
 
+remember_intent();
 $error = '';
 $old = ['name' => '', 'email' => '', 'phone' => ''];
 
@@ -25,8 +26,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Please enter a valid Sri Lankan mobile number (e.g. 0771234567).';
     } elseif (strlen($password) < 8) {
         $error = 'Password must be at least 8 characters.';
-    } elseif ($password !== $confirm) {
-        $error = 'Passwords do not match.';
     } elseif (q_one('SELECT id FROM users WHERE email = ?', [$old['email']])) {
         $error = 'An account with this email already exists. Try logging in.';
     } elseif ($phone && q_one('SELECT id FROM users WHERE phone = ?', [$phone])) {
@@ -52,13 +51,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Kick off email (and phone) verification straight away
         [, $demoEmail] = otp_send_email($user);
         $_SESSION['demo_code_email'] = $demoEmail;
-        if ($user['phone']) {
-            [, $demoPhone] = otp_send_phone($user);
-            $_SESSION['demo_code_phone'] = $demoPhone;
-        }
 
-        flash('success', 'Account created! Now let\'s verify your contact details.');
-        redirect('verify-account.php');
+        flash('success', 'Welcome, ' . $user['name'] . '! Your account is ready.');
+        redirect(take_after_login(url('shop.php')));
     }
 }
 
@@ -87,23 +82,20 @@ include __DIR__ . '/components/header.php';
         <input type="email" name="email" class="form-control" required value="<?= e($old['email']) ?>" placeholder="you@email.com">
       </div>
       <div class="mb-3">
-        <label class="form-label fw-semibold">Mobile number <span class="text-muted fw-normal">(for WhatsApp reminders &amp; phone login)</span></label>
+        <label class="form-label fw-semibold">Mobile number <span class="text-muted fw-normal">(optional — lets you log in with your number)</span></label>
         <input type="tel" name="phone" class="form-control" value="<?= e($old['phone']) ?>" placeholder="07X XXX XXXX">
       </div>
-      <div class="row g-3 mb-4">
-        <div class="col-sm-6">
-          <label class="form-label fw-semibold">Password</label>
-          <input type="password" name="password" class="form-control" required minlength="8" placeholder="Min. 8 characters">
-        </div>
-        <div class="col-sm-6">
-          <label class="form-label fw-semibold">Confirm password</label>
-          <input type="password" name="confirm" class="form-control" required placeholder="Repeat password">
+      <div class="mb-4">
+        <label class="form-label fw-semibold">Password</label>
+        <div class="position-relative">
+          <input type="password" name="password" id="signupPw" class="form-control pe-5" required minlength="8" placeholder="At least 8 characters">
+          <button type="button" class="btn position-absolute end-0 top-50 translate-middle-y me-1" data-toggle-password="#signupPw" aria-label="Show password"><i class="bi bi-eye"></i></button>
         </div>
       </div>
       <button class="btn mo-btn w-100 btn-lg">Create account</button>
     </form>
 
-    <?php if (GOOGLE_CLIENT_ID !== ''): ?>
+    <?php if (GOOGLE_CLIENT_ID !== '' && !in_app()): ?>
       <div class="mo-divider my-4">or sign up with</div>
       <div id="g_id_onload"
            data-client_id="<?= e(GOOGLE_CLIENT_ID) ?>"

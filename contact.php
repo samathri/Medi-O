@@ -33,8 +33,8 @@ include __DIR__ . '/components/header.php';
         <h2 class="h6 fw-bold text-uppercase text-muted mb-3">Quick channels</h2>
         <div class="d-grid gap-2 mb-4">
           <a class="btn btn-outline-success text-start" target="_blank" rel="noopener"
-             href="https://wa.me/<?= e(setting('pharmacy_whatsapp')) ?>?text=<?= rawurlencode('Hello Medi-O!') ?>">
-            <i class="bi bi-whatsapp me-2"></i>WhatsApp us — fastest reply</a>
+             href="<?= url('chat.php') ?>">
+            <i class="bi bi-chat-dots me-2"></i>Chat with a pharmacist — fastest reply</a>
           <a class="btn mo-btn-outline text-start" href="<?= url('chat.php') ?>">
             <i class="bi bi-chat-dots me-2"></i>In-app chat with a pharmacist</a>
           <a class="btn btn-outline-secondary text-start" href="tel:<?= e(setting('pharmacy_phone')) ?>">

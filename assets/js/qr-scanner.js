@@ -44,6 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const cameras = await timeout(Html5Qrcode.getCameras());
       if (!cameras.length) throw new Error('No camera found. Enter the code manually.');
       scanner = scanner || new Html5Qrcode('reader');
+      // A previous timed-out attempt may still hold the camera — release it first.
+      try { await scanner.stop(); } catch (ignored) { /* not running */ }
       const camera = cameras.find(c => /back|rear|environment/i.test(c.label)) || cameras[0];
       const starting = scanner.start(camera.id, { fps: 10, qrbox: { width: 240, height: 240 } }, handleScan);
       starting.then(() => { if (current !== attempt) scanner.stop().catch(() => {}); }).catch(() => {});

@@ -1,12 +1,11 @@
 <?php
 $pageTitle = 'Prescriptions';
 require_once __DIR__ . '/../components/staff-header.php';
-require_once dirname(__DIR__) . '/includes/whatsapp.php';
 require_once dirname(__DIR__) . '/includes/mailer.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_check();
-    $rx = q_one('SELECT p.*, u.name AS customer, u.email, u.phone, u.whatsapp_opt_in
+    $rx = q_one('SELECT p.*, u.name AS customer, u.email, u.phone
                  FROM prescriptions p JOIN users u ON u.id=p.user_id WHERE p.id=?', [(int)$_POST['rx_id']]);
     $action = $_POST['action'] ?? '';
     $note = trim($_POST['note'] ?? '');
@@ -22,13 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ];
         [$title, $body] = $messages[$action];
 
-        notify((int)$rx['user_id'], 'prescription', $title, $body, url('prescriptions.php'));
-        if ($rx['email']) {
-            send_mail($rx['email'], $title, mail_template($title, '<p>' . e($body) . '</p>', 'View my prescriptions', url('prescriptions.php')));
-        }
-        if ($rx['phone'] && $rx['whatsapp_opt_in']) {
-            wa_send((int)$rx['user_id'], $rx['phone'], "Medi-O: {$title}\n{$body}");
-        }
+        alert_user((int)$rx['user_id'], 'prescription', $title, $body, url('prescriptions.php'), 'View my prescriptions');
         flash('success', 'Prescription marked as ' . $action . ' — customer notified.');
     }
     redirect('staff/prescriptions.php' . (isset($_POST['back_filter']) ? '?f=' . urlencode($_POST['back_filter']) : ''));
@@ -52,14 +45,14 @@ foreach (q_all('SELECT status, COUNT(*) AS c FROM prescriptions GROUP BY status'
   <?php foreach ($valid as $f): ?>
     <li class="nav-item">
       <a class="nav-link <?= $filter === $f ? 'active' : '' ?>" href="<?= url('staff/prescriptions.php?f=' . $f) ?>">
-        <?= ucfirst($f) ?><?= $f !== 'all' && isset($counts[$f]) ? ' (' . $counts[$f] . ')' : '' ?>
+        <?= ['pending'=>'To review','approved'=>'Approved','ready'=>'Ready for pickup','rejected'=>'Rejected','collected'=>'Collected','all'=>'All'][$f] ?? ucfirst($f) ?><?= $f !== 'all' && isset($counts[$f]) ? ' (' . $counts[$f] . ')' : '' ?>
       </a>
     </li>
   <?php endforeach; ?>
 </ul>
 
 <?php if (!$rows): ?>
-  <div class="mo-card mo-empty"><i class="bi bi-file-medical"></i>No <?= e($filter === 'all' ? '' : $filter) ?> prescriptions</div>
+  <div class="mo-card mo-empty"><i class="bi bi-file-medical"></i>Nothing here — all caught up</div>
 <?php else: ?>
   <div class="row g-3">
     <?php foreach ($rows as $rx): ?>
@@ -70,7 +63,7 @@ foreach (q_all('SELECT status, COUNT(*) AS c FROM prescriptions GROUP BY status'
               <div class="fw-bold"><?= e($rx['customer']) ?></div>
               <small class="text-muted"><?= e(pretty_phone($rx['phone'])) ?> · <?= time_ago($rx['created_at']) ?></small>
             </div>
-            <span class="mo-status mo-status-<?= e($rx['status']) ?>"><?= ucfirst(e($rx['status'])) ?></span>
+            <span class="mo-status mo-status-<?= e($rx['status']) ?>"><?= e(status_label($rx['status'])) ?></span>
           </div>
           <?php if ($rx['notes']): ?><div class="small bg-light rounded-2 p-2 mb-2"><i class="bi bi-chat-left-text me-1"></i><?= e($rx['notes']) ?></div><?php endif; ?>
           <?php if ($rx['review_note']): ?><div class="small text-muted mb-2">Note: <?= e($rx['review_note']) ?></div><?php endif; ?>

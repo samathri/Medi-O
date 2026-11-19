@@ -4,13 +4,11 @@
  * phone-based password reset. Codes are 6 digits, SHA-256-hashed at rest,
  * valid 10 minutes, max 5 wrong attempts, 60s resend cooldown.
  *
- * Demo mode: when the sending channel isn't configured (no SMTP / no
- * WhatsApp Cloud API), the code is returned so the page can show it —
+ * Demo mode: when SMTP isn't configured, the code is returned so the page can show it —
  * clearly labelled — keeping the whole flow testable offline.
  */
 
 require_once __DIR__ . '/mailer.php';
-require_once __DIR__ . '/whatsapp.php';
 
 const OTP_TTL_MINUTES = 10;
 const OTP_MAX_ATTEMPTS = 5;
@@ -68,25 +66,3 @@ function otp_send_email(array $user): array
     return [true, SMTP_USER === '' ? $code : null, null];
 }
 
-/**
- * Issues + WhatsApps a code to the user's phone (channel: 'phone' or 'reset').
- * Returns [sent, demoCode, error] — demoCode set when the Cloud API isn't configured.
- */
-function otp_send_phone(array $user, string $channel = 'phone'): array
-{
-    if (empty($user['phone'])) return [false, null, 'This account has no mobile number.'];
-    [$code, $err] = otp_issue((int)$user['id'], $channel);
-    if (!$code) return [false, null, $err];
-
-    $outboxId = wa_send_otp((int)$user['id'], $user['phone'], $code);
-
-    // Surface delivery failures (expired token, unregistered number) instead
-    // of leaving the user waiting for a code that will never arrive.
-    $status = q_val('SELECT status FROM whatsapp_outbox WHERE id = ?', [$outboxId]);
-    if ($status === 'failed') {
-        q('DELETE FROM verification_codes WHERE user_id=? AND channel=?', [$user['id'], $channel]);
-        return [false, null, 'WhatsApp delivery failed — the pharmacy\'s WhatsApp connection is down. '
-            . 'Please use email verification instead, or contact the pharmacy.'];
-    }
-    return [true, wa_configured() ? null : $code, null];
-}

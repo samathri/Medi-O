@@ -17,7 +17,7 @@ include __DIR__ . '/components/header.php';
         <h2 class="h5 fw-bold mt-4">How we use it</h2>
         <ul class="text-secondary">
           <li>To process orders and verify prescriptions with a licensed pharmacist.</li>
-          <li>To send order updates and medicine reminders by email and WhatsApp (only if you opt in).</li>
+          <li>To send order updates and medicine reminders in the app and by email.</li>
           <li>To operate your personal QR collection card and keep a record of handed-over medicines.</li>
           <li>To answer your questions in chat.</li>
         </ul>
@@ -31,8 +31,7 @@ include __DIR__ . '/components/header.php';
         </ul>
 
         <h2 class="h5 fw-bold mt-4">Your rights</h2>
-        <p class="text-secondary">You can update your details anytime in your profile, opt out of WhatsApp
-          messages, or ask us to delete your account and data entirely by contacting us.</p>
+        <p class="text-secondary">You can update your details anytime in your profile, turn off reminders in your tracker messages, or ask us to delete your account and data entirely by contacting us.</p>
 
         <h2 class="h5 fw-bold mt-4">Contact</h2>
         <p class="text-secondary mb-0"><?= e(setting('pharmacy_name')) ?>, <?= e(setting('pharmacy_address')) ?> ·

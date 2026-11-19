@@ -28,7 +28,7 @@ include __DIR__ . '/components/header.php';
         <?php foreach ([
             ['bi-patch-check', 'Licensed pharmacists', 'Every prescription is reviewed by a professional.'],
             ['bi-qr-code-scan', 'QR-based pickup', 'Verified, secure, and takes seconds at the counter.'],
-            ['bi-whatsapp', 'WhatsApp care', 'Reminders and updates right where you already chat.'],
+            ['bi-chat-dots', 'Pharmacist chat', 'Message our pharmacists from the website or app — replies arrive by email too.'],
             ['bi-shield-lock', 'Private & secure', 'Your medical data is encrypted and access-controlled.'],
         ] as [$icon, $title, $text]): ?>
           <div class="col-sm-6">

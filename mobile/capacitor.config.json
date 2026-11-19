@@ -1,0 +1,15 @@
+{
+  "appId": "lk.medio.app",
+  "appName": "Medi-O",
+  "webDir": "www",
+  "appendUserAgent": "MediOApp",
+  "backgroundColor": "#00843d",
+  "server": {
+    "url": "http://192.168.43.8/medio/index.php?source=app",
+    "cleartext": true,
+    "androidScheme": "http"
+  },
+  "android": {
+    "allowMixedContent": true
+  }
+}

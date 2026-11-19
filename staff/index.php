@@ -13,6 +13,16 @@ $todayCollections = q_all('SELECT c.*, u.name AS customer, s.name AS staff_name 
                            WHERE DATE(c.created_at)=CURDATE() ORDER BY c.id DESC LIMIT 8');
 $recentRx = q_all("SELECT p.*, u.name AS customer FROM prescriptions p JOIN users u ON u.id=p.user_id
                    WHERE p.status='pending' ORDER BY p.id ASC LIMIT 5");
+$todoOrders = q_all("SELECT o.id, o.order_no, o.status, o.delivery_method, o.created_at, u.name AS customer,
+                            (SELECT COUNT(*) FROM order_items oi WHERE oi.order_id=o.id) AS items
+                     FROM orders o JOIN users u ON u.id=o.user_id WHERE o.status IN ('placed','processing') ORDER BY o.id ASC LIMIT 6");
+$todo = [];
+foreach ($recentRx as $rx) $todo[] = ['t' => strtotime($rx['created_at']), 'icon' => 'bi-file-medical', 'who' => $rx['customer'],
+    'what' => 'Prescription to check', 'when' => $rx['created_at'], 'btn' => 'Review', 'href' => 'staff/prescription-review.php?id=' . $rx['id']];
+foreach ($todoOrders as $o) $todo[] = ['t' => strtotime($o['created_at']), 'icon' => 'bi-box-seam', 'who' => $o['customer'],
+    'what' => 'Order #' . $o['order_no'] . ' · ' . $o['items'] . ' item' . ($o['items'] == 1 ? '' : 's') . ' · ' . ($o['status'] === 'placed' ? 'new' : 'being prepared'),
+    'when' => $o['created_at'], 'btn' => $o['status'] === 'placed' ? 'Prepare' : 'Open', 'href' => 'staff/orders.php'];
+usort($todo, fn($a, $b) => $a['t'] <=> $b['t']);
 $lowStock = q_all('SELECT id, name, stock FROM products WHERE is_active=1 AND stock <= 5 ORDER BY stock LIMIT 8');
 ?>
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
@@ -38,18 +48,18 @@ $lowStock = q_all('SELECT id, name, stock FROM products WHERE is_active=1 AND st
   <div class="col-lg-6">
     <div class="mo-card p-4 h-100">
       <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="h6 fw-bold text-uppercase text-muted mb-0">Oldest pending prescriptions</h2>
-        <a href="<?= url('staff/prescriptions.php') ?>" class="small text-decoration-none">All <i class="bi bi-arrow-right"></i></a>
+        <h2 class="h6 fw-bold text-uppercase text-muted mb-0">To do now <span class="text-body">(oldest first)</span></h2>
       </div>
-      <?php if (!$recentRx): ?>
-        <div class="mo-empty py-4"><i class="bi bi-check2-circle"></i>Queue is clear 🎉</div>
-      <?php else: foreach ($recentRx as $rx): ?>
-        <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
-          <div>
-            <div class="fw-semibold small"><?= e($rx['customer']) ?></div>
-            <small class="text-muted">Waiting <?= time_ago($rx['created_at']) ?></small>
+      <?php if (!$todo): ?>
+        <div class="mo-empty py-4"><i class="bi bi-check2-circle"></i>All caught up — nothing waiting 🎉</div>
+      <?php else: foreach ($todo as $t): ?>
+        <div class="d-flex justify-content-between align-items-center gap-2 py-2 border-bottom">
+          <i class="bi <?= $t['icon'] ?> fs-5" style="color:var(--green)"></i>
+          <div class="flex-grow-1">
+            <div class="fw-semibold small"><?= e($t['who']) ?> — <?= e($t['what']) ?></div>
+            <small class="text-muted">Waiting <?= time_ago($t['when']) ?></small>
           </div>
-          <a class="btn btn-sm mo-btn-soft" href="<?= url('staff/prescriptions.php') ?>">Review</a>
+          <a class="btn btn-sm mo-btn" href="<?= url($t['href']) ?>"><?= $t['btn'] ?></a>
         </div>
       <?php endforeach; endif; ?>
     </div>

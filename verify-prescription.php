@@ -25,7 +25,7 @@ include __DIR__ . '/components/header.php';
       <h1 class="h4 fw-bold mt-3">Genuine Medi-O prescription</h1>
       <p class="text-muted mb-4">This prescription is registered in the Medi-O pharmacy system.</p>
       <div class="d-flex justify-content-center gap-4 small">
-        <div><div class="text-muted">Status</div><span class="mo-status mo-status-<?= e($rx['status']) ?>"><?= ucfirst(e($rx['status'])) ?></span></div>
+        <div><div class="text-muted">Status</div><span class="mo-status mo-status-<?= e($rx['status']) ?>"><?= e(status_label($rx['status'])) ?></span></div>
         <div><div class="text-muted">Uploaded</div><strong><?= date('j M Y', strtotime($rx['created_at'])) ?></strong></div>
         <?php if ($rx['reviewed_at']): ?>
           <div><div class="text-muted">Reviewed</div><strong><?= date('j M Y', strtotime($rx['reviewed_at'])) ?></strong></div>

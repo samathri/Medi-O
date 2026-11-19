@@ -15,6 +15,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     json_out(['ok' => false, 'error' => 'Unknown action.'], 400);
 }
 
+// Live polling: ?since=<last id> returns only newer alerts + the unread count (web + app badges)
+if (isset($_GET['since'])) {
+    $new = q_all('SELECT id, title, body, link FROM notifications WHERE user_id=? AND id > ? ORDER BY id LIMIT 10', [$u['id'], (int)$_GET['since']]);
+    json_out(['ok' => true,
+        'unread' => (int)q_val('SELECT COUNT(*) FROM notifications WHERE user_id=? AND is_read=0', [$u['id']]),
+        'last' => (int)q_val('SELECT COALESCE(MAX(id),0) FROM notifications WHERE user_id=?', [$u['id']]),
+        'items' => array_map(fn($n) => ['id' => (int)$n['id'], 'title' => $n['title'], 'body' => (string)$n['body'], 'link' => $n['link']], $new)]);
+}
+
 $items = q_all('SELECT id, title, body, link, is_read, created_at FROM notifications
                 WHERE user_id=? ORDER BY id DESC LIMIT 15', [$u['id']]);
 json_out(['ok' => true, 'items' => array_map(fn($n) => [

@@ -20,8 +20,4 @@ return [
     // PayHere sandbox (free): sandbox.payhere.lk → Merchant account
     // 'PAYHERE_MERCHANT_ID' => '12xxxxx',
     // 'PAYHERE_MERCHANT_SECRET' => 'xxxxxxxx',
-
-    // WhatsApp Cloud API (free tier): developers.facebook.com → My Apps → WhatsApp
-    // 'WHATSAPP_TOKEN' => 'EAAG...',
-    // 'WHATSAPP_PHONE_ID' => '1055xxxxxxxxxxx',
 ];

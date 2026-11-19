@@ -1,5 +1,5 @@
 <?php
-$pageTitle = 'Analytics';
+$pageTitle = 'Sales report';
 $active = 'index.php';
 require_once __DIR__ . '/../components/staff-header.php';
 if (!is_admin()) { http_response_code(403); exit('Admin only.'); }
@@ -33,7 +33,7 @@ foreach (q_all('SELECT status, COUNT(*) AS c FROM prescriptions GROUP BY status'
     $rxStats[$r['status']] = (int)$r['c'];
 }
 ?>
-<h1 class="h3 fw-bold mb-4">Pharmacy analytics</h1>
+<h1 class="h3 fw-bold mb-4">Sales report</h1>
 
 <div class="row g-3 mb-4">
   <?php foreach ([

@@ -34,6 +34,33 @@ function login_user(array $user): void
 {
     session_regenerate_id(true);
     $_SESSION['user_id'] = (int)$user['id'];
+
+    // A guest tapped "Add to cart" before logging in — finish that for them.
+    $pending = (int)($_SESSION['pending_add'] ?? 0);
+    unset($_SESSION['pending_add']);
+    if ($pending && $user['role'] === 'customer') {
+        $p = q_one('SELECT id, name FROM products WHERE id=? AND is_active=1 AND stock > 0', [$pending]);
+        if ($p && !q_one('SELECT id FROM cart_items WHERE user_id=? AND product_id=?', [$user['id'], $p['id']])) {
+            q('INSERT INTO cart_items (user_id, product_id, quantity) VALUES (?,?,1)', [$user['id'], $p['id']]);
+            flash('success', $p['name'] . ' was added to your cart.');
+        }
+    }
+}
+
+/** Remember what a guest was trying to do (?add=ID, ?next=/path) so we can continue after login/sign-up. */
+function remember_intent(): void
+{
+    if (!empty($_GET['add'])) $_SESSION['pending_add'] = (int)$_GET['add'];
+    $next = (string)($_GET['next'] ?? '');
+    if ($next !== '' && str_starts_with($next, '/') && !str_starts_with($next, '//')) $_SESSION['after_login'] = $next;
+}
+
+/** Where to send someone after login/sign-up. */
+function take_after_login(string $fallback): string
+{
+    $after = $_SESSION['after_login'] ?? '';
+    unset($_SESSION['after_login']);
+    return $after !== '' ? $after : $fallback;
 }
 
 function logout_user(): void

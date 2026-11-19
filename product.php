@@ -77,7 +77,8 @@ include __DIR__ . '/components/header.php';
             <input type="number" id="qtyInput" value="1" min="1" max="<?= (int)$p['stock'] ?>">
             <button type="button" data-step="1" aria-label="Increase">+</button>
           </div>
-          <button class="btn mo-btn btn-lg" data-add-to-cart="<?= $p['id'] ?>"><i class="bi bi-bag-plus me-2"></i>Add to cart</button>
+          <button class="btn mo-btn-outline btn-lg" data-add-to-cart="<?= $p['id'] ?>"><i class="bi bi-cart-plus me-2"></i>Add to cart</button>
+          <button class="btn mo-btn btn-lg" data-add-to-cart="<?= $p['id'] ?>" data-buy-now><i class="bi bi-lightning-charge me-2"></i>Buy now</button>
         </div>
       <?php endif; ?>
 

@@ -17,29 +17,49 @@ $active = basename($_SERVER['SCRIPT_NAME']);
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?= e($pageTitle ?? 'Medi-O') ?> · Medi-O Pharmacy</title>
 <link rel="icon" href="<?= url('assets/img/medi-o-logo.svg') ?>">
+<link rel="manifest" href="<?= url('manifest.webmanifest') ?>">
+<meta name="theme-color" content="#00843d">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Medi-O">
+<link rel="apple-touch-icon" href="<?= url('assets/img/apple-touch-icon.png') ?>">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&display=swap" rel="stylesheet">
 <link href="<?= url('assets/css/app.css') ?>?v=<?= filemtime(__DIR__ . '/../assets/css/app.css') ?>" rel="stylesheet">
 <script>window.MEDIO = {base: <?= json_encode(BASE_URL) ?>, csrf: <?= json_encode(csrf_token()) ?>, loggedIn: <?= $u ? 'true' : 'false' ?>};</script>
 </head>
 <body>
 <a class="visually-hidden-focusable" href="#main">Skip to content</a>
 
-<nav class="navbar navbar-expand-lg mo-navbar sticky-top">
-  <div class="container">
-    <a class="navbar-brand d-flex align-items-center gap-2" href="<?= url('index.php') ?>">
-      <span class="mo-logo"><i class="bi bi-capsule"></i></span>
-      <span class="fw-bold fs-4">Medi<span class="text-gradient">-O</span></span>
-    </a>
+<div class="gx-top">
+  <div class="container d-flex justify-content-center justify-content-md-between align-items-center gap-3">
+    <span class="d-none d-md-inline"><i class="bi bi-clock me-1"></i><?= e(setting('pharmacy_hours')) ?></span>
+    <span><a href="<?= url('prescriptions.php') ?>">Upload your prescription</a> — a pharmacist prepares it, collect with QR</span>
+    <a class="d-none d-md-inline" href="tel:<?= e(setting('pharmacy_phone')) ?>"><i class="bi bi-telephone me-1"></i><?= e(setting('pharmacy_phone')) ?></a>
+  </div>
+</div>
 
-    <div class="d-flex align-items-center gap-1 order-lg-3">
-      <button class="mo-iconbtn d-none d-sm-inline-flex" type="button" data-bs-toggle="modal" data-bs-target="#searchModal" aria-label="Search">
-        <i class="bi bi-search"></i>
-      </button>
+<header class="gx-head sticky-top">
+<nav class="gx-bar">
+  <div class="container d-flex align-items-center gap-3">
+    <button class="navbar-toggler gx-ic d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav" aria-label="Menu">
+      <i class="bi bi-list fs-3"></i>
+    </button>
+    <a class="gx-logo" href="<?= url('index.php') ?>"><i class="bi bi-plus-square-fill"></i><span>Medi-O</span></a>
 
-      <a class="mo-iconbtn position-relative" href="<?= url('cart.php') ?>" aria-label="Cart">
-        <i class="bi bi-bag"></i>
+    <form class="gx-search d-none d-md-flex" action="<?= url('shop.php') ?>" method="get" role="search">
+      <input type="search" name="q" placeholder="Search medicines, vitamins, skin care…" aria-label="Search products" value="<?= e($_GET['q'] ?? '') ?>">
+      <button aria-label="Search"><i class="bi bi-search"></i></button>
+    </form>
+
+    <div class="d-flex align-items-center gap-1 ms-auto">
+      <button class="gx-ic d-md-none" type="button" data-bs-toggle="modal" data-bs-target="#searchModal" aria-label="Search"><i class="bi bi-search"></i></button>
+      <?php if (!$u): ?>
+        <a class="gx-ic gx-ic-lbl" href="<?= url('login.php') ?>"><i class="bi bi-person"></i><span>Log in</span></a>
+      <?php endif; ?>
+      <a class="gx-ic gx-ic-lbl position-relative" href="<?= url('cart.php') ?>" aria-label="Cart">
+        <i class="bi bi-cart3"></i><span>Cart</span>
         <span class="mo-badge" id="cartBadge" <?= $cartCount ? '' : 'hidden' ?>><?= $cartCount ?></span>
       </a>
 
@@ -79,34 +99,31 @@ $active = basename($_SERVER['SCRIPT_NAME']);
             <li><a class="dropdown-item" href="<?= url('orders.php') ?>"><i class="bi bi-box-seam me-2"></i>My Orders</a></li>
             <li><a class="dropdown-item" href="<?= url('prescriptions.php') ?>"><i class="bi bi-file-medical me-2"></i>Prescriptions</a></li>
             <li><a class="dropdown-item" href="<?= url('medications.php') ?>"><i class="bi bi-alarm me-2"></i>Medication Tracker</a></li>
+            <li><button class="dropdown-item" type="button" data-install-app><i class="bi bi-phone me-2"></i>Install the app</button></li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item text-danger" href="<?= url('logout.php') ?>"><i class="bi bi-box-arrow-right me-2"></i>Log out</a></li>
           </ul>
         </div>
       <?php else: ?>
-        <a class="btn mo-btn-outline d-none d-sm-inline-flex ms-1" href="<?= url('login.php') ?>">Log in</a>
-        <a class="btn mo-btn ms-1" href="<?= url('signup.php') ?>">Sign up</a>
+        <a class="btn gx-signup ms-1 d-none d-sm-inline-flex" href="<?= url('signup.php') ?>">Sign up</a>
       <?php endif; ?>
-
-      <button class="navbar-toggler mo-iconbtn ms-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav" aria-label="Menu">
-        <i class="bi bi-list fs-4"></i>
-      </button>
-    </div>
-
-    <div class="collapse navbar-collapse order-lg-2 justify-content-center d-none d-lg-flex">
-      <ul class="navbar-nav mo-nav gap-lg-1">
-        <li><a class="nav-link <?= $active === 'index.php' ? 'active' : '' ?>" href="<?= url('index.php') ?>">Home</a></li>
-        <li><a class="nav-link <?= $active === 'shop.php' ? 'active' : '' ?>" href="<?= url('shop.php') ?>">Shop</a></li>
-        <li><a class="nav-link <?= $active === 'prescriptions.php' ? 'active' : '' ?>" href="<?= url('prescriptions.php') ?>">Prescriptions</a></li>
-        <li><a class="nav-link <?= $active === 'medications.php' ? 'active' : '' ?>" href="<?= url('medications.php') ?>">Tracker</a></li>
-        <li><a class="nav-link position-relative <?= $active === 'chat.php' ? 'active' : '' ?>" href="<?= url('chat.php') ?>">Chat
-          <?php if ($chatUnread): ?><span class="mo-badge mo-badge-inline"><?= $chatUnread ?></span><?php endif; ?>
-        </a></li>
-        <li><a class="nav-link <?= $active === 'contact.php' ? 'active' : '' ?>" href="<?= url('contact.php') ?>">Contact</a></li>
-      </ul>
     </div>
   </div>
 </nav>
+<?php $menuCats = q_all('SELECT c.name FROM categories c JOIN products p ON p.category_id=c.id AND p.is_active=1 GROUP BY c.id ORDER BY COUNT(p.id) DESC LIMIT 5'); ?>
+<div class="gx-menu d-none d-lg-block">
+  <div class="container d-flex align-items-center">
+    <a class="<?= $active === 'shop.php' && empty($_GET['category']) ? 'on' : '' ?>" href="<?= url('shop.php') ?>"><i class="bi bi-grid-3x3-gap-fill me-1"></i>All products</a>
+    <?php foreach ($menuCats as $mi => $mc): ?>
+      <a class="<?= $mi > 1 ? 'xl-only ' : '' ?><?= ($_GET['category'] ?? '') === $mc['name'] ? 'on' : '' ?>" href="<?= url('shop.php?category=' . urlencode($mc['name'])) ?>"><?= e($mc['name']) ?></a>
+    <?php endforeach; ?>
+    <span class="ms-auto"></span>
+    <a class="<?= $active === 'prescriptions.php' ? 'on' : '' ?>" href="<?= url('prescriptions.php') ?>"><i class="bi bi-file-earmark-medical me-1"></i>Prescriptions</a>
+    <a class="<?= $active === 'medications.php' ? 'on' : '' ?>" href="<?= url('medications.php') ?>">Tracker</a>
+    <a class="<?= $active === 'chat.php' ? 'on' : '' ?>" href="<?= url('chat.php') ?>">Chat<?php if ($chatUnread): ?><span class="mo-badge mo-badge-inline"><?= $chatUnread ?></span><?php endif; ?></a>
+  </div>
+</div>
+</header>
 
 <!-- Mobile menu -->
 <div class="offcanvas offcanvas-end mo-offcanvas" tabindex="-1" id="mobileNav">
@@ -124,6 +141,7 @@ $active = basename($_SERVER['SCRIPT_NAME']);
       <a class="list-group-item" href="<?= url('my-qr.php') ?>"><i class="bi bi-qr-code me-2"></i>My QR Card</a>
       <a class="list-group-item" href="<?= url('orders.php') ?>"><i class="bi bi-box-seam me-2"></i>My Orders</a>
       <a class="list-group-item" href="<?= url('contact.php') ?>"><i class="bi bi-envelope me-2"></i>Contact</a>
+      <button class="list-group-item list-group-item-action" type="button" data-install-app><i class="bi bi-phone me-2"></i>Install the app</button>
       <?php if (!$u): ?>
         <div class="d-grid gap-2 mt-3">
           <a class="btn mo-btn" href="<?= url('login.php') ?>">Log in</a>

@@ -3,6 +3,17 @@ $pageTitle = 'Chats';
 require_once __DIR__ . '/../components/staff-header.php';
 
 $convId = (int)($_GET['c'] ?? 0);
+// "Message customer" buttons elsewhere link here with ?user=ID — open (or start) their conversation
+if (!$convId && !empty($_GET['user'])) {
+    $cust = q_one("SELECT id FROM users WHERE id=? AND role='customer'", [(int)$_GET['user']]);
+    if ($cust) {
+        $convId = (int)q_val('SELECT id FROM chat_conversations WHERE user_id=?', [$cust['id']]);
+        if (!$convId) {
+            q('INSERT INTO chat_conversations (user_id) VALUES (?)', [$cust['id']]);
+            $convId = (int)db()->lastInsertId();
+        }
+    }
+}
 $conversations = q_all('SELECT c.*, u.name, u.avatar, u.phone,
                         (SELECT body FROM chat_messages m WHERE m.conversation_id=c.id ORDER BY m.id DESC LIMIT 1) AS last_body
                         FROM chat_conversations c JOIN users u ON u.id=c.user_id
@@ -45,8 +56,7 @@ $activeConv = $convId ? q_one('SELECT c.*, u.name, u.phone FROM chat_conversatio
         <div class="d-flex align-items-center justify-content-between p-3 border-bottom">
           <div class="fw-bold"><i class="bi bi-person-circle me-2"></i><?= e($activeConv['name']) ?></div>
           <?php if ($activeConv['phone']): ?>
-            <a class="btn btn-sm btn-outline-success" target="_blank" rel="noopener"
-               href="https://wa.me/<?= e($activeConv['phone']) ?>"><i class="bi bi-whatsapp me-1"></i><?= e(pretty_phone($activeConv['phone'])) ?></a>
+            <a class="btn btn-sm btn-light border" href="tel:<?= e($activeConv['phone']) ?>"><i class="bi bi-telephone me-1"></i><?= e(pretty_phone($activeConv['phone'])) ?></a>
           <?php endif; ?>
         </div>
         <div class="mo-chat-wrap" style="height:56vh">

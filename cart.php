@@ -55,10 +55,10 @@ include __DIR__ . '/components/header.php';
         <div class="mo-card p-4 position-sticky" style="top:90px">
           <h2 class="h5 fw-bold mb-3">Order summary</h2>
           <div class="d-flex justify-content-between mb-2"><span class="text-muted">Subtotal</span><span id="sumSubtotal" class="fw-semibold"><?= money($subtotal) ?></span></div>
-          <div class="d-flex justify-content-between mb-2"><span class="text-muted">Delivery / handling</span><span><?= $shipping > 0 ? money($shipping) : 'FREE' ?></span></div>
-          <div class="small text-success mb-2"><i class="bi bi-info-circle me-1"></i>Free over <?= money((float)setting('free_shipping_over', '5000')) ?> — pickup is always free</div>
+          <div class="small text-muted mb-2"><i class="bi bi-shop me-1"></i>Pickup at the pharmacy is free. Home delivery
+            (<?= money((float)setting('shipping_fee', '250')) ?>, free over <?= money((float)setting('free_shipping_over', '5000')) ?>) can be chosen at checkout.</div>
           <hr>
-          <div class="d-flex justify-content-between fs-5 fw-bold mb-3"><span>Total</span><span id="sumTotal"><?= money($subtotal + $shipping) ?></span></div>
+          <div class="d-flex justify-content-between fs-5 fw-bold mb-3"><span>Total</span><span id="sumTotal"><?= money($subtotal) ?></span></div>
           <?php if ($needsRx): ?>
             <div class="alert alert-warning small py-2"><i class="bi bi-file-medical me-1"></i>Your cart contains
               prescription medicines — you'll attach a prescription at checkout.</div>
@@ -92,7 +92,7 @@ function refreshTotals(r) {
   updateCartBadge(r.count);
   const free = <?= (float)setting('free_shipping_over', '5000') ?>;
   const fee = <?= (float)setting('shipping_fee', '250') ?>;
-  const ship = r.subtotal >= free ? 0 : fee;
+  const ship = 0;
   document.getElementById('sumSubtotal').textContent = r.subtotal_text;
   document.getElementById('sumTotal').textContent = 'Rs. ' + (r.subtotal + ship).toLocaleString(undefined, {minimumFractionDigits: 2});
 }

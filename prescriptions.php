@@ -5,37 +5,9 @@ $u = require_login();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_check();
-    $notes = trim($_POST['notes'] ?? '');
-    $f = $_FILES['prescription'] ?? null;
-
-    if (!$f || $f['error'] !== UPLOAD_ERR_OK) {
-        flash('error', 'Please choose a file to upload (max 5 MB).');
-    } elseif ($f['size'] > 5 * 1024 * 1024) {
-        flash('error', 'File is too large — maximum size is 5 MB.');
-    } else {
-        $mime = mime_content_type($f['tmp_name']);
-        $allowed = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp', 'application/pdf' => 'pdf'];
-        if (!isset($allowed[$mime])) {
-            flash('error', 'Only JPG, PNG, WEBP or PDF files are accepted.');
-        } else {
-            $name = 'rx_' . $u['id'] . '_' . bin2hex(random_bytes(8)) . '.' . $allowed[$mime];
-            $dest = ROOT_PATH . '/uploads/prescriptions/' . $name;
-            if (move_uploaded_file($f['tmp_name'], $dest)) {
-                q('INSERT INTO prescriptions (user_id, file_path, original_name, notes, verify_token) VALUES (?,?,?,?,?)', [
-                    $u['id'], 'uploads/prescriptions/' . $name,
-                    substr($f['name'], 0, 255), $notes ?: null, new_token(),
-                ]);
-                // Let every pharmacist know a new prescription is waiting
-                foreach (q_all("SELECT id FROM users WHERE role IN ('pharmacist','admin')") as $staff) {
-                    notify((int)$staff['id'], 'prescription', 'New prescription from ' . $u['name'],
-                        'Waiting for review.', url('staff/prescriptions.php'));
-                }
-                flash('success', 'Prescription uploaded! Our pharmacist will review it shortly.');
-            } else {
-                flash('error', 'Upload failed — please try again.');
-            }
-        }
-    }
+    require_once __DIR__ . '/includes/prescription-upload.php';
+    [$id, $err] = save_prescription_upload($u, $_FILES['prescription'] ?? null, trim($_POST['notes'] ?? ''));
+    flash($id ? 'success' : 'error', $id ? 'Prescription sent! A pharmacist will check it and message you — usually within 15 minutes.' : $err);
     redirect('prescriptions.php');
 }
 
@@ -49,28 +21,27 @@ include __DIR__ . '/components/header.php';
 <div class="container py-4 py-md-5">
   <div class="page-head pt-0">
     <h1 class="h2">My prescriptions</h1>
-    <p class="text-muted mb-0">Upload a photo or PDF of your prescription — a licensed pharmacist verifies it,
-      then you can order the medicines or collect them at the counter.</p>
+    <p class="text-muted mb-0">Send us a photo of your doctor's prescription. A pharmacist checks it and gets your medicines ready.</p>
   </div>
 
   <div class="row g-4">
     <div class="col-lg-5" data-reveal>
       <div class="mo-card p-4 position-sticky" style="top:90px">
-        <h2 class="h5 fw-bold mb-3"><i class="bi bi-cloud-arrow-up me-2" style="color:var(--mo-primary)"></i>Upload new</h2>
+        <h2 class="h5 fw-bold mb-3"><i class="bi bi-camera me-2" style="color:var(--mo-primary)"></i>Send a new prescription</h2>
         <form method="post" enctype="multipart/form-data" id="rxForm">
           <?= csrf_field() ?>
           <label id="dropZone" class="d-block border-2 rounded-4 text-center p-4 mb-3"
                  style="border:2px dashed var(--mo-line);cursor:pointer;transition:all .2s">
             <i class="bi bi-file-earmark-medical" style="font-size:2.4rem;color:var(--mo-primary)"></i>
-            <div class="fw-semibold mt-2" id="dropLabel">Tap to choose a file<br><span class="small text-muted fw-normal">or drag &amp; drop — JPG, PNG, WEBP, PDF · max 5 MB</span></div>
-            <input type="file" name="prescription" id="rxFile" class="d-none" accept=".jpg,.jpeg,.png,.webp,.pdf" required>
+            <div class="fw-semibold mt-2" id="dropLabel">Take a photo or choose a file<br><span class="small text-muted fw-normal">JPG, PNG or PDF · up to 5 MB</span></div>
+            <input type="file" name="prescription" id="rxFile" class="d-none" accept="image/*,application/pdf" required>
             <img id="rxPreview" class="img-fluid rounded-3 mt-2 d-none" style="max-height:180px" alt="">
           </label>
           <div class="mb-3">
             <label class="form-label fw-semibold">Notes for the pharmacist <span class="text-muted fw-normal">(optional)</span></label>
             <textarea name="notes" class="form-control" rows="2" placeholder="e.g. Monthly medicines for my mother"></textarea>
           </div>
-          <button class="btn mo-btn w-100"><i class="bi bi-send me-2"></i>Submit for review</button>
+          <button class="btn mo-btn w-100"><i class="bi bi-send me-2"></i>Send to pharmacist</button>
         </form>
       </div>
     </div>
@@ -94,7 +65,7 @@ include __DIR__ . '/components/header.php';
                     <?php if ($rx['pharmacist_name']): ?> · reviewed by <?= e($rx['pharmacist_name']) ?><?php endif; ?>
                   </div>
                 </div>
-                <span class="mo-status mo-status-<?= e($rx['status']) ?>"><?= ucfirst(e($rx['status'])) ?></span>
+                <span class="mo-status mo-status-<?= e($rx['status']) ?>"><?= e(status_label($rx['status'])) ?></span>
               </div>
 
               <?php if ($rx['review_note']): ?>

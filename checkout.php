@@ -4,7 +4,8 @@ $u = require_login();
 
 // Ordering requires a verified contact channel (email or phone)
 if (!$u['email_verified'] && !$u['phone_verified']) {
-    flash('info', 'Please verify your email or mobile number before placing an order.');
+    flash('info', 'One quick step: enter the code we sent to your email or mobile — then you go straight back to checkout.');
+    $_SESSION['after_verify'] = url('checkout.php');
     redirect('verify-account.php');
 }
 
@@ -29,6 +30,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $address = trim($_POST['address'] ?? '');
     $note = trim($_POST['note'] ?? '');
     $rxId = (int)($_POST['prescription_id'] ?? 0);
+    $rxError = null;
+    if ($needsRx && !$rxId) {
+        // No saved prescription picked — take the photo uploaded right here
+        require_once __DIR__ . '/includes/prescription-upload.php';
+        [$rxId, $rxError] = save_prescription_upload($u, $_FILES['prescription_file'] ?? null, 'Uploaded at checkout');
+        $rxId = (int)$rxId;
+    }
 
     $shipping = $delivery === 'delivery'
         ? ($subtotal >= (float)setting('free_shipping_over', '5000') ? 0 : (float)setting('shipping_fee', '250'))
@@ -36,6 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($delivery === 'delivery' && $address === '') {
         $error = 'Please enter a delivery address.';
+    } elseif ($rxError) {
+        $error = $rxError;
     } elseif (($needsRx || $rxId) && !q_one("SELECT id FROM prescriptions WHERE id=? AND user_id=? AND status IN ('pending','approved')", [$rxId, $u['id']])) {
         $error = 'Your cart contains prescription medicines — please select or upload a prescription first.';
     } else {
@@ -121,7 +131,7 @@ include __DIR__ . '/components/header.php';
     <div class="alert alert-danger"><i class="bi bi-exclamation-triangle me-2"></i><?= $error ?></div>
   <?php endif; ?>
 
-  <form method="post">
+  <form method="post" enctype="multipart/form-data">
     <?= csrf_field() ?>
     <div class="row g-4">
       <div class="col-lg-8">
@@ -156,26 +166,29 @@ include __DIR__ . '/components/header.php';
         <!-- Prescription -->
         <div class="mo-card p-4 mb-4" data-reveal>
           <h2 class="h5 fw-bold mb-1"><span class="badge rounded-pill text-bg-dark me-2">2</span>Prescription</h2>
-          <p class="small text-muted">Your cart contains prescription medicines. Attach a prescription so our
-            pharmacist can verify it.</p>
-          <?php if ($myPrescriptions): ?>
-            <div class="d-flex flex-column gap-2">
-              <?php foreach ($myPrescriptions as $rx): ?>
-                <label class="mo-card p-3 d-flex align-items-center gap-3" style="cursor:pointer">
-                  <input type="radio" class="form-check-input m-0" name="prescription_id" value="<?= $rx['id'] ?>">
-                  <i class="bi bi-file-medical fs-4" style="color:var(--mo-primary)"></i>
-                  <div class="flex-grow-1">
-                    <div class="fw-semibold small"><?= e($rx['original_name']) ?></div>
-                    <div class="small text-muted">Uploaded <?= time_ago($rx['created_at']) ?></div>
-                  </div>
-                  <span class="mo-status mo-status-<?= e($rx['status']) ?>"><?= ucfirst(e($rx['status'])) ?></span>
-                </label>
-              <?php endforeach; ?>
-            </div>
-          <?php else: ?>
-            <div class="alert alert-warning small mb-0">You have no prescriptions on file —
-              <a href="<?= url('prescriptions.php') ?>" target="_blank">upload one now</a>, then refresh this page.</div>
-          <?php endif; ?>
+          <p class="small text-muted">Some items need a doctor's prescription. Add a photo of it — our pharmacist checks it before preparing your order.</p>
+          <div class="d-flex flex-column gap-2">
+            <?php foreach ($myPrescriptions as $k => $rx): ?>
+              <label class="mo-card p-3 d-flex align-items-center gap-3" style="cursor:pointer">
+                <input type="radio" class="form-check-input m-0" name="prescription_id" value="<?= $rx['id'] ?>" <?= $k === 0 ? 'checked' : '' ?>>
+                <i class="bi bi-file-medical fs-4" style="color:var(--mo-primary)"></i>
+                <div class="flex-grow-1">
+                  <div class="fw-semibold small">Use my prescription from <?= time_ago($rx['created_at']) ?></div>
+                  <div class="small text-muted text-truncate"><?= e($rx['original_name']) ?></div>
+                </div>
+                <span class="mo-status mo-status-<?= e($rx['status']) ?>"><?= e(status_label($rx['status'])) ?></span>
+              </label>
+            <?php endforeach; ?>
+            <label class="mo-card p-3 d-flex align-items-start gap-3" style="cursor:pointer">
+              <input type="radio" class="form-check-input m-0 mt-1" name="prescription_id" value="0" <?= $myPrescriptions ? '' : 'checked' ?>>
+              <div class="flex-grow-1">
+                <div class="fw-semibold small mb-2"><i class="bi bi-camera me-1"></i>Upload a new prescription photo</div>
+                <input type="file" name="prescription_file" class="form-control" accept="image/*,application/pdf"
+                       onchange="this.closest('label').querySelector('input[type=radio]').checked = true">
+                <div class="small text-muted mt-1">Take a photo with your phone or choose a file (JPG, PNG or PDF, up to 5 MB).</div>
+              </div>
+            </label>
+          </div>
         </div>
         <?php endif; ?>
 

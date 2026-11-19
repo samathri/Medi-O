@@ -29,7 +29,7 @@ include __DIR__ . '/components/header.php';
           </div>
           <div class="text-end">
             <div class="fw-bold"><?= money((float)$o['total']) ?></div>
-            <span class="mo-status mo-status-<?= e($o['status']) ?>"><?= ucfirst(e($o['status'])) ?></span>
+            <span class="mo-status mo-status-<?= e($o['status']) ?>"><?= e(status_label($o['status'])) ?></span>
           </div>
           <i class="bi bi-chevron-right text-muted"></i>
         </a>

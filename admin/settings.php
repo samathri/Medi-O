@@ -6,7 +6,6 @@ if (!is_admin()) { http_response_code(403); exit('Admin only.'); }
 $fields = [
     'pharmacy_name' => 'Pharmacy name',
     'pharmacy_phone' => 'Phone number',
-    'pharmacy_whatsapp' => 'WhatsApp number (94XXXXXXXXX)',
     'pharmacy_address' => 'Address',
     'pharmacy_hours' => 'Opening hours',
     'shipping_fee' => 'Delivery fee (Rs.)',
@@ -40,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </form>
   <hr>
   <div class="small text-muted">
-    <i class="bi bi-key me-1"></i>API keys (Google, PayHere, WhatsApp, SMTP) are configured in
+    <i class="bi bi-key me-1"></i>API keys (Google, PayHere, Gemini, SMTP) are configured in
     <code>config.local.php</code> on the server — see the README for step-by-step guides.
   </div>
 </div>

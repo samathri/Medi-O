@@ -22,7 +22,9 @@ if ($order['payment_method'] !== 'payhere' || in_array($order['status'], ['cance
     http_response_code(409);
     exit('This order is not eligible for demo payment.');
 }
-if ($order['payment_status'] === 'paid') {
+// GET only: a paid order shows its receipt. POSTs fall through so outcome
+// validation and the row lock decide (invalid outcome → 400, replay → 409).
+if ($order['payment_status'] === 'paid' && $_SERVER['REQUEST_METHOD'] !== 'POST') {
     redirect('order-success.php?id=' . $order['id']);
 }
 

@@ -3,12 +3,11 @@ $pageTitle = 'Orders';
 require_once __DIR__ . '/../config.php';
 $staff = require_staff();
 require_once dirname(__DIR__) . '/includes/order-status.php';
-require_once dirname(__DIR__) . '/includes/whatsapp.php';
 require_once dirname(__DIR__) . '/includes/mailer.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_check();
-    $order = q_one('SELECT o.*, u.name AS customer, u.email, u.phone, u.whatsapp_opt_in
+    $order = q_one('SELECT o.*, u.name AS customer, u.email, u.phone
                     FROM orders o JOIN users u ON u.id=o.user_id WHERE o.id=?', [(int)$_POST['order_id']]);
     $newStatus = $_POST['status'] ?? '';
     $allowed = ['processing', 'ready', 'collected', 'completed', 'cancelled'];
@@ -27,15 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'completed' => 'Your order is complete. Get well soon!',
             'cancelled' => 'Your order was cancelled. Contact us if this is unexpected.',
         ];
-        $msg = 'Order #' . $order['order_no'] . ': ' . $texts[$newStatus];
-        notify((int)$order['user_id'], 'order', 'Order #' . $order['order_no'] . ' — ' . ucfirst($newStatus), $texts[$newStatus], url('order.php?id=' . $order['id']));
-        if ($order['email']) {
-            send_mail($order['email'], 'Order #' . $order['order_no'] . ' update', mail_template('Order update', '<p>' . e($msg) . '</p>', 'Track order', url('order.php?id=' . $order['id'])));
-        }
-        if ($order['phone'] && $order['whatsapp_opt_in']) {
-            wa_send((int)$order['user_id'], $order['phone'], 'Medi-O: ' . $msg);
-        }
-        flash('success', 'Order updated to "' . $newStatus . '" — customer notified.');
+        alert_user((int)$order['user_id'], 'order', 'Order #' . $order['order_no'] . ' — ' . status_label($newStatus), $texts[$newStatus], url('order.php?id=' . $order['id']), 'Track my order');
+        flash('success', 'Order #' . $order['order_no'] . ' is now "' . status_label($newStatus) . '" — the customer has been told.');
     }
     redirect('staff/orders.php' . (isset($_POST['back_filter']) ? '?f=' . urlencode($_POST['back_filter']) : ''));
 }
@@ -82,43 +74,54 @@ $orders = q_all("SELECT o.*, u.name AS customer, u.phone,
               <td>
                 <div class="fw-semibold"><?= e($o['customer']) ?></div>
                 <?php if ($o['phone']): ?>
-                  <a class="small text-decoration-none text-success" target="_blank" rel="noopener" href="<?= wa_link($o['phone']) ?>">
-                    <i class="bi bi-whatsapp"></i> <?= e(pretty_phone($o['phone'])) ?></a>
+                  <a class="small text-decoration-none" href="tel:<?= e($o['phone']) ?>"><i class="bi bi-telephone"></i> <?= e(pretty_phone($o['phone'])) ?></a>
                 <?php endif; ?>
               </td>
               <td>
-                <button class="btn btn-sm btn-link text-decoration-none p-0" data-bs-toggle="collapse" data-bs-target="#items<?= $o['id'] ?>">
-                  <?= (int)$o['items'] ?> item<?= $o['items'] == 1 ? '' : 's' ?> <i class="bi bi-chevron-down small"></i></button>
+                <ul class="list-unstyled small mb-0">
+                  <?php foreach (q_all('SELECT product_name, quantity FROM order_items WHERE order_id=?', [$o['id']]) as $it): ?>
+                    <li><b><?= (int)$it['quantity'] ?>×</b> <?= e($it['product_name']) ?></li>
+                  <?php endforeach; ?>
+                </ul>
+                <?php if ($o['note']): ?><div class="small text-muted mt-1"><i class="bi bi-chat-left-text me-1"></i><?= e($o['note']) ?></div><?php endif; ?>
+                <?php if ($o['address']): ?><div class="small text-muted mt-1"><i class="bi bi-geo-alt me-1"></i><?= e($o['address']) ?></div><?php endif; ?>
               </td>
               <td>
                 <div class="fw-semibold"><?= money((float)$o['total']) ?></div>
-                <span class="mo-status mo-status-<?= e($o['payment_status']) ?>"><?= e($o['payment_method']) ?> · <?= e($o['payment_status']) ?></span>
+                <span class="mo-status mo-status-<?= e($o['payment_status']) ?>"><?= $o['payment_method'] === 'cash' ? 'Cash' : 'Online' ?> · <?= $o['payment_status'] === 'paid' ? 'paid' : 'not paid yet' ?></span>
               </td>
               <td><span class="badge text-bg-light border"><i class="bi <?= $o['delivery_method'] === 'pickup' ? 'bi-qr-code-scan' : 'bi-truck' ?> me-1"></i><?= ucfirst(e($o['delivery_method'])) ?></span></td>
-              <td><span class="mo-status mo-status-<?= e($o['status']) ?>"><?= ucfirst(e($o['status'])) ?></span></td>
+              <td><span class="mo-status mo-status-<?= e($o['status']) ?>"><?= e(status_label($o['status'])) ?></span></td>
               <td>
                 <?php if (!in_array($o['status'], ['collected', 'completed', 'cancelled'], true)): ?>
-                  <form method="post" class="d-flex gap-1">
+                  <?php
+                  $pickup = $o['delivery_method'] === 'pickup';
+                  $label = ['processing' => $o['status'] === 'ready' ? 'Back to preparing' : 'Start preparing',
+                            'ready' => $pickup ? 'Mark ready for pickup' : 'Send out for delivery',
+                            'collected' => 'Mark collected', 'completed' => $pickup ? 'Complete' : 'Mark delivered', 'cancelled' => 'Cancel order'];
+                  $next = ['placed' => 'processing', 'processing' => 'ready', 'ready' => $pickup ? 'collected' : 'completed'][$o['status']] ?? null;
+                  $others = array_diff(order_allowed_transitions($o['status']), [$next]);
+                  ?>
+                  <form method="post" class="d-flex gap-1 align-items-center">
                     <?= csrf_field() ?>
                     <input type="hidden" name="order_id" value="<?= $o['id'] ?>">
                     <input type="hidden" name="back_filter" value="<?= e($filter) ?>">
-                    <select name="status" class="form-select form-select-sm">
-                      <?php foreach (['processing' => 'Preparing', 'ready' => $o['delivery_method'] === 'pickup' ? 'Ready for pickup' : 'Out for delivery', 'collected' => 'Collected', 'completed' => 'Completed', 'cancelled' => 'Cancel'] as $s => $label): ?>
-                        <option value="<?= $s ?>" <?= $s === 'processing' && $o['status'] === 'placed' ? 'selected' : '' ?>><?= $label ?></option>
-                      <?php endforeach; ?>
-                    </select>
-                    <button class="btn btn-sm mo-btn">Go</button>
+                    <?php if ($next): ?>
+                      <button name="status" value="<?= $next ?>" class="btn btn-sm mo-btn text-nowrap"><?= $label[$next] ?></button>
+                    <?php endif; ?>
+                    <?php if ($others): ?>
+                      <div class="dropdown">
+                        <button type="button" class="btn btn-sm btn-light border" data-bs-toggle="dropdown" aria-label="More actions"><i class="bi bi-three-dots"></i></button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                          <?php foreach ($others as $s): ?>
+                            <li><button name="status" value="<?= $s ?>" class="dropdown-item <?= $s === 'cancelled' ? 'text-danger' : '' ?>"
+                              <?= $s === 'cancelled' ? "onclick=\"return confirm('Cancel this order? The customer will be told.')\"" : '' ?>><?= $label[$s] ?></button></li>
+                          <?php endforeach; ?>
+                        </ul>
+                      </div>
+                    <?php endif; ?>
                   </form>
                 <?php endif; ?>
-              </td>
-            </tr>
-            <tr class="collapse" id="items<?= $o['id'] ?>">
-              <td colspan="7" class="bg-light small">
-                <?php foreach (q_all('SELECT * FROM order_items WHERE order_id=?', [$o['id']]) as $it): ?>
-                  <span class="me-3">• <?= e($it['product_name']) ?> × <?= (int)$it['quantity'] ?></span>
-                <?php endforeach; ?>
-                <?php if ($o['note']): ?><div class="mt-1"><i class="bi bi-chat-left-text me-1"></i>Note: <?= e($o['note']) ?></div><?php endif; ?>
-                <?php if ($o['address']): ?><div class="mt-1"><i class="bi bi-geo-alt me-1"></i><?= e($o['address']) ?></div><?php endif; ?>
               </td>
             </tr>
           <?php endforeach; ?>
