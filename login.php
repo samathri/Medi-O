@@ -23,15 +23,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $user = $phone ? q_one('SELECT * FROM users WHERE phone = ?', [$phone]) : null;
         }
 
-        if ($user && $user['password_hash'] && password_verify($password, $user['password_hash'])) {
+        // Slow down password guessing: 5 misses per account or 20 per address in 15 minutes
+        $identHash = hash('sha256', strtolower($identifier));
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '';
+        q('DELETE FROM login_attempts WHERE created_at < DATE_SUB(NOW(), INTERVAL 1 DAY)');
+        $locked = (int)q_val('SELECT COUNT(*) FROM login_attempts WHERE ident_hash=? AND created_at > DATE_SUB(NOW(), INTERVAL 15 MINUTE)', [$identHash]) >= 5
+               || (int)q_val('SELECT COUNT(*) FROM login_attempts WHERE ip=? AND created_at > DATE_SUB(NOW(), INTERVAL 15 MINUTE)', [$ip]) >= 20;
+
+        if ($locked) {
+            http_response_code(429);
+            $error = 'Too many wrong attempts. Please wait 15 minutes, or reset your password.';
+        } elseif ($user && $user['password_hash'] && password_verify($password, $user['password_hash'])) {
+            q('DELETE FROM login_attempts WHERE ident_hash=?', [$identHash]);
             login_user($user);
             flash('success', 'Welcome back, ' . $user['name'] . '!');
             redirect(take_after_login(role_home($user)));
 
         }
-        $error = $user && !$user['password_hash']
-            ? 'This account uses Google Sign-In. Please use the Google button below.'
-            : 'Incorrect email/phone or password.';
+        if (!$locked) {
+            q('INSERT INTO login_attempts (ident_hash, ip) VALUES (?,?)', [$identHash, $ip]);
+            $error = $user && !$user['password_hash']
+                ? 'This account uses Google Sign-In. Please use the Google button below.'
+                : 'Incorrect email/phone or password.';
+        }
     }
 }
 

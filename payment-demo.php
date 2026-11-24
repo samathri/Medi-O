@@ -6,7 +6,7 @@
  */
 require_once __DIR__ . '/config.php';
 // Fail closed if any real gateway configuration is present.
-if (!PAYHERE_SANDBOX || PAYHERE_MERCHANT_ID !== '' || PAYHERE_MERCHANT_SECRET !== '') {
+if (ALLOW_DEMO_PAYMENTS !== true || !PAYHERE_SANDBOX || PAYHERE_MERCHANT_ID !== '' || PAYHERE_MERCHANT_SECRET !== '') {
     http_response_code(403);
     exit('Demo payments are disabled.');
 }
@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     redirect('order.php?id=' . $orderId);
 }
 
-$pageTitle = 'Demo payment';
+$pageTitle = 'Test payment';
 include __DIR__ . '/components/header.php';
 ?>
 <div class="container py-5">

@@ -12,7 +12,7 @@ USE `medio`;
 
 SET FOREIGN_KEY_CHECKS = 0;
 
-DROP TABLE IF EXISTS prescription_items, verification_codes, notifications, collections, medication_logs,
+DROP TABLE IF EXISTS login_attempts, prescription_items, verification_codes, notifications, collections, medication_logs,
   medication_times, medications, chat_messages, chat_conversations, payments,
   order_items, orders, prescriptions, cart_items, products, categories,
   contact_messages, settings, users;
@@ -199,6 +199,16 @@ CREATE TABLE chat_messages (
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
+-- Failed log-ins, used to slow down password guessing.
+CREATE TABLE login_attempts (
+  id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  ident_hash CHAR(64) NOT NULL,
+  ip         VARCHAR(45) NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  KEY idx_ident (ident_hash, created_at),
+  KEY idx_ip (ip, created_at)
+) ENGINE=InnoDB;
+
 -- Medication tracker: schedules + per-dose logs, reminded in the app and by email.
 -- ---------------------------------------------------------------------
 CREATE TABLE medications (

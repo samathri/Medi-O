@@ -33,10 +33,10 @@ $active = basename($_SERVER['SCRIPT_NAME']);
 <a class="visually-hidden-focusable" href="#main">Skip to content</a>
 
 <div class="gx-top">
-  <div class="container d-flex justify-content-center justify-content-md-between align-items-center gap-3">
-    <span class="d-none d-md-inline"><i class="bi bi-clock me-1"></i><?= e(setting('pharmacy_hours')) ?></span>
+  <div class="container d-flex justify-content-center justify-content-lg-between align-items-center gap-3 text-center">
+    <span class="d-none d-lg-inline"><i class="bi bi-clock me-1"></i><?= e(setting('pharmacy_hours')) ?></span>
     <span><a href="<?= url('prescriptions.php') ?>">Upload your prescription</a> — a pharmacist prepares it, collect with QR</span>
-    <a class="d-none d-md-inline" href="tel:<?= e(setting('pharmacy_phone')) ?>"><i class="bi bi-telephone me-1"></i><?= e(setting('pharmacy_phone')) ?></a>
+    <a class="d-none d-lg-inline" href="tel:<?= e(setting('pharmacy_phone')) ?>"><i class="bi bi-telephone me-1"></i><?= e(setting('pharmacy_phone')) ?></a>
   </div>
 </div>
 

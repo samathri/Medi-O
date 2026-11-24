@@ -26,7 +26,8 @@ $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_check();
     $delivery = ($_POST['delivery'] ?? 'pickup') === 'delivery' ? 'delivery' : 'pickup';
-    $payment = ($_POST['payment'] ?? 'cash') === 'payhere' ? 'payhere' : 'cash';
+    require_once __DIR__ . '/includes/payhere.php';
+    $payment = ($_POST['payment'] ?? 'cash') === 'payhere' && online_payment_available() ? 'payhere' : 'cash';
     $address = trim($_POST['address'] ?? '');
     $note = trim($_POST['note'] ?? '');
     $rxId = (int)($_POST['prescription_id'] ?? 0);
@@ -196,6 +197,8 @@ include __DIR__ . '/components/header.php';
         <div class="mo-card p-4" data-reveal>
           <h2 class="h5 fw-bold mb-3"><span class="badge rounded-pill text-bg-dark me-2"><?= $needsRx ? 3 : 2 ?></span>Payment</h2>
           <div class="row g-3">
+            <?php require_once __DIR__ . '/includes/payhere.php'; $onlineOk = online_payment_available(); ?>
+            <?php if ($onlineOk): ?>
             <div class="col-sm-6">
               <input type="radio" class="btn-check" name="payment" id="pCard" value="payhere" checked>
               <label class="mo-card p-3 w-100 h-100 d-block" for="pCard" style="cursor:pointer">
@@ -204,8 +207,9 @@ include __DIR__ . '/components/header.php';
                 <div class="small text-muted">Card via PayHere <?= payhere_configured_badge() ?></div>
               </label>
             </div>
+            <?php endif; ?>
             <div class="col-sm-6">
-              <input type="radio" class="btn-check" name="payment" id="pCash" value="cash">
+              <input type="radio" class="btn-check" name="payment" id="pCash" value="cash" <?= $onlineOk ? '' : 'checked' ?>>
               <label class="mo-card p-3 w-100 h-100 d-block" for="pCash" style="cursor:pointer">
                 <i class="bi bi-cash-coin fs-3" style="color:var(--mo-primary)"></i>
                 <div class="fw-bold mt-1">Cash</div>
@@ -263,5 +267,5 @@ function payhere_configured_badge(): string
     require_once __DIR__ . '/includes/payhere.php';
     return payhere_configured()
         ? (PAYHERE_SANDBOX ? '<span class="badge text-bg-warning">Sandbox</span>' : '')
-        : '<span class="badge text-bg-secondary">Demo mode</span>';
+        : '<span class="badge text-bg-secondary">Test mode</span>';
 }

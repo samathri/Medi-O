@@ -11,6 +11,12 @@ function payhere_configured(): bool
     return PAYHERE_MERCHANT_ID !== '' && PAYHERE_MERCHANT_SECRET !== '';
 }
 
+/** Can customers choose "Pay online"? Real PayHere keys, or the pretend gateway when explicitly allowed for testing. */
+function online_payment_available(): bool
+{
+    return payhere_configured() || ALLOW_DEMO_PAYMENTS === true;
+}
+
 function payhere_checkout_url(): string
 {
     return PAYHERE_SANDBOX

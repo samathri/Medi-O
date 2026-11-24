@@ -588,7 +588,7 @@ h1, h2, h3, .h1, .h2, .h3, .display-4, .mo-serif { font-weight: 700; letter-spac
 .gx-menu a.on { color: var(--green); border-bottom-color: var(--green); font-weight: 700; }
 
 /* home */
-.gx-hero { padding: 1.2rem 0 .4rem; }
+.gx-hero { padding-top: 1.2rem; padding-bottom: .4rem; }
 .gx-banner { background: var(--green); color: #fff; border-radius: 10px; padding: 2.4rem; position: relative; overflow: hidden; min-height: 300px; display: flex; flex-direction: column; justify-content: center; }
 .gx-banner::before { content: '+'; position: absolute; right: -30px; top: -90px; font-size: 380px; font-weight: 800; line-height: 1; color: rgba(255,255,255,.07); }
 .gx-banner h1 { font-size: clamp(1.9rem, 3.4vw, 2.6rem); line-height: 1.1; max-width: 17ch; position: relative; color: #fff; }
@@ -686,3 +686,22 @@ label.mo-card:has(input[type=radio]:checked) { border: 2px solid var(--green); b
 @media (max-width: 991.98px) { .gx-appbar { bottom: 74px; } }
 /* inside the installed app, the phone status bar sits on brand green */
 @media (display-mode: standalone) { .gx-top { display: none; } }
+
+/* small phones: keep the green header on one line */
+@media (max-width: 575.98px) {
+  .gx-bar .container { gap: .35rem !important; padding-left: .6rem; padding-right: .6rem; }
+  .gx-bar .container > .d-flex { gap: 0 !important; }
+  .gx-logo { font-size: 1.15rem; gap: .3rem; }
+  .gx-logo i { font-size: 1.25rem; }
+  .gx-ic, .gx-bar .mo-iconbtn { padding: .35rem .4rem; font-size: 1.15rem; width: auto; height: 38px; }
+  .gx-bar .mo-avatar-btn { width: 32px; height: 32px; font-size: .85rem; margin-left: .2rem; }
+  .gx-bar .navbar-toggler { padding-left: 0; }
+}
+@media (max-width: 359.98px) {
+  .gx-bar a[aria-label="Cart"] { display: none; }   /* Cart stays in the bottom tab bar */
+  .gx-logo span { font-size: 1.05rem; }
+}
+@media (max-width: 359.98px) {
+  .mo-auth-card { padding: 1.1rem .7rem !important; }
+  .mo-auth-card iframe { max-width: 100%; }
+}

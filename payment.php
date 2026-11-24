@@ -15,7 +15,9 @@ if ($order['payment_status'] === 'paid') {
 
 // No PayHere credentials → built-in demo gateway keeps checkout testable
 if (!payhere_configured()) {
-    redirect('payment-demo.php?order=' . $order['id']);
+    if (ALLOW_DEMO_PAYMENTS === true) redirect('payment-demo.php?order=' . $order['id']);
+    flash('info', 'Online payment is not available right now — you can pay when you collect or receive your order.');
+    redirect('order.php?id=' . $order['id']);
 }
 
 [$first, $last] = array_pad(explode(' ', $u['name'], 2), 2, '-');

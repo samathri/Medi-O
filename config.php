@@ -34,7 +34,10 @@ $defaults = [
     'GEMINI_API_KEY' => '',
     'GEMINI_MODEL' => 'gemini-flash-latest',
 
-    'APP_DEBUG' => true,
+    'APP_DEBUG' => false, // set true in config.local.php only while developing
+    // Testing only: lets "Pay online" use a pretend gateway when PayHere keys are missing.
+    // NEVER enable on a live site — orders would be marked paid without any money.
+    'ALLOW_DEMO_PAYMENTS' => false,
     // Public app URL used by CLI reminder links; set for non-default folders/ports.
     'APP_URL' => 'http://localhost/medio',
 ];
@@ -69,6 +72,8 @@ if (APP_DEBUG) {
 } else {
     error_reporting(E_ALL & ~E_DEPRECATED);
     ini_set('display_errors', '0');
+    ini_set('log_errors', '1');
+    if (is_dir(__DIR__ . '/logs')) ini_set('error_log', __DIR__ . '/logs/php-error.log');
 }
 
 require_once __DIR__ . '/vendor/autoload.php';

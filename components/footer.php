@@ -19,10 +19,6 @@
         </div>
         <p class="pe-lg-5 small">A licensed community pharmacy in Sri Lanka. Order online, have prescriptions checked
           by a pharmacist, and collect at the counter with your QR card.</p>
-        <div class="d-flex gap-2">
-          <a class="mo-social" href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
-          <a class="mo-social" href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
-        </div>
       </div>
       <div class="col-6 col-lg-2">
         <h6 class="mb-3">Shop</h6>
