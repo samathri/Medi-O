@@ -17,8 +17,8 @@ function send_mail(string $to, string $subject, string $html): bool
 {
     if (SMTP_USER === '' || SMTP_PASS === '') {
         $dir = ROOT_PATH . '/logs';
-        if (!is_dir($dir)) mkdir($dir, 0775, true);
-        file_put_contents(
+        if (!is_dir($dir)) @mkdir($dir, 0775, true);
+        if (is_dir($dir) && is_writable($dir)) file_put_contents(
             $dir . '/mail.log',
             sprintf("[%s] TO:%s | %s\n%s\n%s\n", date('Y-m-d H:i:s'), $to, $subject, mail_plain_text($html), str_repeat('-', 60)),
             FILE_APPEND

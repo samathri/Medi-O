@@ -1,0 +1,30 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "functions": {
+    "api/index.php": {
+      "runtime": "vercel-php@0.7.3",
+      "maxDuration": 60,
+      "includeFiles": "**"
+    }
+  },
+  "routes": [
+    { "src": "/(includes|components|database|vendor|cron|logs|docs|mobile)(/.*)?", "status": 404, "dest": "/404" },
+    { "src": "/uploads/prescriptions/.*", "status": 404, "dest": "/404" },
+    { "src": "/.*\\.(sql|md|log|lock|ini|bak|ps1|vbs)", "status": 404, "dest": "/404" },
+    { "src": "/(composer|vercel|package)(-lock)?\\.json", "status": 404, "dest": "/404" },
+    { "src": "/sw\\.js", "headers": { "Service-Worker-Allowed": "/", "Cache-Control": "no-cache" }, "continue": true },
+    { "src": "/(.*)", "headers": {
+        "X-Frame-Options": "SAMEORIGIN",
+        "X-Content-Type-Options": "nosniff",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+        "Permissions-Policy": "camera=(self), geolocation=(), microphone=()"
+      }, "continue": true },
+    { "src": "/", "dest": "/api/index.php?__path=index.php" },
+    { "src": "/(.+\\.php)", "dest": "/api/index.php?__path=$1" },
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "status": 404, "dest": "/api/index.php?__path=__notfound.php" }
+  ],
+  "crons": [
+    { "path": "/cron-run.php", "schedule": "30 2 * * *" }
+  ]
+}

@@ -11,7 +11,8 @@ function save_product_image(?array $f): ?string
     $ext = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'][$mime] ?? null;
     if (!$ext) { flash('error', 'Only JPG, PNG or WEBP images allowed.'); return null; }
     $name = 'p_' . bin2hex(random_bytes(8)) . '.' . $ext;
-    if (!move_uploaded_file($f['tmp_name'], ROOT_PATH . '/uploads/products/' . $name)) return null;
+    require_once dirname(__DIR__) . '/includes/storage.php';
+    if (!storage_save_upload($f['tmp_name'], 'uploads/products/' . $name, $mime)) return null;
     return 'uploads/products/' . $name;
 }
 

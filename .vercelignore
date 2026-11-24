@@ -1,0 +1,16 @@
+# Not needed (or not allowed) on the live site
+.git
+mobile
+docs
+logs
+node_modules
+config.local.php
+uploads/prescriptions/*
+!uploads/prescriptions/.htaccess
+uploads/products/catalog
+uploads/chat/*
+database/*.sql
+database/backup-*
+*.zip
+_v.htm
+medio-1-november.sql

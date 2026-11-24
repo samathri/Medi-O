@@ -25,9 +25,10 @@ function ai_analyze_prescription(int $rxId): array
     $rx = q_one('SELECT * FROM prescriptions WHERE id = ?', [$rxId]);
     if (!$rx) return [false, 'Prescription not found.'];
 
-    $path = ROOT_PATH . '/' . $rx['file_path'];
-    if (!is_file($path)) return [false, 'Prescription file is missing on disk.'];
-    $mime = mime_content_type($path) ?: 'image/jpeg';
+    require_once __DIR__ . '/storage.php';
+    $stored = storage_read($rx['file_path']);
+    if (!$stored) return [false, 'Prescription file is missing.'];
+    $mime = $stored['mime'] ?: 'image/jpeg';
     if (filesize($path) > 15 * 1024 * 1024) return [false, 'File too large for analysis.'];
 
     // Give the model the live stock list so it can match products
@@ -68,7 +69,7 @@ PROMPT;
     $payload = [
         'contents' => [[
             'parts' => [
-                ['inline_data' => ['mime_type' => $mime, 'data' => base64_encode(file_get_contents($path))]],
+                ['inline_data' => ['mime_type' => $mime, 'data' => base64_encode($stored['data'])]],
                 ['text' => $prompt],
             ],
         ]],

@@ -17,7 +17,7 @@
 require_once dirname(__DIR__) . '/config.php';
 require_once dirname(__DIR__) . '/includes/mailer.php';
 
-if (PHP_SAPI !== 'cli') {
+if (PHP_SAPI !== 'cli' && !defined('MEDIO_CRON_AUTHORISED')) {
     // Browser trigger allowed for staff only (handy for demos)
     if (!is_staff()) {
         http_response_code(403);

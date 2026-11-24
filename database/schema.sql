@@ -12,7 +12,7 @@ USE `medio`;
 
 SET FOREIGN_KEY_CHECKS = 0;
 
-DROP TABLE IF EXISTS login_attempts, prescription_items, verification_codes, notifications, collections, medication_logs,
+DROP TABLE IF EXISTS stored_files, sessions, login_attempts, prescription_items, verification_codes, notifications, collections, medication_logs,
   medication_times, medications, chat_messages, chat_conversations, payments,
   order_items, orders, prescriptions, cart_items, products, categories,
   contact_messages, settings, users;
@@ -199,6 +199,23 @@ CREATE TABLE chat_messages (
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
+-- Log-in sessions, used when SESSION_DRIVER = 'db' (hosts without a shared disk).
+CREATE TABLE sessions (
+  id         VARCHAR(128) NOT NULL PRIMARY KEY,
+  data       MEDIUMBLOB NOT NULL,
+  updated_at DATETIME NOT NULL,
+  KEY idx_updated (updated_at)
+) ENGINE=InnoDB;
+
+-- Uploaded files, used when STORAGE_DRIVER = 'db' (hosts with a read-only disk).
+CREATE TABLE stored_files (
+  path       VARCHAR(190) NOT NULL PRIMARY KEY,
+  mime       VARCHAR(100) NOT NULL,
+  size       INT UNSIGNED NOT NULL,
+  data       LONGBLOB NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
 -- Failed log-ins, used to slow down password guessing.
 CREATE TABLE login_attempts (
   id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,

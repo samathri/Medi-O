@@ -5,6 +5,11 @@ if (session_status() === PHP_SESSION_NONE && PHP_SAPI !== 'cli') {
     // Isolate this installation from other PHP apps sharing localhost cookies.
     session_name('MEDIOSESSID' . substr(hash('sha256', ROOT_PATH . BASE_URL), 0, 12));
     ini_set('session.use_strict_mode', '1');
+    if (SESSION_DRIVER === 'db') {
+        require_once __DIR__ . '/session-db.php';
+        session_set_save_handler(new MedioDbSessionHandler(), true);
+        ini_set('session.gc_probability', '1'); ini_set('session.gc_divisor', '200');
+    }
     session_set_cookie_params([
         'path' => (parse_url(BASE_URL, PHP_URL_PATH) ?: '') . '/',
         'secure' => str_starts_with(BASE_URL, 'https://'),
@@ -95,6 +100,10 @@ function product_image(?string $path): string
 {
     if ($path && is_file(ROOT_PATH . '/' . $path)) {
         return url($path);
+    }
+    // Photos uploaded on a read-only host live in the database and are served by file.php
+    if ($path && STORAGE_DRIVER === 'db' && str_starts_with($path, 'uploads/products/p_')) {
+        return url('file.php?p=' . rawurlencode(basename($path)));
     }
     return url('assets/img/placeholder-product.svg');
 }
